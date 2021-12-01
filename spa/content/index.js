@@ -19,7 +19,7 @@ import {
 } from '../web_modules/svelte/internal/index.mjs';
 
 import { onMount } from '../web_modules/svelte/index.mjs';
-import * as d3 from "d3";
+import * as d3 from '../web_modules/d3/src/index.js';
 
 function create_fragment(ctx) {
 	let h1;
