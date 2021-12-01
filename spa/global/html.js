@@ -36,7 +36,10 @@ function create_fragment(ctx) {
 	let current;
 
 	head = new Head({
-			props: { title: /*content*/ ctx[0].filename }
+			props: {
+				title: /*content*/ ctx[0].filename,
+				env: /*env*/ ctx[2]
+			}
 		});
 
 	const switch_instance_spread_levels = [/*content*/ ctx[0].fields];
@@ -95,6 +98,7 @@ function create_fragment(ctx) {
 		p(ctx, [dirty]) {
 			const head_changes = {};
 			if (dirty & /*content*/ 1) head_changes.title = /*content*/ ctx[0].filename;
+			if (dirty & /*env*/ 4) head_changes.env = /*env*/ ctx[2];
 			head.$set(head_changes);
 
 			const switch_instance_changes = (dirty & /*content*/ 1)
@@ -145,20 +149,21 @@ function create_fragment(ctx) {
 }
 
 function instance($$self, $$props, $$invalidate) {
-	let { content } = $$props, { layout } = $$props;
+	let { content } = $$props, { layout } = $$props, { env } = $$props;
 
 	$$self.$$set = $$props => {
 		if ("content" in $$props) $$invalidate(0, content = $$props.content);
 		if ("layout" in $$props) $$invalidate(1, layout = $$props.layout);
+		if ("env" in $$props) $$invalidate(2, env = $$props.env);
 	};
 
-	return [content, layout];
+	return [content, layout, env];
 }
 
 class Component extends SvelteComponent {
 	constructor(options) {
 		super();
-		init(this, options, instance, create_fragment, safe_not_equal, { content: 0, layout: 1 });
+		init(this, options, instance, create_fragment, safe_not_equal, { content: 0, layout: 1, env: 2 });
 	}
 }
 
