@@ -1,5 +1,5 @@
 <script>
-  export let title;
+  export let title, env;
 </script>
 
 <head>
@@ -7,9 +7,10 @@
   <meta name='viewport' content='width=device-width,initial-scale=1'>
 
   <title>{ title }</title>
+  <base href="{ env.local ? '/' : env.baseurl }">
 
-  <script type="module" src="/spa/ejected/main.js"></script>
+  <script type="module" src="spa/ejected/main.js"></script>
 
-  <link rel="icon" type="image/svg+xml" href="/assets/logo.svg">
-  <link rel='stylesheet' href='/spa/bundle.css'>
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+  <link rel='stylesheet' href='spa/bundle.css'>
 </head>

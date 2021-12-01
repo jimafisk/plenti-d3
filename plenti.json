@@ -1,5 +1,6 @@
 {
 	"build": "public",
+  "baseurl": "/plenti-d3/",
 	"local": {
 		"port": 3000
 	}
