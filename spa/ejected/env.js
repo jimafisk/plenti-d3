@@ -1,1 +1,1 @@
-export let env = { local: false, baseurl: '/plenti-d3/'};
+export let env = { local: false, baseurl: '/plenti-d3/', cms: { repo: '', redirectUrl: '', appId: '', branch: '' } };
