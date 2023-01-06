@@ -7,7 +7,7 @@
   <meta name='viewport' content='width=device-width,initial-scale=1'>
 
   <title>{ title }</title>
-  <base href="{ env.local ? '/' : env.baseurl }">
+  <base href="{env.baseurl}">
 
   <script type="module" src="spa/ejected/main.js"></script>
 
