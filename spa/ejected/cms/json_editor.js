@@ -3,7 +3,6 @@ import {
 	SvelteComponent,
 	append,
 	attr,
-	binding_callbacks,
 	children,
 	claim_component,
 	claim_element,
@@ -14,15 +13,15 @@ import {
 	element,
 	init,
 	insert,
+	listen,
 	mount_component,
-	query_selector_all,
+	run_all,
 	safe_not_equal,
 	space,
 	transition_in,
 	transition_out
 } from '../../web_modules/svelte/internal/index.mjs';
 
-import { onMount } from '../../web_modules/svelte/index.mjs';
 import ButtonWrapper from './button_wrapper.js';
 import Button from './button.js';
 
@@ -55,6 +54,7 @@ function create_default_slot(ctx) {
 					}
 				],
 				buttonText: "Delete",
+				buttonStyle: "secondary",
 				action: "delete",
 				encoding: "text"
 			}
@@ -120,13 +120,13 @@ function create_default_slot(ctx) {
 }
 
 function create_fragment(ctx) {
-	let link;
-	let t0;
 	let form;
 	let div;
-	let t1;
+	let t;
 	let buttonwrapper;
 	let current;
+	let mounted;
+	let dispose;
 
 	buttonwrapper = new ButtonWrapper({
 			props: {
@@ -137,48 +137,50 @@ function create_fragment(ctx) {
 
 	return {
 		c() {
-			link = element("link");
-			t0 = space();
 			form = element("form");
 			div = element("div");
-			t1 = space();
+			t = space();
 			create_component(buttonwrapper.$$.fragment);
 			this.h();
 		},
 		l(nodes) {
-			const head_nodes = query_selector_all("[data-svelte=\"svelte-1xta96n\"]", document.head);
-			link = claim_element(head_nodes, "LINK", { rel: true, href: true });
-			head_nodes.forEach(detach);
-			t0 = claim_space(nodes);
 			form = claim_element(nodes, "FORM", { class: true });
 			var form_nodes = children(form);
-			div = claim_element(form_nodes, "DIV", { class: true });
-			children(div).forEach(detach);
-			t1 = claim_space(form_nodes);
+			div = claim_element(form_nodes, "DIV", { class: true, contenteditable: true });
+			var div_nodes = children(div);
+			div_nodes.forEach(detach);
+			t = claim_space(form_nodes);
 			claim_component(buttonwrapper.$$.fragment, form_nodes);
 			form_nodes.forEach(detach);
 			this.h();
 		},
 		h() {
-			attr(link, "rel", "stylesheet");
-			attr(link, "href", "https://unpkg.com/codemirror@5.65.1/lib/codemirror.css");
-			attr(div, "class", "editor-container svelte-1kxexd2");
-			attr(form, "class", "svelte-1kxexd2");
+			attr(div, "class", "json-editor svelte-nwrl91");
+			attr(div, "contenteditable", "true");
+			attr(form, "class", "svelte-nwrl91");
 		},
 		m(target, anchor) {
-			append(document.head, link);
-			insert(target, t0, anchor);
 			insert(target, form, anchor);
 			append(form, div);
-			/*div_binding*/ ctx[3](div);
-			append(form, t1);
+			div.innerHTML = /*formattedFields*/ ctx[1];
+			append(form, t);
 			mount_component(buttonwrapper, form, null);
 			current = true;
+
+			if (!mounted) {
+				dispose = [
+					listen(div, "input", /*input_handler*/ ctx[3]),
+					listen(div, "keydown", /*keydown_handler*/ ctx[4])
+				];
+
+				mounted = true;
+			}
 		},
 		p(ctx, [dirty]) {
+			if (!current || dirty & /*formattedFields*/ 2) div.innerHTML = /*formattedFields*/ ctx[1];;
 			const buttonwrapper_changes = {};
 
-			if (dirty & /*$$scope, content*/ 33) {
+			if (dirty & /*$$scope, content*/ 65) {
 				buttonwrapper_changes.$$scope = { dirty, ctx };
 			}
 
@@ -194,56 +196,66 @@ function create_fragment(ctx) {
 			current = false;
 		},
 		d(detaching) {
-			detach(link);
-			if (detaching) detach(t0);
 			if (detaching) detach(form);
-			/*div_binding*/ ctx[3](null);
 			destroy_component(buttonwrapper);
+			mounted = false;
+			run_all(dispose);
 		}
 	};
 }
 
 function instance($$self, $$props, $$invalidate) {
 	let { content } = $$props;
-	const loaded = Promise.resolve().then(() => import("https://unpkg.com/codemirror@5.65.1/lib/codemirror.js")).then(() => import("https://unpkg.com/codemirror@5.65.1/mode/javascript/javascript.js"));
-	let container;
-	let editor;
+	let formattedFields, previousFilepath;
 
-	onMount(async () => {
-		await loaded;
-		$$invalidate(2, editor = new CodeMirror(container, { mode: "javascript" }));
+	const syntaxHighlight = json => {
+		json = JSON.stringify(json, null, 4);
+		json = json.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
-		editor.on("change", () => {
-			try {
-				$$invalidate(0, content.fields = JSON.parse(editor.getValue()), content);
-			} catch(error) {
-				if (!(error instanceof SyntaxError)) {
-					throw error;
+		return json.replace(/("(\u[a-zA-Z0-9]{4}|\[^u]|[^\"])*"(s*:)?|(true|false|null)|(-?[0-9]*.?[0-9]*))/g, match => {
+			let cls = "syntax";
+
+			if ((/^"/).test(match)) {
+				if ((/:$/).test(match)) {
+					cls = "key";
+				} else {
+					cls = "string";
 				}
+			} else if ((/true|false/).test(match)) {
+				cls = "boolean";
+			} else if ((/[0-9]/).test(match)) {
+				cls = "number";
+			} else if ((/null/).test(match)) {
+				cls = "null";
 			}
-		});
-	});
 
-	function div_binding($$value) {
-		binding_callbacks[$$value ? "unshift" : "push"](() => {
-			container = $$value;
-			$$invalidate(1, container);
+			return "<span class=\"" + cls + "\">" + match + "</span>";
 		});
-	}
+	};
+
+	const input_handler = e => $$invalidate(0, content.fields = JSON.parse(e.target.textContent), content);
+
+	const keydown_handler = e => {
+		if (e.key === "Tab") {
+			document.execCommand("insertHTML", false, "&#32;&#32;&#32;&#32;");
+			e.preventDefault();
+		}
+	};
 
 	$$self.$$set = $$props => {
 		if ("content" in $$props) $$invalidate(0, content = $$props.content);
 	};
 
 	$$self.$$.update = () => {
-		if ($$self.$$.dirty & /*editor, content*/ 5) {
-			$: if (editor && !editor.hasFocus()) {
-				editor.setValue(JSON.stringify(content.fields, undefined, 4));
+		if ($$self.$$.dirty & /*content, previousFilepath*/ 5) {
+			$: if (content.filepath !== previousFilepath) {
+				$$invalidate(1, formattedFields = syntaxHighlight(content.fields));
+				$$invalidate(2, previousFilepath = content.filepath);
 			}
 		}
 	};
 
-	return [content, container, editor, div_binding];
+	return [content, formattedFields, previousFilepath, input_handler, keydown_handler];
 }
 
 class Component extends SvelteComponent {

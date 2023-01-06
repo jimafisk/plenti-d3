@@ -84,7 +84,7 @@ function create_fragment(ctx) {
 			attr(meta0, "charset", "utf-8");
 			attr(meta1, "name", "viewport");
 			attr(meta1, "content", "width=device-width,initial-scale=1");
-			attr(base, "href", base_href_value = /*env*/ ctx[1].local ? "/" : /*env*/ ctx[1].baseurl);
+			attr(base, "href", base_href_value = /*env*/ ctx[1].baseurl);
 			attr(script, "type", "module");
 			if (script.src !== (script_src_value = "spa/ejected/main.js")) attr(script, "src", script_src_value);
 			attr(link0, "rel", "icon");
@@ -113,7 +113,7 @@ function create_fragment(ctx) {
 		p(ctx, [dirty]) {
 			if (dirty & /*title*/ 1) set_data(t2, /*title*/ ctx[0]);
 
-			if (dirty & /*env*/ 2 && base_href_value !== (base_href_value = /*env*/ ctx[1].local ? "/" : /*env*/ ctx[1].baseurl)) {
+			if (dirty & /*env*/ 2 && base_href_value !== (base_href_value = /*env*/ ctx[1].baseurl)) {
 				attr(base, "href", base_href_value);
 			}
 		},

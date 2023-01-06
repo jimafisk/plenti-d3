@@ -179,7 +179,7 @@ function create_else_block_1(ctx) {
 			attr(svg, "stroke-linejoin", "round");
 			attr(div0, "class", "drop-icon");
 			attr(div1, "class", "drop-text");
-			attr(div2, "class", div2_class_value = "drop" + (/*drag*/ ctx[6] ? " active" : "") + " svelte-6x59kg");
+			attr(div2, "class", div2_class_value = "drop" + (/*drag*/ ctx[7] ? " active" : "") + " svelte-6x59kg");
 			attr(div3, "class", "or svelte-6x59kg");
 			attr(input, "type", "file");
 			input.multiple = input_multiple_value = /*changingAsset*/ ctx[2] ? false : true;
@@ -214,18 +214,18 @@ function create_else_block_1(ctx) {
 
 			if (!mounted) {
 				dispose = [
-					listen(div2, "dragenter", /*toggleDrag*/ ctx[9]),
-					listen(div2, "dragleave", /*toggleDrag*/ ctx[9]),
-					listen(div2, "drop", prevent_default(/*drop_handler*/ ctx[23])),
-					listen(div2, "dragover", prevent_default(/*dragover_handler*/ ctx[14])),
-					listen(div4, "change", /*change_handler*/ ctx[24])
+					listen(div2, "dragenter", /*toggleDrag*/ ctx[10]),
+					listen(div2, "dragleave", /*toggleDrag*/ ctx[10]),
+					listen(div2, "drop", prevent_default(/*drop_handler*/ ctx[22])),
+					listen(div2, "dragover", prevent_default(/*dragover_handler*/ ctx[15])),
+					listen(div4, "change", /*change_handler*/ ctx[23])
 				];
 
 				mounted = true;
 			}
 		},
 		p(ctx, dirty) {
-			if (dirty & /*drag*/ 64 && div2_class_value !== (div2_class_value = "drop" + (/*drag*/ ctx[6] ? " active" : "") + " svelte-6x59kg")) {
+			if (dirty & /*drag*/ 128 && div2_class_value !== (div2_class_value = "drop" + (/*drag*/ ctx[7] ? " active" : "") + " svelte-6x59kg")) {
 				attr(div2, "class", div2_class_value);
 			}
 
@@ -256,11 +256,11 @@ function create_if_block(ctx) {
 	let current;
 
 	function mediafilters_assets_binding(value) {
-		/*mediafilters_assets_binding*/ ctx[15](value);
+		/*mediafilters_assets_binding*/ ctx[16](value);
 	}
 
 	function mediafilters_enabledFilters_binding(value) {
-		/*mediafilters_enabledFilters_binding*/ ctx[16](value);
+		/*mediafilters_enabledFilters_binding*/ ctx[17](value);
 	}
 
 	let mediafilters_props = {
@@ -272,8 +272,8 @@ function create_if_block(ctx) {
 		mediafilters_props.assets = /*assets*/ ctx[1];
 	}
 
-	if (/*enabledFilters*/ ctx[4] !== void 0) {
-		mediafilters_props.enabledFilters = /*enabledFilters*/ ctx[4];
+	if (/*enabledFilters*/ ctx[5] !== void 0) {
+		mediafilters_props.enabledFilters = /*enabledFilters*/ ctx[5];
 	}
 
 	mediafilters = new MediaFilters({ props: mediafilters_props });
@@ -281,15 +281,15 @@ function create_if_block(ctx) {
 	binding_callbacks.push(() => bind(mediafilters, "enabledFilters", mediafilters_enabledFilters_binding));
 
 	function mediagrid_selectedMedia_binding(value) {
-		/*mediagrid_selectedMedia_binding*/ ctx[17](value);
+		/*mediagrid_selectedMedia_binding*/ ctx[18](value);
 	}
 
 	let mediagrid_props = {
-		files: /*getThumbnails*/ ctx[12](/*localMediaList*/ ctx[0])
+		files: /*getThumbnails*/ ctx[13](/*localMediaList*/ ctx[0])
 	};
 
-	if (/*selectedMedia*/ ctx[7] !== void 0) {
-		mediagrid_props.selectedMedia = /*selectedMedia*/ ctx[7];
+	if (/*selectedMedia*/ ctx[8] !== void 0) {
+		mediagrid_props.selectedMedia = /*selectedMedia*/ ctx[8];
 	}
 
 	mediagrid = new MediaGrid({ props: mediagrid_props });
@@ -335,26 +335,26 @@ function create_if_block(ctx) {
 				add_flush_callback(() => updating_assets = false);
 			}
 
-			if (!updating_enabledFilters && dirty & /*enabledFilters*/ 16) {
+			if (!updating_enabledFilters && dirty & /*enabledFilters*/ 32) {
 				updating_enabledFilters = true;
-				mediafilters_changes.enabledFilters = /*enabledFilters*/ ctx[4];
+				mediafilters_changes.enabledFilters = /*enabledFilters*/ ctx[5];
 				add_flush_callback(() => updating_enabledFilters = false);
 			}
 
 			mediafilters.$set(mediafilters_changes);
 			const mediagrid_changes = {};
-			if (dirty & /*localMediaList*/ 1) mediagrid_changes.files = /*getThumbnails*/ ctx[12](/*localMediaList*/ ctx[0]);
+			if (dirty & /*localMediaList*/ 1) mediagrid_changes.files = /*getThumbnails*/ ctx[13](/*localMediaList*/ ctx[0]);
 
-			if (!updating_selectedMedia && dirty & /*selectedMedia*/ 128) {
+			if (!updating_selectedMedia && dirty & /*selectedMedia*/ 256) {
 				updating_selectedMedia = true;
-				mediagrid_changes.selectedMedia = /*selectedMedia*/ ctx[7];
+				mediagrid_changes.selectedMedia = /*selectedMedia*/ ctx[8];
 				add_flush_callback(() => updating_selectedMedia = false);
 			}
 
 			mediagrid.$set(mediagrid_changes);
 			const buttonwrapper_changes = {};
 
-			if (dirty & /*$$scope, selectedMedia, localMediaList, enabledFilters, filePrefix, changingAsset, showMedia*/ 67109053) {
+			if (dirty & /*$$scope, selectedMedia, localMediaList, enabledFilters, filePrefix, assetPrefix, changingAsset, showMedia*/ 33554813) {
 				buttonwrapper_changes.$$scope = { dirty, ctx };
 			}
 
@@ -383,91 +383,100 @@ function create_if_block(ctx) {
 	};
 }
 
-// (95:12) {:else}
+// (100:12) {:else}
 function create_else_block(ctx) {
 	let button;
-	let t;
-	let mounted;
-	let dispose;
+	let current;
+
+	button = new Button({
+			props: {
+				buttonText: "Discard all",
+				buttonStyle: "secondary"
+			}
+		});
+
+	button.$on("click", /*click_handler_1*/ ctx[21]);
 
 	return {
 		c() {
-			button = element("button");
-			t = text("Discard all");
+			create_component(button.$$.fragment);
 		},
 		l(nodes) {
-			button = claim_element(nodes, "BUTTON", {});
-			var button_nodes = children(button);
-			t = claim_text(button_nodes, "Discard all");
-			button_nodes.forEach(detach);
+			claim_component(button.$$.fragment, nodes);
 		},
 		m(target, anchor) {
-			insert(target, button, anchor);
-			append(button, t);
-
-			if (!mounted) {
-				dispose = listen(button, "click", prevent_default(/*click_handler_3*/ ctx[22]));
-				mounted = true;
-			}
+			mount_component(button, target, anchor);
+			current = true;
 		},
 		p: noop,
+		i(local) {
+			if (current) return;
+			transition_in(button.$$.fragment, local);
+			current = true;
+		},
+		o(local) {
+			transition_out(button.$$.fragment, local);
+			current = false;
+		},
 		d(detaching) {
-			if (detaching) detach(button);
-			mounted = false;
-			dispose();
+			destroy_component(button, detaching);
 		}
 	};
 }
 
-// (93:12) {#if selectedMedia.length > 0}
+// (94:12) {#if selectedMedia.length > 0}
 function create_if_block_1(ctx) {
 	let button;
-	let t;
-	let mounted;
-	let dispose;
+	let current;
+
+	button = new Button({
+			props: {
+				buttonText: "Discard selected",
+				buttonStyle: "secondary"
+			}
+		});
+
+	button.$on("click", /*removeSelectedMedia*/ ctx[12]);
 
 	return {
 		c() {
-			button = element("button");
-			t = text("Discard selected");
+			create_component(button.$$.fragment);
 		},
 		l(nodes) {
-			button = claim_element(nodes, "BUTTON", {});
-			var button_nodes = children(button);
-			t = claim_text(button_nodes, "Discard selected");
-			button_nodes.forEach(detach);
+			claim_component(button.$$.fragment, nodes);
 		},
 		m(target, anchor) {
-			insert(target, button, anchor);
-			append(button, t);
-
-			if (!mounted) {
-				dispose = listen(button, "click", prevent_default(/*removeSelectedMedia*/ ctx[11]));
-				mounted = true;
-			}
+			mount_component(button, target, anchor);
+			current = true;
 		},
 		p: noop,
+		i(local) {
+			if (current) return;
+			transition_in(button.$$.fragment, local);
+			current = true;
+		},
+		o(local) {
+			transition_out(button.$$.fragment, local);
+			current = false;
+		},
 		d(detaching) {
-			if (detaching) detach(button);
-			mounted = false;
-			dispose();
+			destroy_component(button, detaching);
 		}
 	};
 }
 
 // (78:8) <ButtonWrapper>
 function create_default_slot(ctx) {
-	let div;
 	let button;
 	let updating_commitList;
 	let t;
+	let current_block_type_index;
+	let if_block;
 	let if_block_anchor;
 	let current;
-	let mounted;
-	let dispose;
 
 	function button_commitList_binding(value) {
-		/*button_commitList_binding*/ ctx[18](value);
+		/*button_commitList_binding*/ ctx[19](value);
 	}
 
 	let button_props = {
@@ -482,55 +491,37 @@ function create_default_slot(ctx) {
 
 	button = new Button({ props: button_props });
 	binding_callbacks.push(() => bind(button, "commitList", button_commitList_binding));
+	button.$on("click", /*click_handler*/ ctx[20]);
+	const if_block_creators = [create_if_block_1, create_else_block];
+	const if_blocks = [];
 
 	function select_block_type_1(ctx, dirty) {
-		if (/*selectedMedia*/ ctx[7].length > 0) return create_if_block_1;
-		return create_else_block;
+		if (/*selectedMedia*/ ctx[8].length > 0) return 0;
+		return 1;
 	}
 
-	let current_block_type = select_block_type_1(ctx, -1);
-	let if_block = current_block_type(ctx);
+	current_block_type_index = select_block_type_1(ctx, -1);
+	if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
 
 	return {
 		c() {
-			div = element("div");
 			create_component(button.$$.fragment);
 			t = space();
 			if_block.c();
 			if_block_anchor = empty();
-			this.h();
 		},
 		l(nodes) {
-			div = claim_element(nodes, "DIV", { class: true });
-			var div_nodes = children(div);
-			claim_component(button.$$.fragment, div_nodes);
-			div_nodes.forEach(detach);
+			claim_component(button.$$.fragment, nodes);
 			t = claim_space(nodes);
 			if_block.l(nodes);
 			if_block_anchor = empty();
-			this.h();
-		},
-		h() {
-			attr(div, "class", "button-primary");
 		},
 		m(target, anchor) {
-			insert(target, div, anchor);
-			mount_component(button, div, null);
+			mount_component(button, target, anchor);
 			insert(target, t, anchor);
-			if_block.m(target, anchor);
+			if_blocks[current_block_type_index].m(target, anchor);
 			insert(target, if_block_anchor, anchor);
 			current = true;
-
-			if (!mounted) {
-				dispose = [
-					listen(div, "click", /*addUploadToLibrary*/ ctx[13]),
-					listen(div, "click", prevent_default(/*click_handler*/ ctx[19])),
-					listen(div, "click", prevent_default(/*click_handler_1*/ ctx[20])),
-					listen(div, "click", prevent_default(/*click_handler_2*/ ctx[21]))
-				];
-
-				mounted = true;
-			}
 		},
 		p(ctx, dirty) {
 			const button_changes = {};
@@ -542,36 +533,48 @@ function create_default_slot(ctx) {
 			}
 
 			button.$set(button_changes);
+			let previous_block_index = current_block_type_index;
+			current_block_type_index = select_block_type_1(ctx, dirty);
 
-			if (current_block_type === (current_block_type = select_block_type_1(ctx, dirty)) && if_block) {
-				if_block.p(ctx, dirty);
+			if (current_block_type_index === previous_block_index) {
+				if_blocks[current_block_type_index].p(ctx, dirty);
 			} else {
-				if_block.d(1);
-				if_block = current_block_type(ctx);
+				group_outros();
 
-				if (if_block) {
+				transition_out(if_blocks[previous_block_index], 1, 1, () => {
+					if_blocks[previous_block_index] = null;
+				});
+
+				check_outros();
+				if_block = if_blocks[current_block_type_index];
+
+				if (!if_block) {
+					if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
 					if_block.c();
-					if_block.m(if_block_anchor.parentNode, if_block_anchor);
+				} else {
+					if_block.p(ctx, dirty);
 				}
+
+				transition_in(if_block, 1);
+				if_block.m(if_block_anchor.parentNode, if_block_anchor);
 			}
 		},
 		i(local) {
 			if (current) return;
 			transition_in(button.$$.fragment, local);
+			transition_in(if_block);
 			current = true;
 		},
 		o(local) {
 			transition_out(button.$$.fragment, local);
+			transition_out(if_block);
 			current = false;
 		},
 		d(detaching) {
-			if (detaching) detach(div);
-			destroy_component(button);
+			destroy_component(button, detaching);
 			if (detaching) detach(t);
-			if_block.d(detaching);
+			if_blocks[current_block_type_index].d(detaching);
 			if (detaching) detach(if_block_anchor);
-			mounted = false;
-			run_all(dispose);
 		}
 	};
 }
@@ -660,7 +663,8 @@ function instance($$self, $$props, $$invalidate) {
 	let { assets } = $$props,
 		{ changingAsset } = $$props,
 		{ showMedia } = $$props,
-		{ localMediaList } = $$props;
+		{ localMediaList } = $$props,
+		{ assetPrefix } = $$props;
 
 	let enabledFilters = [];
 
@@ -672,7 +676,7 @@ function instance($$self, $$props, $$invalidate) {
 			$$invalidate(0, localMediaList = [
 				...localMediaList,
 				{
-					file: "assets/" + file.name,
+					file: assetPrefix + "assets/" + file.name,
 					contents: e.target.result
 				}
 			]);
@@ -685,11 +689,11 @@ function instance($$self, $$props, $$invalidate) {
 		});
 	};
 
-	let filePrefix = "assets/";
+	let filePrefix = assetPrefix + "assets/";
 	let drag;
 
 	const toggleDrag = () => {
-		$$invalidate(6, drag = !drag);
+		$$invalidate(7, drag = !drag);
 	};
 
 	const dropFile = ev => {
@@ -710,7 +714,7 @@ function instance($$self, $$props, $$invalidate) {
 	const removeSelectedMedia = () => {
 		selectedMedia.forEach(file => {
 			$$invalidate(0, localMediaList = localMediaList.filter(i => i.contents !== file));
-			$$invalidate(7, selectedMedia = []);
+			$$invalidate(8, selectedMedia = []);
 		});
 	};
 
@@ -733,12 +737,12 @@ function instance($$self, $$props, $$invalidate) {
 
 	function mediafilters_enabledFilters_binding(value) {
 		enabledFilters = value;
-		$$invalidate(4, enabledFilters);
+		$$invalidate(5, enabledFilters);
 	}
 
 	function mediagrid_selectedMedia_binding(value) {
 		selectedMedia = value;
-		$$invalidate(7, selectedMedia);
+		$$invalidate(8, selectedMedia);
 	}
 
 	function button_commitList_binding(value) {
@@ -746,17 +750,18 @@ function instance($$self, $$props, $$invalidate) {
 		$$invalidate(0, localMediaList);
 	}
 
-	const click_handler = () => $$invalidate(4, enabledFilters = []);
-	const click_handler_1 = () => $$invalidate(5, filePrefix = "assets/");
+	const click_handler = () => {
+		addUploadToLibrary();
+		$$invalidate(5, enabledFilters = []);
+		$$invalidate(6, filePrefix = assetPrefix + "assets/");
 
-	const click_handler_2 = () => {
 		if (changingAsset) {
 			$$invalidate(2, changingAsset = localMediaList[0].file);
 			$$invalidate(3, showMedia = false);
 		}
 	};
 
-	const click_handler_3 = () => $$invalidate(0, localMediaList = []);
+	const click_handler_1 = () => $$invalidate(0, localMediaList = []);
 	const drop_handler = event => dropFile(event);
 	const change_handler = event => selectFile(event.target.files);
 
@@ -765,23 +770,24 @@ function instance($$self, $$props, $$invalidate) {
 		if ("changingAsset" in $$props) $$invalidate(2, changingAsset = $$props.changingAsset);
 		if ("showMedia" in $$props) $$invalidate(3, showMedia = $$props.showMedia);
 		if ("localMediaList" in $$props) $$invalidate(0, localMediaList = $$props.localMediaList);
+		if ("assetPrefix" in $$props) $$invalidate(4, assetPrefix = $$props.assetPrefix);
 	};
 
 	$$self.$$.update = () => {
-		if ($$self.$$.dirty & /*enabledFilters, localMediaList, filePrefix*/ 49) {
+		if ($$self.$$.dirty & /*enabledFilters, assetPrefix, localMediaList, filePrefix*/ 113) {
 			$: if (enabledFilters) {
 				if (enabledFilters.length > 0) {
 					// Convert filter array to path
 					let filterPath = enabledFilters[0].join("/") + "/";
 
-					let newPrefix = "assets/" + filterPath;
+					let newPrefix = assetPrefix + "assets/" + filterPath;
 
 					localMediaList.forEach(mediaFile => {
 						mediaFile.file = mediaFile.file.replace(filePrefix, newPrefix);
 					});
 
 					// Set new prefix in case filter is switched and needs to be replaced
-					$$invalidate(5, filePrefix = newPrefix);
+					$$invalidate(6, filePrefix = newPrefix);
 				}
 			}
 		}
@@ -792,6 +798,7 @@ function instance($$self, $$props, $$invalidate) {
 		assets,
 		changingAsset,
 		showMedia,
+		assetPrefix,
 		enabledFilters,
 		filePrefix,
 		drag,
@@ -809,8 +816,6 @@ function instance($$self, $$props, $$invalidate) {
 		button_commitList_binding,
 		click_handler,
 		click_handler_1,
-		click_handler_2,
-		click_handler_3,
 		drop_handler,
 		change_handler
 	];
@@ -824,7 +829,8 @@ class Component extends SvelteComponent {
 			assets: 1,
 			changingAsset: 2,
 			showMedia: 3,
-			localMediaList: 0
+			localMediaList: 0,
+			assetPrefix: 4
 		});
 	}
 }

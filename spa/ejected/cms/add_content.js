@@ -32,34 +32,39 @@ import {
 	transition_out
 } from '../../web_modules/svelte/internal/index.mjs';
 
-import blueprints from '../blueprints.js';
+import defaults from '../defaults.js';
 import ButtonWrapper from './button_wrapper.js';
 import validateFilename from './validate_filename.js';
 
 function get_each_context_1(ctx, list, i) {
 	const child_ctx = ctx.slice();
-	child_ctx[13] = list[i];
+	child_ctx[15] = list[i];
 	return child_ctx;
 }
 
 function get_each_context(ctx, list, i) {
 	const child_ctx = ctx.slice();
-	child_ctx[10] = list[i];
+	child_ctx[12] = list[i];
 	return child_ctx;
 }
 
-// (45:0) {:else}
-function create_else_block(ctx) {
+// (53:0) {:else}
+function create_else_block_1(ctx) {
 	let h1;
 	let t0;
 	let t1;
 	let div;
-	let each_value_1 = blueprints;
+	let current;
+	let each_value_1 = defaults;
 	let each_blocks = [];
 
 	for (let i = 0; i < each_value_1.length; i += 1) {
 		each_blocks[i] = create_each_block_1(get_each_context_1(ctx, each_value_1, i));
 	}
+
+	const out = i => transition_out(each_blocks[i], 1, 1, () => {
+		each_blocks[i] = null;
+	});
 
 	return {
 		c() {
@@ -91,7 +96,7 @@ function create_else_block(ctx) {
 			this.h();
 		},
 		h() {
-			attr(div, "class", "blueprints svelte-17xmg29");
+			attr(div, "class", "defaults svelte-wnvmau");
 		},
 		m(target, anchor) {
 			insert(target, h1, anchor);
@@ -102,10 +107,12 @@ function create_else_block(ctx) {
 			for (let i = 0; i < each_blocks.length; i += 1) {
 				each_blocks[i].m(div, null);
 			}
+
+			current = true;
 		},
 		p(ctx, dirty) {
-			if (dirty & /*setType, blueprints*/ 8) {
-				each_value_1 = blueprints;
+			if (dirty & /*setType, defaults*/ 8) {
+				each_value_1 = defaults;
 				let i;
 
 				for (i = 0; i < each_value_1.length; i += 1) {
@@ -113,22 +120,42 @@ function create_else_block(ctx) {
 
 					if (each_blocks[i]) {
 						each_blocks[i].p(child_ctx, dirty);
+						transition_in(each_blocks[i], 1);
 					} else {
 						each_blocks[i] = create_each_block_1(child_ctx);
 						each_blocks[i].c();
+						transition_in(each_blocks[i], 1);
 						each_blocks[i].m(div, null);
 					}
 				}
 
-				for (; i < each_blocks.length; i += 1) {
-					each_blocks[i].d(1);
+				group_outros();
+
+				for (i = each_value_1.length; i < each_blocks.length; i += 1) {
+					out(i);
 				}
 
-				each_blocks.length = each_value_1.length;
+				check_outros();
 			}
 		},
-		i: noop,
-		o: noop,
+		i(local) {
+			if (current) return;
+
+			for (let i = 0; i < each_value_1.length; i += 1) {
+				transition_in(each_blocks[i]);
+			}
+
+			current = true;
+		},
+		o(local) {
+			each_blocks = each_blocks.filter(Boolean);
+
+			for (let i = 0; i < each_blocks.length; i += 1) {
+				transition_out(each_blocks[i]);
+			}
+
+			current = false;
+		},
 		d(detaching) {
 			if (detaching) detach(h1);
 			if (detaching) detach(t1);
@@ -138,7 +165,7 @@ function create_else_block(ctx) {
 	};
 }
 
-// (27:0) {#if selectedType}
+// (31:0) {#if selectedType}
 function create_if_block(ctx) {
 	let h1;
 	let t0;
@@ -226,8 +253,9 @@ function create_if_block(ctx) {
 		},
 		h() {
 			attr(input, "placeholder", "filename");
-			attr(input, "class", input_class_value = "" + (null_to_empty(/*validationErrors*/ ctx[2].length > 0 ? "error" : "") + " svelte-17xmg29"));
-			attr(div, "class", "filename svelte-17xmg29");
+			input.autofocus = true;
+			attr(input, "class", input_class_value = "" + (null_to_empty(/*validationErrors*/ ctx[2].length > 0 ? "error" : "") + " svelte-wnvmau"));
+			attr(div, "class", "filename svelte-wnvmau");
 		},
 		m(target, anchor) {
 			insert(target, h1, anchor);
@@ -251,9 +279,10 @@ function create_if_block(ctx) {
 			insert(target, t11, anchor);
 			mount_component(buttonwrapper, target, anchor);
 			current = true;
+			input.focus();
 
 			if (!mounted) {
-				dispose = listen(input, "input", /*input_input_handler*/ ctx[7]);
+				dispose = listen(input, "input", /*input_input_handler*/ ctx[8]);
 				mounted = true;
 			}
 		},
@@ -261,7 +290,7 @@ function create_if_block(ctx) {
 			if (!current || dirty & /*selectedType*/ 2) set_data(t1, /*selectedType*/ ctx[1]);
 			if (!current || dirty & /*selectedType*/ 2) set_data(t5, /*selectedType*/ ctx[1]);
 
-			if (!current || dirty & /*validationErrors*/ 4 && input_class_value !== (input_class_value = "" + (null_to_empty(/*validationErrors*/ ctx[2].length > 0 ? "error" : "") + " svelte-17xmg29"))) {
+			if (!current || dirty & /*validationErrors*/ 4 && input_class_value !== (input_class_value = "" + (null_to_empty(/*validationErrors*/ ctx[2].length > 0 ? "error" : "") + " svelte-wnvmau"))) {
 				attr(input, "class", input_class_value);
 			}
 
@@ -284,7 +313,7 @@ function create_if_block(ctx) {
 
 			const buttonwrapper_changes = {};
 
-			if (dirty & /*$$scope*/ 65536) {
+			if (dirty & /*$$scope*/ 262144) {
 				buttonwrapper_changes.$$scope = { dirty, ctx };
 			}
 
@@ -313,40 +342,44 @@ function create_if_block(ctx) {
 	};
 }
 
-// (49:4) {#each blueprints as blueprint}
-function create_each_block_1(ctx) {
+// (57:12) <ButtonWrapper>
+function create_default_slot_1(ctx) {
 	let button;
-	let t_value = /*blueprint*/ ctx[13].type + "";
-	let t;
+	let t0_value = /*defaultContent*/ ctx[15].type + "";
+	let t0;
+	let t1;
 	let mounted;
 	let dispose;
 
-	function click_handler_1() {
-		return /*click_handler_1*/ ctx[9](/*blueprint*/ ctx[13]);
+	function click_handler_2() {
+		return /*click_handler_2*/ ctx[11](/*defaultContent*/ ctx[15]);
 	}
 
 	return {
 		c() {
 			button = element("button");
-			t = text(t_value);
+			t0 = text(t0_value);
+			t1 = space();
 			this.h();
 		},
 		l(nodes) {
 			button = claim_element(nodes, "BUTTON", { class: true });
 			var button_nodes = children(button);
-			t = claim_text(button_nodes, t_value);
+			t0 = claim_text(button_nodes, t0_value);
 			button_nodes.forEach(detach);
+			t1 = claim_space(nodes);
 			this.h();
 		},
 		h() {
-			attr(button, "class", "blueprint svelte-17xmg29");
+			attr(button, "class", "default svelte-wnvmau");
 		},
 		m(target, anchor) {
 			insert(target, button, anchor);
-			append(button, t);
+			append(button, t0);
+			insert(target, t1, anchor);
 
 			if (!mounted) {
-				dispose = listen(button, "click", click_handler_1);
+				dispose = listen(button, "click", click_handler_2);
 				mounted = true;
 			}
 		},
@@ -355,13 +388,61 @@ function create_each_block_1(ctx) {
 		},
 		d(detaching) {
 			if (detaching) detach(button);
+			if (detaching) detach(t1);
 			mounted = false;
 			dispose();
 		}
 	};
 }
 
-// (34:4) {#if validationErrors}
+// (56:8) {#each defaults as defaultContent}
+function create_each_block_1(ctx) {
+	let buttonwrapper;
+	let current;
+
+	buttonwrapper = new ButtonWrapper({
+			props: {
+				$$slots: { default: [create_default_slot_1] },
+				$$scope: { ctx }
+			}
+		});
+
+	return {
+		c() {
+			create_component(buttonwrapper.$$.fragment);
+		},
+		l(nodes) {
+			claim_component(buttonwrapper.$$.fragment, nodes);
+		},
+		m(target, anchor) {
+			mount_component(buttonwrapper, target, anchor);
+			current = true;
+		},
+		p(ctx, dirty) {
+			const buttonwrapper_changes = {};
+
+			if (dirty & /*$$scope*/ 262144) {
+				buttonwrapper_changes.$$scope = { dirty, ctx };
+			}
+
+			buttonwrapper.$set(buttonwrapper_changes);
+		},
+		i(local) {
+			if (current) return;
+			transition_in(buttonwrapper.$$.fragment, local);
+			current = true;
+		},
+		o(local) {
+			transition_out(buttonwrapper.$$.fragment, local);
+			current = false;
+		},
+		d(detaching) {
+			destroy_component(buttonwrapper, detaching);
+		}
+	};
+}
+
+// (38:4) {#if validationErrors}
 function create_if_block_1(ctx) {
 	let ul;
 	let each_value = /*validationErrors*/ ctx[2];
@@ -393,7 +474,7 @@ function create_if_block_1(ctx) {
 			this.h();
 		},
 		h() {
-			attr(ul, "class", "errors svelte-17xmg29");
+			attr(ul, "class", "errors svelte-wnvmau");
 		},
 		m(target, anchor) {
 			insert(target, ul, anchor);
@@ -403,7 +484,7 @@ function create_if_block_1(ctx) {
 			}
 		},
 		p(ctx, dirty) {
-			if (dirty & /*validationErrors*/ 4) {
+			if (dirty & /*redirectAndEdit, validationErrors*/ 36) {
 				each_value = /*validationErrors*/ ctx[2];
 				let i;
 
@@ -433,10 +514,10 @@ function create_if_block_1(ctx) {
 	};
 }
 
-// (36:8) {#each validationErrors as error}
-function create_each_block(ctx) {
+// (43:12) {:else}
+function create_else_block(ctx) {
 	let li;
-	let t_value = /*error*/ ctx[10] + "";
+	let t_value = /*error*/ ctx[12] + "";
 	let t;
 
 	return {
@@ -455,7 +536,7 @@ function create_each_block(ctx) {
 			append(li, t);
 		},
 		p(ctx, dirty) {
-			if (dirty & /*validationErrors*/ 4 && t_value !== (t_value = /*error*/ ctx[10] + "")) set_data(t, t_value);
+			if (dirty & /*validationErrors*/ 4 && t_value !== (t_value = /*error*/ ctx[12] + "")) set_data(t, t_value);
 		},
 		d(detaching) {
 			if (detaching) detach(li);
@@ -463,7 +544,119 @@ function create_each_block(ctx) {
 	};
 }
 
-// (41:4) <ButtonWrapper>
+// (41:12) {#if typeof error === "object"}
+function create_if_block_2(ctx) {
+	let li;
+	let t0_value = /*error*/ ctx[12].message + "";
+	let t0;
+	let t1;
+	let span;
+	let t2;
+	let t3;
+	let mounted;
+	let dispose;
+
+	function click_handler() {
+		return /*click_handler*/ ctx[9](/*error*/ ctx[12]);
+	}
+
+	return {
+		c() {
+			li = element("li");
+			t0 = text(t0_value);
+			t1 = space();
+			span = element("span");
+			t2 = text("Edit Content");
+			t3 = text("?");
+			this.h();
+		},
+		l(nodes) {
+			li = claim_element(nodes, "LI", {});
+			var li_nodes = children(li);
+			t0 = claim_text(li_nodes, t0_value);
+			t1 = claim_space(li_nodes);
+			span = claim_element(li_nodes, "SPAN", { class: true });
+			var span_nodes = children(span);
+			t2 = claim_text(span_nodes, "Edit Content");
+			span_nodes.forEach(detach);
+			t3 = claim_text(li_nodes, "?");
+			li_nodes.forEach(detach);
+			this.h();
+		},
+		h() {
+			attr(span, "class", "error-link svelte-wnvmau");
+		},
+		m(target, anchor) {
+			insert(target, li, anchor);
+			append(li, t0);
+			append(li, t1);
+			append(li, span);
+			append(span, t2);
+			append(li, t3);
+
+			if (!mounted) {
+				dispose = listen(span, "click", click_handler);
+				mounted = true;
+			}
+		},
+		p(new_ctx, dirty) {
+			ctx = new_ctx;
+			if (dirty & /*validationErrors*/ 4 && t0_value !== (t0_value = /*error*/ ctx[12].message + "")) set_data(t0, t0_value);
+		},
+		d(detaching) {
+			if (detaching) detach(li);
+			mounted = false;
+			dispose();
+		}
+	};
+}
+
+// (40:8) {#each validationErrors as error}
+function create_each_block(ctx) {
+	let if_block_anchor;
+
+	function select_block_type_1(ctx, dirty) {
+		if (typeof /*error*/ ctx[12] === "object") return create_if_block_2;
+		return create_else_block;
+	}
+
+	let current_block_type = select_block_type_1(ctx, -1);
+	let if_block = current_block_type(ctx);
+
+	return {
+		c() {
+			if_block.c();
+			if_block_anchor = empty();
+		},
+		l(nodes) {
+			if_block.l(nodes);
+			if_block_anchor = empty();
+		},
+		m(target, anchor) {
+			if_block.m(target, anchor);
+			insert(target, if_block_anchor, anchor);
+		},
+		p(ctx, dirty) {
+			if (current_block_type === (current_block_type = select_block_type_1(ctx, dirty)) && if_block) {
+				if_block.p(ctx, dirty);
+			} else {
+				if_block.d(1);
+				if_block = current_block_type(ctx);
+
+				if (if_block) {
+					if_block.c();
+					if_block.m(if_block_anchor.parentNode, if_block_anchor);
+				}
+			}
+		},
+		d(detaching) {
+			if_block.d(detaching);
+			if (detaching) detach(if_block_anchor);
+		}
+	};
+}
+
+// (49:4) <ButtonWrapper>
 function create_default_slot(ctx) {
 	let button0;
 	let t0;
@@ -495,8 +688,8 @@ function create_default_slot(ctx) {
 			this.h();
 		},
 		h() {
-			attr(button0, "class", "button svelte-17xmg29");
-			attr(button1, "class", "button svelte-17xmg29");
+			attr(button0, "class", "primary svelte-wnvmau");
+			attr(button1, "class", "svelte-wnvmau");
 		},
 		m(target, anchor) {
 			insert(target, button0, anchor);
@@ -508,7 +701,7 @@ function create_default_slot(ctx) {
 			if (!mounted) {
 				dispose = [
 					listen(button0, "click", /*checkFilename*/ ctx[4]),
-					listen(button1, "click", /*click_handler*/ ctx[8])
+					listen(button1, "click", /*click_handler_1*/ ctx[10])
 				];
 
 				mounted = true;
@@ -530,7 +723,7 @@ function create_fragment(ctx) {
 	let if_block;
 	let if_block_anchor;
 	let current;
-	const if_block_creators = [create_if_block, create_else_block];
+	const if_block_creators = [create_if_block, create_else_block_1];
 	const if_blocks = [];
 
 	function select_block_type(ctx, dirty) {
@@ -610,14 +803,18 @@ function instance($$self, $$props, $$invalidate) {
 	let validationErrors = [];
 
 	const checkFilename = () => {
-		$$invalidate(2, validationErrors = validateFilename(filename));
+		$$invalidate(2, validationErrors = validateFilename(filename, selectedType));
 
 		// No errors, redirect to "add" page
 		if (validationErrors.length === 0) {
-			history.pushState(null, "", "/#add/" + selectedType + "/" + filename);
-			$$invalidate(5, showAdd = false);
-			$$invalidate(6, showEditor = true);
+			redirectAndEdit("/#add/" + selectedType + "/" + filename);
 		}
+	};
+
+	const redirectAndEdit = path => {
+		history.pushState(null, "", path);
+		$$invalidate(6, showAdd = false);
+		$$invalidate(7, showEditor = true);
 	};
 
 	function input_input_handler() {
@@ -625,12 +822,13 @@ function instance($$self, $$props, $$invalidate) {
 		$$invalidate(0, filename);
 	}
 
-	const click_handler = () => setType(null);
-	const click_handler_1 = blueprint => setType(blueprint.type);
+	const click_handler = error => redirectAndEdit(error.contentPath);
+	const click_handler_1 = () => setType(null);
+	const click_handler_2 = defaultContent => setType(defaultContent.type);
 
 	$$self.$$set = $$props => {
-		if ("showAdd" in $$props) $$invalidate(5, showAdd = $$props.showAdd);
-		if ("showEditor" in $$props) $$invalidate(6, showEditor = $$props.showEditor);
+		if ("showAdd" in $$props) $$invalidate(6, showAdd = $$props.showAdd);
+		if ("showEditor" in $$props) $$invalidate(7, showEditor = $$props.showEditor);
 	};
 
 	return [
@@ -639,18 +837,20 @@ function instance($$self, $$props, $$invalidate) {
 		validationErrors,
 		setType,
 		checkFilename,
+		redirectAndEdit,
 		showAdd,
 		showEditor,
 		input_input_handler,
 		click_handler,
-		click_handler_1
+		click_handler_1,
+		click_handler_2
 	];
 }
 
 class Component extends SvelteComponent {
 	constructor(options) {
 		super();
-		init(this, options, instance, create_fragment, safe_not_equal, { showAdd: 5, showEditor: 6 });
+		init(this, options, instance, create_fragment, safe_not_equal, { showAdd: 6, showEditor: 7 });
 	}
 }
 

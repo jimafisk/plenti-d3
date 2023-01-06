@@ -103,7 +103,7 @@ function create_else_block_2(ctx) {
 			attr(line, "x2", "17.5");
 			attr(line, "y2", "10.5");
 			attr(svg, "xmlns", "http://www.w3.org/2000/svg");
-			attr(svg, "class", "icon icon-tabler icon-tabler-pencil svelte-zkzdmz");
+			attr(svg, "class", "icon icon-tabler icon-tabler-pencil svelte-w9j5o0");
 			attr(svg, "width", "30");
 			attr(svg, "height", "30");
 			attr(svg, "viewBox", "0 0 24 24");
@@ -183,7 +183,7 @@ function create_if_block_5(ctx) {
 			attr(circle, "r", "2");
 			attr(path1, "d", "M22 12c-2.667 4.667 -6 7 -10 7s-7.333 -2.333 -10 -7c2.667 -4.667 6 -7 10 -7s7.333 2.333 10 7");
 			attr(svg, "xmlns", "http://www.w3.org/2000/svg");
-			attr(svg, "class", "icon icon-tabler icon-tabler-eye svelte-zkzdmz");
+			attr(svg, "class", "icon icon-tabler icon-tabler-eye svelte-w9j5o0");
 			attr(svg, "width", "30");
 			attr(svg, "height", "30");
 			attr(svg, "viewBox", "0 0 24 24");
@@ -250,7 +250,7 @@ function create_if_block_3(ctx) {
 	const if_blocks = [];
 
 	function select_block_type_1(ctx, dirty) {
-		if (/*activeMedia*/ ctx[4] === "library") return 0;
+		if (/*activeMedia*/ ctx[5] === "library") return 0;
 		return 1;
 	}
 
@@ -479,7 +479,7 @@ function create_if_block_3(ctx) {
 			attr(line1, "x2", "18");
 			attr(line1, "y2", "18");
 			attr(svg0, "xmlns", "http://www.w3.org/2000/svg");
-			attr(svg0, "class", "icon icon-tabler icon-tabler-x svelte-zkzdmz");
+			attr(svg0, "class", "icon icon-tabler icon-tabler-x svelte-w9j5o0");
 			attr(svg0, "width", "35");
 			attr(svg0, "height", "35");
 			attr(svg0, "viewBox", "5 5 14 14");
@@ -488,7 +488,7 @@ function create_if_block_3(ctx) {
 			attr(svg0, "fill", "none");
 			attr(svg0, "stroke-linecap", "round");
 			attr(svg0, "stroke-linejoin", "round");
-			attr(div0, "class", "modal-close svelte-zkzdmz");
+			attr(div0, "class", "modal-close svelte-w9j5o0");
 			attr(path1, "stroke", "none");
 			attr(path1, "d", "M0 0h24v24H0z");
 			attr(path1, "fill", "none");
@@ -499,7 +499,7 @@ function create_if_block_3(ctx) {
 			attr(line2, "x2", "12");
 			attr(line2, "y2", "16");
 			attr(svg1, "xmlns", "http://www.w3.org/2000/svg");
-			attr(svg1, "class", "icon icon-tabler icon-tabler-upload svelte-zkzdmz");
+			attr(svg1, "class", "icon icon-tabler icon-tabler-upload svelte-w9j5o0");
 			attr(svg1, "width", "30");
 			attr(svg1, "height", "30");
 			attr(svg1, "viewBox", "0 0 24 24");
@@ -508,7 +508,7 @@ function create_if_block_3(ctx) {
 			attr(svg1, "fill", "none");
 			attr(svg1, "stroke-linecap", "round");
 			attr(svg1, "stroke-linejoin", "round");
-			attr(div1, "class", div1_class_value = "selector " + (/*activeMedia*/ ctx[4] === "upload" ? "active" : "") + " svelte-zkzdmz");
+			attr(div1, "class", div1_class_value = "selector " + (/*activeMedia*/ ctx[5] === "upload" ? "active" : "") + " svelte-w9j5o0");
 			attr(path3, "stroke", "none");
 			attr(path3, "d", "M0 0h24v24H0z");
 			attr(path3, "fill", "none");
@@ -533,7 +533,7 @@ function create_if_block_3(ctx) {
 			attr(rect3, "height", "6");
 			attr(rect3, "rx", "1");
 			attr(svg2, "xmlns", "http://www.w3.org/2000/svg");
-			attr(svg2, "class", "icon icon-tabler icon-tabler-layout-grid svelte-zkzdmz");
+			attr(svg2, "class", "icon icon-tabler icon-tabler-layout-grid svelte-w9j5o0");
 			attr(svg2, "width", "30");
 			attr(svg2, "height", "30");
 			attr(svg2, "viewBox", "0 0 24 24");
@@ -542,10 +542,10 @@ function create_if_block_3(ctx) {
 			attr(svg2, "fill", "none");
 			attr(svg2, "stroke-linecap", "round");
 			attr(svg2, "stroke-linejoin", "round");
-			attr(div2, "class", div2_class_value = "selector " + (/*activeMedia*/ ctx[4] === "library" ? "active" : "") + " svelte-zkzdmz");
-			attr(div3, "class", "selectors svelte-zkzdmz");
-			attr(div4, "class", "modal svelte-zkzdmz");
-			attr(div5, "class", "modal-wrapper svelte-zkzdmz");
+			attr(div2, "class", div2_class_value = "selector " + (/*activeMedia*/ ctx[5] === "library" ? "active" : "") + " svelte-w9j5o0");
+			attr(div3, "class", "selectors svelte-w9j5o0");
+			attr(div4, "class", "modal svelte-w9j5o0");
+			attr(div5, "class", "modal-wrapper svelte-w9j5o0");
 		},
 		m(target, anchor) {
 			insert(target, div5, anchor);
@@ -583,21 +583,21 @@ function create_if_block_3(ctx) {
 
 			if (!mounted) {
 				dispose = [
-					listen(div1, "click", /*click_handler_3*/ ctx[19]),
-					listen(div2, "click", /*click_handler_4*/ ctx[20]),
-					listen(div4, "click", stop_propagation(/*click_handler*/ ctx[17])),
-					listen(div5, "click", /*toggleMedia*/ ctx[11])
+					listen(div1, "click", /*click_handler_3*/ ctx[21]),
+					listen(div2, "click", /*click_handler_4*/ ctx[22]),
+					listen(div4, "click", stop_propagation(/*click_handler*/ ctx[19])),
+					listen(div5, "click", /*toggleMedia*/ ctx[13])
 				];
 
 				mounted = true;
 			}
 		},
 		p(ctx, dirty) {
-			if (!current || dirty[0] & /*activeMedia*/ 16 && div1_class_value !== (div1_class_value = "selector " + (/*activeMedia*/ ctx[4] === "upload" ? "active" : "") + " svelte-zkzdmz")) {
+			if (!current || dirty[0] & /*activeMedia*/ 32 && div1_class_value !== (div1_class_value = "selector " + (/*activeMedia*/ ctx[5] === "upload" ? "active" : "") + " svelte-w9j5o0")) {
 				attr(div1, "class", div1_class_value);
 			}
 
-			if (!current || dirty[0] & /*activeMedia*/ 16 && div2_class_value !== (div2_class_value = "selector " + (/*activeMedia*/ ctx[4] === "library" ? "active" : "") + " svelte-zkzdmz")) {
+			if (!current || dirty[0] & /*activeMedia*/ 32 && div2_class_value !== (div2_class_value = "selector " + (/*activeMedia*/ ctx[5] === "library" ? "active" : "") + " svelte-w9j5o0")) {
 				attr(div2, "class", div2_class_value);
 			}
 
@@ -655,37 +655,37 @@ function create_else_block_1(ctx) {
 	let current;
 
 	function fileupload_assets_binding(value) {
-		/*fileupload_assets_binding*/ ctx[24](value);
+		/*fileupload_assets_binding*/ ctx[26](value);
 	}
 
 	function fileupload_changingAsset_binding(value) {
-		/*fileupload_changingAsset_binding*/ ctx[25](value);
+		/*fileupload_changingAsset_binding*/ ctx[27](value);
 	}
 
 	function fileupload_showMedia_binding(value) {
-		/*fileupload_showMedia_binding*/ ctx[26](value);
+		/*fileupload_showMedia_binding*/ ctx[28](value);
 	}
 
 	function fileupload_localMediaList_binding(value) {
-		/*fileupload_localMediaList_binding*/ ctx[27](value);
+		/*fileupload_localMediaList_binding*/ ctx[29](value);
 	}
 
-	let fileupload_props = {};
+	let fileupload_props = { assetPrefix: /*assetPrefix*/ ctx[12] };
 
-	if (/*assets*/ ctx[2] !== void 0) {
-		fileupload_props.assets = /*assets*/ ctx[2];
+	if (/*assets*/ ctx[3] !== void 0) {
+		fileupload_props.assets = /*assets*/ ctx[3];
 	}
 
-	if (/*changingAsset*/ ctx[8] !== void 0) {
-		fileupload_props.changingAsset = /*changingAsset*/ ctx[8];
+	if (/*changingAsset*/ ctx[9] !== void 0) {
+		fileupload_props.changingAsset = /*changingAsset*/ ctx[9];
 	}
 
-	if (/*showMedia*/ ctx[3] !== void 0) {
-		fileupload_props.showMedia = /*showMedia*/ ctx[3];
+	if (/*showMedia*/ ctx[4] !== void 0) {
+		fileupload_props.showMedia = /*showMedia*/ ctx[4];
 	}
 
-	if (/*localMediaList*/ ctx[9] !== void 0) {
-		fileupload_props.localMediaList = /*localMediaList*/ ctx[9];
+	if (/*localMediaList*/ ctx[10] !== void 0) {
+		fileupload_props.localMediaList = /*localMediaList*/ ctx[10];
 	}
 
 	fileupload = new FileUpload({ props: fileupload_props });
@@ -708,27 +708,27 @@ function create_else_block_1(ctx) {
 		p(ctx, dirty) {
 			const fileupload_changes = {};
 
-			if (!updating_assets && dirty[0] & /*assets*/ 4) {
+			if (!updating_assets && dirty[0] & /*assets*/ 8) {
 				updating_assets = true;
-				fileupload_changes.assets = /*assets*/ ctx[2];
+				fileupload_changes.assets = /*assets*/ ctx[3];
 				add_flush_callback(() => updating_assets = false);
 			}
 
-			if (!updating_changingAsset && dirty[0] & /*changingAsset*/ 256) {
+			if (!updating_changingAsset && dirty[0] & /*changingAsset*/ 512) {
 				updating_changingAsset = true;
-				fileupload_changes.changingAsset = /*changingAsset*/ ctx[8];
+				fileupload_changes.changingAsset = /*changingAsset*/ ctx[9];
 				add_flush_callback(() => updating_changingAsset = false);
 			}
 
-			if (!updating_showMedia && dirty[0] & /*showMedia*/ 8) {
+			if (!updating_showMedia && dirty[0] & /*showMedia*/ 16) {
 				updating_showMedia = true;
-				fileupload_changes.showMedia = /*showMedia*/ ctx[3];
+				fileupload_changes.showMedia = /*showMedia*/ ctx[4];
 				add_flush_callback(() => updating_showMedia = false);
 			}
 
-			if (!updating_localMediaList && dirty[0] & /*localMediaList*/ 512) {
+			if (!updating_localMediaList && dirty[0] & /*localMediaList*/ 1024) {
 				updating_localMediaList = true;
-				fileupload_changes.localMediaList = /*localMediaList*/ ctx[9];
+				fileupload_changes.localMediaList = /*localMediaList*/ ctx[10];
 				add_flush_callback(() => updating_localMediaList = false);
 			}
 
@@ -758,29 +758,29 @@ function create_if_block_4(ctx) {
 	let current;
 
 	function mediabrowser_assets_binding(value) {
-		/*mediabrowser_assets_binding*/ ctx[21](value);
+		/*mediabrowser_assets_binding*/ ctx[23](value);
 	}
 
 	function mediabrowser_changingAsset_binding(value) {
-		/*mediabrowser_changingAsset_binding*/ ctx[22](value);
+		/*mediabrowser_changingAsset_binding*/ ctx[24](value);
 	}
 
 	function mediabrowser_showMedia_binding(value) {
-		/*mediabrowser_showMedia_binding*/ ctx[23](value);
+		/*mediabrowser_showMedia_binding*/ ctx[25](value);
 	}
 
 	let mediabrowser_props = {};
 
-	if (/*assets*/ ctx[2] !== void 0) {
-		mediabrowser_props.assets = /*assets*/ ctx[2];
+	if (/*assets*/ ctx[3] !== void 0) {
+		mediabrowser_props.assets = /*assets*/ ctx[3];
 	}
 
-	if (/*changingAsset*/ ctx[8] !== void 0) {
-		mediabrowser_props.changingAsset = /*changingAsset*/ ctx[8];
+	if (/*changingAsset*/ ctx[9] !== void 0) {
+		mediabrowser_props.changingAsset = /*changingAsset*/ ctx[9];
 	}
 
-	if (/*showMedia*/ ctx[3] !== void 0) {
-		mediabrowser_props.showMedia = /*showMedia*/ ctx[3];
+	if (/*showMedia*/ ctx[4] !== void 0) {
+		mediabrowser_props.showMedia = /*showMedia*/ ctx[4];
 	}
 
 	mediabrowser = new MediaBrowser({ props: mediabrowser_props });
@@ -802,21 +802,21 @@ function create_if_block_4(ctx) {
 		p(ctx, dirty) {
 			const mediabrowser_changes = {};
 
-			if (!updating_assets && dirty[0] & /*assets*/ 4) {
+			if (!updating_assets && dirty[0] & /*assets*/ 8) {
 				updating_assets = true;
-				mediabrowser_changes.assets = /*assets*/ ctx[2];
+				mediabrowser_changes.assets = /*assets*/ ctx[3];
 				add_flush_callback(() => updating_assets = false);
 			}
 
-			if (!updating_changingAsset && dirty[0] & /*changingAsset*/ 256) {
+			if (!updating_changingAsset && dirty[0] & /*changingAsset*/ 512) {
 				updating_changingAsset = true;
-				mediabrowser_changes.changingAsset = /*changingAsset*/ ctx[8];
+				mediabrowser_changes.changingAsset = /*changingAsset*/ ctx[9];
 				add_flush_callback(() => updating_changingAsset = false);
 			}
 
-			if (!updating_showMedia && dirty[0] & /*showMedia*/ 8) {
+			if (!updating_showMedia && dirty[0] & /*showMedia*/ 16) {
 				updating_showMedia = true;
-				mediabrowser_changes.showMedia = /*showMedia*/ ctx[3];
+				mediabrowser_changes.showMedia = /*showMedia*/ ctx[4];
 				add_flush_callback(() => updating_showMedia = false);
 			}
 
@@ -850,41 +850,31 @@ function create_if_block_2(ctx) {
 	let addcontent;
 	let updating_showAdd;
 	let updating_showEditor;
-	let updating_content;
 	let current;
 	let mounted;
 	let dispose;
 
 	function addcontent_showAdd_binding(value) {
-		/*addcontent_showAdd_binding*/ ctx[28](value);
+		/*addcontent_showAdd_binding*/ ctx[30](value);
 	}
 
 	function addcontent_showEditor_binding(value) {
-		/*addcontent_showEditor_binding*/ ctx[29](value);
-	}
-
-	function addcontent_content_binding(value) {
-		/*addcontent_content_binding*/ ctx[30](value);
+		/*addcontent_showEditor_binding*/ ctx[31](value);
 	}
 
 	let addcontent_props = {};
 
-	if (/*showAdd*/ ctx[7] !== void 0) {
-		addcontent_props.showAdd = /*showAdd*/ ctx[7];
+	if (/*showAdd*/ ctx[8] !== void 0) {
+		addcontent_props.showAdd = /*showAdd*/ ctx[8];
 	}
 
-	if (/*showEditor*/ ctx[5] !== void 0) {
-		addcontent_props.showEditor = /*showEditor*/ ctx[5];
-	}
-
-	if (/*content*/ ctx[0] !== void 0) {
-		addcontent_props.content = /*content*/ ctx[0];
+	if (/*showEditor*/ ctx[6] !== void 0) {
+		addcontent_props.showEditor = /*showEditor*/ ctx[6];
 	}
 
 	addcontent = new AddContent({ props: addcontent_props });
 	binding_callbacks.push(() => bind(addcontent, "showAdd", addcontent_showAdd_binding));
 	binding_callbacks.push(() => bind(addcontent, "showEditor", addcontent_showEditor_binding));
-	binding_callbacks.push(() => bind(addcontent, "content", addcontent_content_binding));
 
 	return {
 		c() {
@@ -953,7 +943,7 @@ function create_if_block_2(ctx) {
 			attr(line1, "x2", "18");
 			attr(line1, "y2", "18");
 			attr(svg, "xmlns", "http://www.w3.org/2000/svg");
-			attr(svg, "class", "icon icon-tabler icon-tabler-x svelte-zkzdmz");
+			attr(svg, "class", "icon icon-tabler icon-tabler-x svelte-w9j5o0");
 			attr(svg, "width", "35");
 			attr(svg, "height", "35");
 			attr(svg, "viewBox", "5 5 14 14");
@@ -962,9 +952,9 @@ function create_if_block_2(ctx) {
 			attr(svg, "fill", "none");
 			attr(svg, "stroke-linecap", "round");
 			attr(svg, "stroke-linejoin", "round");
-			attr(div0, "class", "modal-close svelte-zkzdmz");
-			attr(div1, "class", "modal small svelte-zkzdmz");
-			attr(div2, "class", "modal-wrapper svelte-zkzdmz");
+			attr(div0, "class", "modal-close svelte-w9j5o0");
+			attr(div1, "class", "modal small svelte-w9j5o0");
+			attr(div2, "class", "modal-wrapper svelte-w9j5o0");
 		},
 		m(target, anchor) {
 			insert(target, div2, anchor);
@@ -980,8 +970,8 @@ function create_if_block_2(ctx) {
 
 			if (!mounted) {
 				dispose = [
-					listen(div1, "click", stop_propagation(/*click_handler_1*/ ctx[16])),
-					listen(div2, "click", /*click_handler_5*/ ctx[31])
+					listen(div1, "click", stop_propagation(/*click_handler_1*/ ctx[18])),
+					listen(div2, "click", /*click_handler_5*/ ctx[32])
 				];
 
 				mounted = true;
@@ -990,22 +980,16 @@ function create_if_block_2(ctx) {
 		p(ctx, dirty) {
 			const addcontent_changes = {};
 
-			if (!updating_showAdd && dirty[0] & /*showAdd*/ 128) {
+			if (!updating_showAdd && dirty[0] & /*showAdd*/ 256) {
 				updating_showAdd = true;
-				addcontent_changes.showAdd = /*showAdd*/ ctx[7];
+				addcontent_changes.showAdd = /*showAdd*/ ctx[8];
 				add_flush_callback(() => updating_showAdd = false);
 			}
 
-			if (!updating_showEditor && dirty[0] & /*showEditor*/ 32) {
+			if (!updating_showEditor && dirty[0] & /*showEditor*/ 64) {
 				updating_showEditor = true;
-				addcontent_changes.showEditor = /*showEditor*/ ctx[5];
+				addcontent_changes.showEditor = /*showEditor*/ ctx[6];
 				add_flush_callback(() => updating_showEditor = false);
-			}
-
-			if (!updating_content && dirty[0] & /*content*/ 1) {
-				updating_content = true;
-				addcontent_changes.content = /*content*/ ctx[0];
-				add_flush_callback(() => updating_content = false);
 			}
 
 			addcontent.$set(addcontent_changes);
@@ -1064,7 +1048,7 @@ function create_if_block(ctx) {
 	const if_blocks = [];
 
 	function select_block_type_2(ctx, dirty) {
-		if (/*activeEditor*/ ctx[6] === "code") return 0;
+		if (/*activeEditor*/ ctx[7] === "code") return 0;
 		return 1;
 	}
 
@@ -1212,7 +1196,7 @@ function create_if_block(ctx) {
 			attr(line1, "x2", "10");
 			attr(line1, "y2", "20");
 			attr(svg0, "xmlns", "http://www.w3.org/2000/svg");
-			attr(svg0, "class", "icon icon-tabler icon-tabler-table svelte-zkzdmz");
+			attr(svg0, "class", "icon icon-tabler icon-tabler-table svelte-w9j5o0");
 			attr(svg0, "width", "30");
 			attr(svg0, "height", "30");
 			attr(svg0, "viewBox", "0 0 24 24");
@@ -1221,14 +1205,14 @@ function create_if_block(ctx) {
 			attr(svg0, "fill", "none");
 			attr(svg0, "stroke-linecap", "round");
 			attr(svg0, "stroke-linejoin", "round");
-			attr(div0, "class", div0_class_value = "selector " + (/*activeEditor*/ ctx[6] === "visual" ? "active" : "") + " svelte-zkzdmz");
+			attr(div0, "class", div0_class_value = "selector " + (/*activeEditor*/ ctx[7] === "visual" ? "active" : "") + " svelte-w9j5o0");
 			attr(path1, "stroke", "none");
 			attr(path1, "d", "M0 0h24v24H0z");
 			attr(path1, "fill", "none");
 			attr(path2, "d", "M7 4a2 2 0 0 0 -2 2v3a2 3 0 0 1 -2 3a2 3 0 0 1 2 3v3a2 2 0 0 0 2 2");
 			attr(path3, "d", "M17 4a2 2 0 0 1 2 2v3a2 3 0 0 0 2 3a2 3 0 0 0 -2 3v3a2 2 0 0 1 -2 2");
 			attr(svg1, "xmlns", "http://www.w3.org/2000/svg");
-			attr(svg1, "class", "icon icon-tabler icon-tabler-braces svelte-zkzdmz");
+			attr(svg1, "class", "icon icon-tabler icon-tabler-braces svelte-w9j5o0");
 			attr(svg1, "width", "30");
 			attr(svg1, "height", "30");
 			attr(svg1, "viewBox", "0 0 24 24");
@@ -1237,9 +1221,9 @@ function create_if_block(ctx) {
 			attr(svg1, "fill", "none");
 			attr(svg1, "stroke-linecap", "round");
 			attr(svg1, "stroke-linejoin", "round");
-			attr(div1, "class", div1_class_value = "selector " + (/*activeEditor*/ ctx[6] === "code" ? "active" : "") + " svelte-zkzdmz");
-			attr(div2, "class", "selectors svelte-zkzdmz");
-			attr(div3, "class", div3_class_value = "" + (null_to_empty(/*showEditor*/ ctx[5] ? "sidenav" : "") + " svelte-zkzdmz"));
+			attr(div1, "class", div1_class_value = "selector " + (/*activeEditor*/ ctx[7] === "code" ? "active" : "") + " svelte-w9j5o0");
+			attr(div2, "class", "selectors svelte-w9j5o0");
+			attr(div3, "class", div3_class_value = "" + (null_to_empty(/*showEditor*/ ctx[6] ? "sidenav" : "") + " svelte-w9j5o0"));
 		},
 		m(target, anchor) {
 			insert(target, div3, anchor);
@@ -1268,19 +1252,19 @@ function create_if_block(ctx) {
 
 			if (!mounted) {
 				dispose = [
-					listen(div0, "click", /*click_handler_6*/ ctx[32]),
-					listen(div1, "click", /*click_handler_7*/ ctx[33])
+					listen(div0, "click", /*click_handler_6*/ ctx[33]),
+					listen(div1, "click", /*click_handler_7*/ ctx[34])
 				];
 
 				mounted = true;
 			}
 		},
 		p(ctx, dirty) {
-			if (!current || dirty[0] & /*activeEditor*/ 64 && div0_class_value !== (div0_class_value = "selector " + (/*activeEditor*/ ctx[6] === "visual" ? "active" : "") + " svelte-zkzdmz")) {
+			if (!current || dirty[0] & /*activeEditor*/ 128 && div0_class_value !== (div0_class_value = "selector " + (/*activeEditor*/ ctx[7] === "visual" ? "active" : "") + " svelte-w9j5o0")) {
 				attr(div0, "class", div0_class_value);
 			}
 
-			if (!current || dirty[0] & /*activeEditor*/ 64 && div1_class_value !== (div1_class_value = "selector " + (/*activeEditor*/ ctx[6] === "code" ? "active" : "") + " svelte-zkzdmz")) {
+			if (!current || dirty[0] & /*activeEditor*/ 128 && div1_class_value !== (div1_class_value = "selector " + (/*activeEditor*/ ctx[7] === "code" ? "active" : "") + " svelte-w9j5o0")) {
 				attr(div1, "class", div1_class_value);
 			}
 
@@ -1310,7 +1294,7 @@ function create_if_block(ctx) {
 				if_block.m(div3, null);
 			}
 
-			if (!current || dirty[0] & /*showEditor*/ 32 && div3_class_value !== (div3_class_value = "" + (null_to_empty(/*showEditor*/ ctx[5] ? "sidenav" : "") + " svelte-zkzdmz"))) {
+			if (!current || dirty[0] & /*showEditor*/ 64 && div3_class_value !== (div3_class_value = "" + (null_to_empty(/*showEditor*/ ctx[6] ? "sidenav" : "") + " svelte-w9j5o0"))) {
 				attr(div3, "class", div3_class_value);
 			}
 		},
@@ -1320,7 +1304,7 @@ function create_if_block(ctx) {
 
 			if (local) {
 				add_render_callback(() => {
-					if (!div3_transition) div3_transition = create_bidirectional_transition(div3, /*horizontalSlide*/ ctx[15], {}, true);
+					if (!div3_transition) div3_transition = create_bidirectional_transition(div3, /*horizontalSlide*/ ctx[17], {}, true);
 					div3_transition.run(1);
 				});
 			}
@@ -1331,7 +1315,7 @@ function create_if_block(ctx) {
 			transition_out(if_block);
 
 			if (local) {
-				if (!div3_transition) div3_transition = create_bidirectional_transition(div3, /*horizontalSlide*/ ctx[15], {}, false);
+				if (!div3_transition) div3_transition = create_bidirectional_transition(div3, /*horizontalSlide*/ ctx[17], {}, false);
 				div3_transition.run(0);
 			}
 
@@ -1354,22 +1338,27 @@ function create_else_block(ctx) {
 	let updating_showMedia;
 	let updating_changingAsset;
 	let updating_localMediaList;
+	let updating_shadowContent;
 	let current;
 
 	function visualeditor_content_binding(value) {
-		/*visualeditor_content_binding*/ ctx[35](value);
+		/*visualeditor_content_binding*/ ctx[36](value);
 	}
 
 	function visualeditor_showMedia_binding(value) {
-		/*visualeditor_showMedia_binding*/ ctx[36](value);
+		/*visualeditor_showMedia_binding*/ ctx[37](value);
 	}
 
 	function visualeditor_changingAsset_binding(value) {
-		/*visualeditor_changingAsset_binding*/ ctx[37](value);
+		/*visualeditor_changingAsset_binding*/ ctx[38](value);
 	}
 
 	function visualeditor_localMediaList_binding(value) {
-		/*visualeditor_localMediaList_binding*/ ctx[38](value);
+		/*visualeditor_localMediaList_binding*/ ctx[39](value);
+	}
+
+	function visualeditor_shadowContent_binding(value) {
+		/*visualeditor_shadowContent_binding*/ ctx[40](value);
 	}
 
 	let visualeditor_props = {};
@@ -1378,16 +1367,20 @@ function create_else_block(ctx) {
 		visualeditor_props.content = /*content*/ ctx[0];
 	}
 
-	if (/*showMedia*/ ctx[3] !== void 0) {
-		visualeditor_props.showMedia = /*showMedia*/ ctx[3];
+	if (/*showMedia*/ ctx[4] !== void 0) {
+		visualeditor_props.showMedia = /*showMedia*/ ctx[4];
 	}
 
-	if (/*changingAsset*/ ctx[8] !== void 0) {
-		visualeditor_props.changingAsset = /*changingAsset*/ ctx[8];
+	if (/*changingAsset*/ ctx[9] !== void 0) {
+		visualeditor_props.changingAsset = /*changingAsset*/ ctx[9];
 	}
 
-	if (/*localMediaList*/ ctx[9] !== void 0) {
-		visualeditor_props.localMediaList = /*localMediaList*/ ctx[9];
+	if (/*localMediaList*/ ctx[10] !== void 0) {
+		visualeditor_props.localMediaList = /*localMediaList*/ ctx[10];
+	}
+
+	if (/*shadowContent*/ ctx[1] !== void 0) {
+		visualeditor_props.shadowContent = /*shadowContent*/ ctx[1];
 	}
 
 	visualeditor = new VisualEditor({ props: visualeditor_props });
@@ -1395,6 +1388,7 @@ function create_else_block(ctx) {
 	binding_callbacks.push(() => bind(visualeditor, "showMedia", visualeditor_showMedia_binding));
 	binding_callbacks.push(() => bind(visualeditor, "changingAsset", visualeditor_changingAsset_binding));
 	binding_callbacks.push(() => bind(visualeditor, "localMediaList", visualeditor_localMediaList_binding));
+	binding_callbacks.push(() => bind(visualeditor, "shadowContent", visualeditor_shadowContent_binding));
 
 	return {
 		c() {
@@ -1416,22 +1410,28 @@ function create_else_block(ctx) {
 				add_flush_callback(() => updating_content = false);
 			}
 
-			if (!updating_showMedia && dirty[0] & /*showMedia*/ 8) {
+			if (!updating_showMedia && dirty[0] & /*showMedia*/ 16) {
 				updating_showMedia = true;
-				visualeditor_changes.showMedia = /*showMedia*/ ctx[3];
+				visualeditor_changes.showMedia = /*showMedia*/ ctx[4];
 				add_flush_callback(() => updating_showMedia = false);
 			}
 
-			if (!updating_changingAsset && dirty[0] & /*changingAsset*/ 256) {
+			if (!updating_changingAsset && dirty[0] & /*changingAsset*/ 512) {
 				updating_changingAsset = true;
-				visualeditor_changes.changingAsset = /*changingAsset*/ ctx[8];
+				visualeditor_changes.changingAsset = /*changingAsset*/ ctx[9];
 				add_flush_callback(() => updating_changingAsset = false);
 			}
 
-			if (!updating_localMediaList && dirty[0] & /*localMediaList*/ 512) {
+			if (!updating_localMediaList && dirty[0] & /*localMediaList*/ 1024) {
 				updating_localMediaList = true;
-				visualeditor_changes.localMediaList = /*localMediaList*/ ctx[9];
+				visualeditor_changes.localMediaList = /*localMediaList*/ ctx[10];
 				add_flush_callback(() => updating_localMediaList = false);
+			}
+
+			if (!updating_shadowContent && dirty[0] & /*shadowContent*/ 2) {
+				updating_shadowContent = true;
+				visualeditor_changes.shadowContent = /*shadowContent*/ ctx[1];
+				add_flush_callback(() => updating_shadowContent = false);
 			}
 
 			visualeditor.$set(visualeditor_changes);
@@ -1458,7 +1458,7 @@ function create_if_block_1(ctx) {
 	let current;
 
 	function jsoneditor_content_binding(value) {
-		/*jsoneditor_content_binding*/ ctx[34](value);
+		/*jsoneditor_content_binding*/ ctx[35](value);
 	}
 
 	let jsoneditor_props = {};
@@ -1517,8 +1517,10 @@ function create_fragment(ctx) {
 	let polyline;
 	let path1;
 	let t1;
+	let a0_href_value;
 	let t2;
 	let a1;
+	let a1_class_value;
 	let t3;
 	let span;
 	let t4;
@@ -1555,15 +1557,15 @@ function create_fragment(ctx) {
 	let dispose;
 
 	function select_block_type(ctx, dirty) {
-		if (/*showEditor*/ ctx[5]) return create_if_block_5;
+		if (/*showEditor*/ ctx[6]) return create_if_block_5;
 		return create_else_block_2;
 	}
 
 	let current_block_type = select_block_type(ctx, [-1, -1]);
 	let if_block0 = current_block_type(ctx);
-	let if_block1 = /*showMedia*/ ctx[3] && create_if_block_3(ctx);
-	let if_block2 = /*showAdd*/ ctx[7] && create_if_block_2(ctx);
-	let if_block3 = /*showEditor*/ ctx[5] && create_if_block(ctx);
+	let if_block1 = /*showMedia*/ ctx[4] && create_if_block_3(ctx);
+	let if_block2 = /*showAdd*/ ctx[8] && create_if_block_2(ctx);
+	let if_block3 = /*showEditor*/ ctx[6] && create_if_block(ctx);
 
 	return {
 		c() {
@@ -1620,7 +1622,7 @@ function create_fragment(ctx) {
 			t0 = claim_space(nodes);
 			nav = claim_element(nodes, "NAV", { class: true });
 			var nav_nodes = children(nav);
-			a0 = claim_element(nav_nodes, "A", { href: true, id: true, class: true });
+			a0 = claim_element(nav_nodes, "A", { href: true, class: true });
 			var a0_nodes = children(a0);
 
 			svg0 = claim_element(
@@ -1787,14 +1789,14 @@ function create_fragment(ctx) {
 			this.h();
 		},
 		h() {
-			attr(div0, "class", "spacer svelte-zkzdmz");
+			attr(div0, "class", "spacer svelte-w9j5o0");
 			attr(path0, "stroke", "none");
 			attr(path0, "d", "M0 0h24v24H0z");
 			attr(path0, "fill", "none");
 			attr(polyline, "points", "5 12 3 12 12 3 21 12 19 12");
 			attr(path1, "d", "M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7");
 			attr(svg0, "xmlns", "http://www.w3.org/2000/svg");
-			attr(svg0, "class", "icon icon-tabler icon-tabler-home-2 svelte-zkzdmz");
+			attr(svg0, "class", "icon icon-tabler icon-tabler-home-2 svelte-w9j5o0");
 			attr(svg0, "width", "30");
 			attr(svg0, "height", "30");
 			attr(svg0, "viewBox", "0 0 24 24");
@@ -1803,12 +1805,11 @@ function create_fragment(ctx) {
 			attr(svg0, "fill", "none");
 			attr(svg0, "stroke-linecap", "round");
 			attr(svg0, "stroke-linejoin", "round");
-			attr(a0, "href", ".");
-			attr(a0, "id", "home");
-			attr(a0, "class", "svelte-zkzdmz");
+			attr(a0, "href", a0_href_value = env.baseurl ? "." : "/");
+			attr(a0, "class", "home svelte-w9j5o0");
 			attr(a1, "href", ".");
-			attr(a1, "class", "svelte-zkzdmz");
-			attr(span, "class", "gap svelte-zkzdmz");
+			attr(a1, "class", a1_class_value = "" + (null_to_empty(/*showEditor*/ ctx[6] ? "view" : "edit") + " svelte-w9j5o0"));
+			attr(span, "class", "gap svelte-w9j5o0");
 			attr(path2, "stroke", "none");
 			attr(path2, "d", "M0 0h24v24H0z");
 			attr(path2, "fill", "none");
@@ -1824,7 +1825,7 @@ function create_fragment(ctx) {
 			attr(line1, "x2", "12");
 			attr(line1, "y2", "15");
 			attr(svg1, "xmlns", "http://www.w3.org/2000/svg");
-			attr(svg1, "class", "icon icon-tabler icon-tabler-circle-plus svelte-zkzdmz");
+			attr(svg1, "class", "icon icon-tabler icon-tabler-circle-plus svelte-w9j5o0");
 			attr(svg1, "width", "30");
 			attr(svg1, "height", "30");
 			attr(svg1, "viewBox", "0 0 24 24");
@@ -1834,7 +1835,7 @@ function create_fragment(ctx) {
 			attr(svg1, "stroke-linecap", "round");
 			attr(svg1, "stroke-linejoin", "round");
 			attr(a2, "href", ".");
-			attr(a2, "class", "svelte-zkzdmz");
+			attr(a2, "class", "add svelte-w9j5o0");
 			attr(path3, "stroke", "none");
 			attr(path3, "d", "M0 0h24v24H0z");
 			attr(path3, "fill", "none");
@@ -1850,7 +1851,7 @@ function create_fragment(ctx) {
 			attr(path4, "d", "M4 15l4 -4a3 5 0 0 1 3 0l5 5");
 			attr(path5, "d", "M14 14l1 -1a3 5 0 0 1 3 0l2 2");
 			attr(svg2, "xmlns", "http://www.w3.org/2000/svg");
-			attr(svg2, "class", "icon icon-tabler icon-tabler-photo svelte-zkzdmz");
+			attr(svg2, "class", "icon icon-tabler icon-tabler-photo svelte-w9j5o0");
 			attr(svg2, "width", "30");
 			attr(svg2, "height", "30");
 			attr(svg2, "viewBox", "0 0 24 24");
@@ -1860,14 +1861,14 @@ function create_fragment(ctx) {
 			attr(svg2, "stroke-linecap", "round");
 			attr(svg2, "stroke-linejoin", "round");
 			attr(a3, "href", ".");
-			attr(a3, "class", "svelte-zkzdmz");
+			attr(a3, "class", "media svelte-w9j5o0");
 			attr(path6, "stroke", "none");
 			attr(path6, "d", "M0 0h24v24H0z");
 			attr(path6, "fill", "none");
 			attr(path7, "d", "M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2");
 			attr(path8, "d", "M7 12h14l-3 -3m0 6l3 -3");
 			attr(svg3, "xmlns", "http://www.w3.org/2000/svg");
-			attr(svg3, "class", "icon icon-tabler icon-tabler-logout svelte-zkzdmz");
+			attr(svg3, "class", "icon icon-tabler icon-tabler-logout svelte-w9j5o0");
 			attr(svg3, "width", "30");
 			attr(svg3, "height", "30");
 			attr(svg3, "viewBox", "0 0 24 24");
@@ -1877,9 +1878,9 @@ function create_fragment(ctx) {
 			attr(svg3, "stroke-linecap", "round");
 			attr(svg3, "stroke-linejoin", "round");
 			attr(a4, "href", ".");
-			attr(a4, "class", "svelte-zkzdmz");
-			attr(nav, "class", "svelte-zkzdmz");
-			attr(div1, "class", div1_class_value = "" + (null_to_empty(/*showEditor*/ ctx[5] ? "sidenav-wrapper" : "") + " svelte-zkzdmz"));
+			attr(a4, "class", "logout svelte-w9j5o0");
+			attr(nav, "class", "svelte-w9j5o0");
+			attr(div1, "class", div1_class_value = "" + (null_to_empty(/*showEditor*/ ctx[6] ? "sidenav-wrapper" : "") + " svelte-w9j5o0"));
 		},
 		m(target, anchor) {
 			insert(target, div0, anchor);
@@ -1931,11 +1932,11 @@ function create_fragment(ctx) {
 
 			if (!mounted) {
 				dispose = [
-					listen(a1, "click", prevent_default(/*toggleEditor*/ ctx[13])),
-					listen(a2, "click", prevent_default(/*click_handler_2*/ ctx[18])),
-					listen(a3, "click", prevent_default(/*toggleMedia*/ ctx[11])),
+					listen(a1, "click", prevent_default(/*toggleEditor*/ ctx[15])),
+					listen(a2, "click", prevent_default(/*click_handler_2*/ ctx[20])),
+					listen(a3, "click", prevent_default(/*toggleMedia*/ ctx[13])),
 					listen(a4, "click", prevent_default(function () {
-						if (is_function(/*$user*/ ctx[10].logout)) /*$user*/ ctx[10].logout.apply(this, arguments);
+						if (is_function(/*$user*/ ctx[11].logout)) /*$user*/ ctx[11].logout.apply(this, arguments);
 					}))
 				];
 
@@ -1955,11 +1956,15 @@ function create_fragment(ctx) {
 				}
 			}
 
-			if (/*showMedia*/ ctx[3]) {
+			if (!current || dirty[0] & /*showEditor*/ 64 && a1_class_value !== (a1_class_value = "" + (null_to_empty(/*showEditor*/ ctx[6] ? "view" : "edit") + " svelte-w9j5o0"))) {
+				attr(a1, "class", a1_class_value);
+			}
+
+			if (/*showMedia*/ ctx[4]) {
 				if (if_block1) {
 					if_block1.p(ctx, dirty);
 
-					if (dirty[0] & /*showMedia*/ 8) {
+					if (dirty[0] & /*showMedia*/ 16) {
 						transition_in(if_block1, 1);
 					}
 				} else {
@@ -1978,11 +1983,11 @@ function create_fragment(ctx) {
 				check_outros();
 			}
 
-			if (/*showAdd*/ ctx[7]) {
+			if (/*showAdd*/ ctx[8]) {
 				if (if_block2) {
 					if_block2.p(ctx, dirty);
 
-					if (dirty[0] & /*showAdd*/ 128) {
+					if (dirty[0] & /*showAdd*/ 256) {
 						transition_in(if_block2, 1);
 					}
 				} else {
@@ -2001,11 +2006,11 @@ function create_fragment(ctx) {
 				check_outros();
 			}
 
-			if (/*showEditor*/ ctx[5]) {
+			if (/*showEditor*/ ctx[6]) {
 				if (if_block3) {
 					if_block3.p(ctx, dirty);
 
-					if (dirty[0] & /*showEditor*/ 32) {
+					if (dirty[0] & /*showEditor*/ 64) {
 						transition_in(if_block3, 1);
 					}
 				} else {
@@ -2024,7 +2029,7 @@ function create_fragment(ctx) {
 				check_outros();
 			}
 
-			if (!current || dirty[0] & /*showEditor*/ 32 && div1_class_value !== (div1_class_value = "" + (null_to_empty(/*showEditor*/ ctx[5] ? "sidenav-wrapper" : "") + " svelte-zkzdmz"))) {
+			if (!current || dirty[0] & /*showEditor*/ 64 && div1_class_value !== (div1_class_value = "" + (null_to_empty(/*showEditor*/ ctx[6] ? "sidenav-wrapper" : "") + " svelte-w9j5o0"))) {
 				attr(div1, "class", div1_class_value);
 			}
 		},
@@ -2062,36 +2067,36 @@ function create_fragment(ctx) {
 function instance($$self, $$props, $$invalidate) {
 	let $user,
 		$$unsubscribe_user = noop,
-		$$subscribe_user = () => ($$unsubscribe_user(), $$unsubscribe_user = subscribe(user, $$value => $$invalidate(10, $user = $$value)), user);
+		$$subscribe_user = () => ($$unsubscribe_user(), $$unsubscribe_user = subscribe(user, $$value => $$invalidate(11, $user = $$value)), user);
 
 	$$self.$$.on_destroy.push(() => $$unsubscribe_user());
-	let { user } = $$props, { content } = $$props;
+	let { user } = $$props, { content } = $$props, { shadowContent } = $$props;
 	$$subscribe_user();
-	let baseUrl = env.local ? "/" : env.baseurl;
-	let assets = allAssets.map(asset => baseUrl + asset);
+	let assetPrefix = env.baseurl ? "" : "/";
+	let assets = allAssets.map(asset => assetPrefix + asset);
 	let showMedia = false;
 
 	const toggleMedia = () => {
-		$$invalidate(3, showMedia = !showMedia);
-		$$invalidate(8, changingAsset = "");
+		$$invalidate(4, showMedia = !showMedia);
+		$$invalidate(9, changingAsset = "");
 	};
 
 	let activeMedia = "upload";
 
 	const setActiveMedia = selected => {
-		$$invalidate(4, activeMedia = selected);
+		$$invalidate(5, activeMedia = selected);
 	};
 
 	let showEditor = false;
 
 	const toggleEditor = () => {
-		$$invalidate(5, showEditor = !showEditor);
+		$$invalidate(6, showEditor = !showEditor);
 	};
 
 	let activeEditor = "visual";
 
 	const setActiveEditor = selected => {
-		$$invalidate(6, activeEditor = selected);
+		$$invalidate(7, activeEditor = selected);
 	};
 
 	let showAdd = false;
@@ -2116,7 +2121,7 @@ function instance($$self, $$props, $$invalidate) {
 	}
 
 	const click_handler_2 = () => {
-		$$invalidate(7, showAdd = true);
+		$$invalidate(8, showAdd = true);
 	};
 
 	const click_handler_3 = () => setActiveMedia("upload");
@@ -2124,56 +2129,51 @@ function instance($$self, $$props, $$invalidate) {
 
 	function mediabrowser_assets_binding(value) {
 		assets = value;
-		$$invalidate(2, assets);
+		$$invalidate(3, assets);
 	}
 
 	function mediabrowser_changingAsset_binding(value) {
 		changingAsset = value;
-		$$invalidate(8, changingAsset);
+		$$invalidate(9, changingAsset);
 	}
 
 	function mediabrowser_showMedia_binding(value) {
 		showMedia = value;
-		$$invalidate(3, showMedia);
+		$$invalidate(4, showMedia);
 	}
 
 	function fileupload_assets_binding(value) {
 		assets = value;
-		$$invalidate(2, assets);
+		$$invalidate(3, assets);
 	}
 
 	function fileupload_changingAsset_binding(value) {
 		changingAsset = value;
-		$$invalidate(8, changingAsset);
+		$$invalidate(9, changingAsset);
 	}
 
 	function fileupload_showMedia_binding(value) {
 		showMedia = value;
-		$$invalidate(3, showMedia);
+		$$invalidate(4, showMedia);
 	}
 
 	function fileupload_localMediaList_binding(value) {
 		localMediaList = value;
-		$$invalidate(9, localMediaList);
+		$$invalidate(10, localMediaList);
 	}
 
 	function addcontent_showAdd_binding(value) {
 		showAdd = value;
-		$$invalidate(7, showAdd);
+		$$invalidate(8, showAdd);
 	}
 
 	function addcontent_showEditor_binding(value) {
 		showEditor = value;
-		$$invalidate(5, showEditor);
-	}
-
-	function addcontent_content_binding(value) {
-		content = value;
-		$$invalidate(0, content);
+		$$invalidate(6, showEditor);
 	}
 
 	const click_handler_5 = () => {
-		$$invalidate(7, showAdd = false);
+		$$invalidate(8, showAdd = false);
 	};
 
 	const click_handler_6 = () => setActiveEditor("visual");
@@ -2191,26 +2191,33 @@ function instance($$self, $$props, $$invalidate) {
 
 	function visualeditor_showMedia_binding(value) {
 		showMedia = value;
-		$$invalidate(3, showMedia);
+		$$invalidate(4, showMedia);
 	}
 
 	function visualeditor_changingAsset_binding(value) {
 		changingAsset = value;
-		$$invalidate(8, changingAsset);
+		$$invalidate(9, changingAsset);
 	}
 
 	function visualeditor_localMediaList_binding(value) {
 		localMediaList = value;
-		$$invalidate(9, localMediaList);
+		$$invalidate(10, localMediaList);
+	}
+
+	function visualeditor_shadowContent_binding(value) {
+		shadowContent = value;
+		$$invalidate(1, shadowContent);
 	}
 
 	$$self.$$set = $$props => {
-		if ("user" in $$props) $$subscribe_user($$invalidate(1, user = $$props.user));
+		if ("user" in $$props) $$subscribe_user($$invalidate(2, user = $$props.user));
 		if ("content" in $$props) $$invalidate(0, content = $$props.content);
+		if ("shadowContent" in $$props) $$invalidate(1, shadowContent = $$props.shadowContent);
 	};
 
 	return [
 		content,
+		shadowContent,
 		user,
 		assets,
 		showMedia,
@@ -2221,6 +2228,7 @@ function instance($$self, $$props, $$invalidate) {
 		changingAsset,
 		localMediaList,
 		$user,
+		assetPrefix,
 		toggleMedia,
 		setActiveMedia,
 		toggleEditor,
@@ -2240,7 +2248,6 @@ function instance($$self, $$props, $$invalidate) {
 		fileupload_localMediaList_binding,
 		addcontent_showAdd_binding,
 		addcontent_showEditor_binding,
-		addcontent_content_binding,
 		click_handler_5,
 		click_handler_6,
 		click_handler_7,
@@ -2248,14 +2255,15 @@ function instance($$self, $$props, $$invalidate) {
 		visualeditor_content_binding,
 		visualeditor_showMedia_binding,
 		visualeditor_changingAsset_binding,
-		visualeditor_localMediaList_binding
+		visualeditor_localMediaList_binding,
+		visualeditor_shadowContent_binding
 	];
 }
 
 class Component extends SvelteComponent {
 	constructor(options) {
 		super();
-		init(this, options, instance, create_fragment, safe_not_equal, { user: 1, content: 0 }, [-1, -1]);
+		init(this, options, instance, create_fragment, safe_not_equal, { user: 2, content: 0, shadowContent: 1 }, [-1, -1]);
 	}
 }
 

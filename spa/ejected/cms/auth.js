@@ -53,6 +53,12 @@ const getUser = () => ({
         console.error('Invalid parameters or state');
     },
 
+    refresh() {
+        let authTokens = JSON.parse(localStorage.getItem('PLENTI_CMS_GITLAB_TOKENS'));
+        this.isAuthenticated = typeof authTokens?.access_token !== 'undefined';
+        this.tokens = authTokens;
+    },
+
     login() {
         return requestAuthCode();
     },

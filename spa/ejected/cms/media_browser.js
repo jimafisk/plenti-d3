@@ -11,7 +11,6 @@ import {
 	claim_component,
 	claim_element,
 	claim_space,
-	claim_text,
 	create_component,
 	destroy_component,
 	detach,
@@ -20,12 +19,9 @@ import {
 	group_outros,
 	init,
 	insert,
-	listen,
 	mount_component,
-	run_all,
 	safe_not_equal,
 	space,
-	text,
 	transition_in,
 	transition_out
 } from '../../web_modules/svelte/internal/index.mjs';
@@ -84,21 +80,25 @@ function create_if_block(ctx) {
 // (40:4) <ButtonWrapper>
 function create_default_slot(ctx) {
 	let button0;
-	let t0;
-	let t1;
-	let div;
+	let t;
 	let button1;
 	let updating_commitList;
 	let current;
-	let mounted;
-	let dispose;
+
+	button0 = new Button({
+			props: { buttonText: "Download selected" }
+		});
+
+	button0.$on("click", /*downloadFiles*/ ctx[8]);
 
 	function button1_commitList_binding(value) {
 		/*button1_commitList_binding*/ ctx[18](value);
 	}
 
 	let button1_props = {
+		afterSubmit: /*removeAssets*/ ctx[9],
 		buttonText: "Delete Selected Media",
+		buttonStyle: "secondary",
 		action: "delete",
 		encoding: "text"
 	};
@@ -112,44 +112,20 @@ function create_default_slot(ctx) {
 
 	return {
 		c() {
-			button0 = element("button");
-			t0 = text("Download selected");
-			t1 = space();
-			div = element("div");
+			create_component(button0.$$.fragment);
+			t = space();
 			create_component(button1.$$.fragment);
-			this.h();
 		},
 		l(nodes) {
-			button0 = claim_element(nodes, "BUTTON", {});
-			var button0_nodes = children(button0);
-			t0 = claim_text(button0_nodes, "Download selected");
-			button0_nodes.forEach(detach);
-			t1 = claim_space(nodes);
-			div = claim_element(nodes, "DIV", { class: true });
-			var div_nodes = children(div);
-			claim_component(button1.$$.fragment, div_nodes);
-			div_nodes.forEach(detach);
-			this.h();
-		},
-		h() {
-			attr(div, "class", "delete-wrapper button-secondary");
+			claim_component(button0.$$.fragment, nodes);
+			t = claim_space(nodes);
+			claim_component(button1.$$.fragment, nodes);
 		},
 		m(target, anchor) {
-			insert(target, button0, anchor);
-			append(button0, t0);
-			insert(target, t1, anchor);
-			insert(target, div, anchor);
-			mount_component(button1, div, null);
+			mount_component(button0, target, anchor);
+			insert(target, t, anchor);
+			mount_component(button1, target, anchor);
 			current = true;
-
-			if (!mounted) {
-				dispose = [
-					listen(button0, "click", /*downloadFiles*/ ctx[8]),
-					listen(div, "click", /*removeAssets*/ ctx[9])
-				];
-
-				mounted = true;
-			}
 		},
 		p(ctx, dirty) {
 			const button1_changes = {};
@@ -164,20 +140,19 @@ function create_default_slot(ctx) {
 		},
 		i(local) {
 			if (current) return;
+			transition_in(button0.$$.fragment, local);
 			transition_in(button1.$$.fragment, local);
 			current = true;
 		},
 		o(local) {
+			transition_out(button0.$$.fragment, local);
 			transition_out(button1.$$.fragment, local);
 			current = false;
 		},
 		d(detaching) {
-			if (detaching) detach(button0);
-			if (detaching) detach(t1);
-			if (detaching) detach(div);
-			destroy_component(button1);
-			mounted = false;
-			run_all(dispose);
+			destroy_component(button0, detaching);
+			if (detaching) detach(t);
+			destroy_component(button1, detaching);
 		}
 	};
 }

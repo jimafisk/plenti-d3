@@ -2,7 +2,6 @@
 import {
 	SvelteComponent,
 	add_flush_callback,
-	add_render_callback,
 	append,
 	attr,
 	bind,
@@ -13,544 +12,245 @@ import {
 	claim_element,
 	claim_space,
 	claim_text,
-	create_animation,
-	create_bidirectional_transition,
 	create_component,
 	destroy_component,
-	destroy_each,
 	detach,
 	element,
 	empty,
-	fix_and_outro_and_destroy_block,
-	fix_position,
 	group_outros,
 	init,
 	insert,
-	is_function,
-	listen,
 	mount_component,
 	noop,
-	null_to_empty,
-	prevent_default,
-	run_all,
 	safe_not_equal,
 	set_data,
-	set_input_value,
 	space,
-	svg_element,
 	text,
-	to_number,
 	transition_in,
-	transition_out,
-	update_keyed_each
+	transition_out
 } from '../../web_modules/svelte/internal/index.mjs';
 
-import { isDate, makeDate, formatDate } from './dates.js';
-import { isAssetPath, isImagePath, isDocPath } from './assets_checker.js';
+import { isDate, isTime } from './date_checker.js';
+import { isAssetPath } from './asset_checker.js';
+import Checkbox from './fields/checkbox.js';
+import Radio from './fields/radio.js';
+import Wysiwyg from './fields/wysiwyg.js';
+import Component from './fields/component.js';
+import Fieldset from './fields/fieldset.js';
+import Asset from './fields/asset.js';
+import Select from './fields/select.js';
+import Autocomplete from './fields/autocomplete.js';
+import ID from './fields/id.js';
+import Date from './fields/date.js';
+import Time from './fields/time.js';
+import Number from './fields/number.js';
+import Text from './fields/text.js';
+import Boolean from './fields/boolean.js';
 
-// Accordion
-import { slide } from '../../web_modules/svelte/transition/index.mjs';
-
-// Drag and drop
-import { flip } from '../../web_modules/svelte/animate/index.mjs';
-
-function get_each_context_1(ctx, list, i) {
-	const child_ctx = ctx.slice();
-	child_ctx[69] = list[i][0];
-	child_ctx[67] = list[i][1];
-	child_ctx[70] = list;
-	child_ctx[71] = i;
-	return child_ctx;
-}
-
-function get_each_context(ctx, list, i) {
-	const child_ctx = ctx.slice();
-	child_ctx[67] = list[i];
-	child_ctx[68] = list;
-	child_ctx[69] = i;
-	return child_ctx;
-}
-
-// (315:49) 
-function create_if_block_15(ctx) {
-	let fieldset;
-	let current;
-	let each_value_1 = Object.entries(/*field*/ ctx[0]);
-	let each_blocks = [];
-
-	for (let i = 0; i < each_value_1.length; i += 1) {
-		each_blocks[i] = create_each_block_1(get_each_context_1(ctx, each_value_1, i));
-	}
-
-	const out = i => transition_out(each_blocks[i], 1, 1, () => {
-		each_blocks[i] = null;
-	});
-
-	return {
-		c() {
-			fieldset = element("fieldset");
-
-			for (let i = 0; i < each_blocks.length; i += 1) {
-				each_blocks[i].c();
-			}
-		},
-		l(nodes) {
-			fieldset = claim_element(nodes, "FIELDSET", {});
-			var fieldset_nodes = children(fieldset);
-
-			for (let i = 0; i < each_blocks.length; i += 1) {
-				each_blocks[i].l(fieldset_nodes);
-			}
-
-			fieldset_nodes.forEach(detach);
-		},
-		m(target, anchor) {
-			insert(target, fieldset, anchor);
-
-			for (let i = 0; i < each_blocks.length; i += 1) {
-				each_blocks[i].m(fieldset, null);
-			}
-
-			current = true;
-		},
-		p(ctx, dirty) {
-			if (dirty[0] & /*field, showMedia, changingAsset, localMediaList*/ 15) {
-				each_value_1 = Object.entries(/*field*/ ctx[0]);
-				let i;
-
-				for (i = 0; i < each_value_1.length; i += 1) {
-					const child_ctx = get_each_context_1(ctx, each_value_1, i);
-
-					if (each_blocks[i]) {
-						each_blocks[i].p(child_ctx, dirty);
-						transition_in(each_blocks[i], 1);
-					} else {
-						each_blocks[i] = create_each_block_1(child_ctx);
-						each_blocks[i].c();
-						transition_in(each_blocks[i], 1);
-						each_blocks[i].m(fieldset, null);
-					}
-				}
-
-				group_outros();
-
-				for (i = each_value_1.length; i < each_blocks.length; i += 1) {
-					out(i);
-				}
-
-				check_outros();
-			}
-		},
-		i(local) {
-			if (current) return;
-
-			for (let i = 0; i < each_value_1.length; i += 1) {
-				transition_in(each_blocks[i]);
-			}
-
-			current = true;
-		},
-		o(local) {
-			each_blocks = each_blocks.filter(Boolean);
-
-			for (let i = 0; i < each_blocks.length; i += 1) {
-				transition_out(each_blocks[i]);
-			}
-
-			current = false;
-		},
-		d(detaching) {
-			if (detaching) detach(fieldset);
-			destroy_each(each_blocks, detaching);
-		}
-	};
-}
-
-// (231:47) 
-function create_if_block_10(ctx) {
-	let main;
-	let div0;
-	let p;
-	let div0_class_value;
-	let div0_style_value;
-	let t;
-	let div1;
-	let each_blocks = [];
-	let each_1_lookup = new Map();
-	let current;
-	let mounted;
-	let dispose;
-	let each_value = /*field*/ ctx[0];
-	const get_key = ctx => /*compID*/ ctx[19] = /*isOpen*/ ctx[6] ? /*key*/ ctx[69] : /*value*/ ctx[67];
-
-	for (let i = 0; i < each_value.length; i += 1) {
-		let child_ctx = get_each_context(ctx, each_value, i);
-		let key = get_key(child_ctx);
-		each_1_lookup.set(key, each_blocks[i] = create_each_block(key, child_ctx));
-	}
-
-	return {
-		c() {
-			main = element("main");
-			div0 = element("div");
-			p = element("p");
-			t = space();
-			div1 = element("div");
-
-			for (let i = 0; i < each_blocks.length; i += 1) {
-				each_blocks[i].c();
-			}
-
-			this.h();
-		},
-		l(nodes) {
-			main = claim_element(nodes, "MAIN", { class: true });
-			var main_nodes = children(main);
-			div0 = claim_element(main_nodes, "DIV", { id: true, class: true, style: true });
-			var div0_nodes = children(div0);
-			p = claim_element(div0_nodes, "P", { class: true });
-			children(p).forEach(detach);
-			div0_nodes.forEach(detach);
-			t = claim_space(main_nodes);
-			div1 = claim_element(main_nodes, "DIV", { class: true });
-			var div1_nodes = children(div1);
-
-			for (let i = 0; i < each_blocks.length; i += 1) {
-				each_blocks[i].l(div1_nodes);
-			}
-
-			div1_nodes.forEach(detach);
-			main_nodes.forEach(detach);
-			this.h();
-		},
-		h() {
-			attr(p, "class", "svelte-ltyhti");
-			attr(div0, "id", "ghost");
-			attr(div0, "class", div0_class_value = "" + (null_to_empty(/*grabbed*/ ctx[9] ? "item haunting" : "item") + " svelte-ltyhti"));
-			attr(div0, "style", div0_style_value = "top: " + (/*mouseY*/ ctx[10] + /*offsetY*/ ctx[11] - /*layerY*/ ctx[12]) + "px");
-			attr(div1, "class", "list svelte-ltyhti");
-			attr(main, "class", "dragdroplist svelte-ltyhti");
-		},
-		m(target, anchor) {
-			insert(target, main, anchor);
-			append(main, div0);
-			append(div0, p);
-			/*div0_binding*/ ctx[46](div0);
-			append(main, t);
-			append(main, div1);
-
-			for (let i = 0; i < each_blocks.length; i += 1) {
-				each_blocks[i].m(div1, null);
-			}
-
-			current = true;
-
-			if (!mounted) {
-				dispose = [
-					listen(div1, "mousemove", /*mousemove_handler*/ ctx[58]),
-					listen(div1, "touchmove", /*touchmove_handler_1*/ ctx[59]),
-					listen(div1, "mouseup", /*mouseup_handler*/ ctx[60]),
-					listen(div1, "touchend", /*touchend_handler*/ ctx[61])
-				];
-
-				mounted = true;
-			}
-		},
-		p(ctx, dirty) {
-			if (!current || dirty[0] & /*grabbed*/ 512 && div0_class_value !== (div0_class_value = "" + (null_to_empty(/*grabbed*/ ctx[9] ? "item haunting" : "item") + " svelte-ltyhti"))) {
-				attr(div0, "class", div0_class_value);
-			}
-
-			if (!current || dirty[0] & /*mouseY, offsetY, layerY*/ 7168 && div0_style_value !== (div0_style_value = "top: " + (/*mouseY*/ ctx[10] + /*offsetY*/ ctx[11] - /*layerY*/ ctx[12]) + "px")) {
-				attr(div0, "style", div0_style_value);
-			}
-
-			if (dirty[0] & /*grabbed, compID, field, label, showMedia, changingAsset, localMediaList, openKeys, removeItem, removesItems, accordion, moveItem, grab, dragEnter, touchEnter, isOpen*/ 98304767) {
-				each_value = /*field*/ ctx[0];
-				group_outros();
-				for (let i = 0; i < each_blocks.length; i += 1) each_blocks[i].r();
-				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value, each_1_lookup, div1, fix_and_outro_and_destroy_block, create_each_block, null, get_each_context);
-				for (let i = 0; i < each_blocks.length; i += 1) each_blocks[i].a();
-				check_outros();
-			}
-		},
-		i(local) {
-			if (current) return;
-
-			for (let i = 0; i < each_value.length; i += 1) {
-				transition_in(each_blocks[i]);
-			}
-
-			current = true;
-		},
-		o(local) {
-			for (let i = 0; i < each_blocks.length; i += 1) {
-				transition_out(each_blocks[i]);
-			}
-
-			current = false;
-		},
-		d(detaching) {
-			if (detaching) detach(main);
-			/*div0_binding*/ ctx[46](null);
-
-			for (let i = 0; i < each_blocks.length; i += 1) {
-				each_blocks[i].d();
-			}
-
-			mounted = false;
-			run_all(dispose);
-		}
-	};
-}
-
-// (227:37) 
-function create_if_block_9(ctx) {
-	let div;
-	let input;
-	let span;
-	let t;
-	let mounted;
-	let dispose;
-
-	return {
-		c() {
-			div = element("div");
-			input = element("input");
-			span = element("span");
-			t = text(/*field*/ ctx[0]);
-			this.h();
-		},
-		l(nodes) {
-			div = claim_element(nodes, "DIV", { class: true });
-			var div_nodes = children(div);
-			input = claim_element(div_nodes, "INPUT", { id: true, type: true, class: true });
-			span = claim_element(div_nodes, "SPAN", {});
-			var span_nodes = children(span);
-			t = claim_text(span_nodes, /*field*/ ctx[0]);
-			span_nodes.forEach(detach);
-			div_nodes.forEach(detach);
-			this.h();
-		},
-		h() {
-			attr(input, "id", /*label*/ ctx[4]);
-			attr(input, "type", "checkbox");
-			attr(input, "class", "svelte-ltyhti");
-			attr(div, "class", "field svelte-ltyhti");
-		},
-		m(target, anchor) {
-			insert(target, div, anchor);
-			append(div, input);
-			input.checked = /*field*/ ctx[0];
-			append(div, span);
-			append(span, t);
-
-			if (!mounted) {
-				dispose = listen(input, "change", /*input_change_handler*/ ctx[45]);
-				mounted = true;
-			}
-		},
-		p(ctx, dirty) {
-			if (dirty[0] & /*label*/ 16) {
-				attr(input, "id", /*label*/ ctx[4]);
-			}
-
-			if (dirty[0] & /*field*/ 1) {
-				input.checked = /*field*/ ctx[0];
-			}
-
-			if (dirty[0] & /*field*/ 1) set_data(t, /*field*/ ctx[0]);
-		},
-		i: noop,
-		o: noop,
-		d(detaching) {
-			if (detaching) detach(div);
-			mounted = false;
-			dispose();
-		}
-	};
-}
-
-// (143:36) 
-function create_if_block_3(ctx) {
-	let show_if;
-	let show_if_1;
-	let if_block_anchor;
-
-	function select_block_type_1(ctx, dirty) {
-		if (show_if == null || dirty[0] & /*field*/ 1) show_if = !!isDate(/*field*/ ctx[0]);
-		if (show_if) return create_if_block_4;
-		if (show_if_1 == null || dirty[0] & /*field*/ 1) show_if_1 = !!isAssetPath(/*field*/ ctx[0]);
-		if (show_if_1) return create_if_block_5;
-		if (/*field*/ ctx[0].length < 50) return create_if_block_8;
-		return create_else_block;
-	}
-
-	let current_block_type = select_block_type_1(ctx, [-1, -1, -1]);
-	let if_block = current_block_type(ctx);
-
-	return {
-		c() {
-			if_block.c();
-			if_block_anchor = empty();
-		},
-		l(nodes) {
-			if_block.l(nodes);
-			if_block_anchor = empty();
-		},
-		m(target, anchor) {
-			if_block.m(target, anchor);
-			insert(target, if_block_anchor, anchor);
-		},
-		p(ctx, dirty) {
-			if (current_block_type === (current_block_type = select_block_type_1(ctx, dirty)) && if_block) {
-				if_block.p(ctx, dirty);
-			} else {
-				if_block.d(1);
-				if_block = current_block_type(ctx);
-
-				if (if_block) {
-					if_block.c();
-					if_block.m(if_block_anchor.parentNode, if_block_anchor);
-				}
-			}
-		},
-		i: noop,
-		o: noop,
-		d(detaching) {
-			if_block.d(detaching);
-			if (detaching) detach(if_block_anchor);
-		}
-	};
-}
-
-// (139:36) 
-function create_if_block_2(ctx) {
-	let div;
-	let input;
-	let mounted;
-	let dispose;
-
-	return {
-		c() {
-			div = element("div");
-			input = element("input");
-			this.h();
-		},
-		l(nodes) {
-			div = claim_element(nodes, "DIV", { class: true });
-			var div_nodes = children(div);
-			input = claim_element(div_nodes, "INPUT", { id: true, type: true, class: true });
-			div_nodes.forEach(detach);
-			this.h();
-		},
-		h() {
-			attr(input, "id", /*label*/ ctx[4]);
-			attr(input, "type", "number");
-			attr(input, "class", "svelte-ltyhti");
-			attr(div, "class", "field svelte-ltyhti");
-		},
-		m(target, anchor) {
-			insert(target, div, anchor);
-			append(div, input);
-			set_input_value(input, /*field*/ ctx[0]);
-
-			if (!mounted) {
-				dispose = listen(input, "input", /*input_input_handler*/ ctx[31]);
-				mounted = true;
-			}
-		},
-		p(ctx, dirty) {
-			if (dirty[0] & /*label*/ 16) {
-				attr(input, "id", /*label*/ ctx[4]);
-			}
-
-			if (dirty[0] & /*field*/ 1 && to_number(input.value) !== /*field*/ ctx[0]) {
-				set_input_value(input, /*field*/ ctx[0]);
-			}
-		},
-		i: noop,
-		o: noop,
-		d(detaching) {
-			if (detaching) detach(div);
-			mounted = false;
-			dispose();
-		}
-	};
-}
-
-// (137:30) 
-function create_if_block_1(ctx) {
-	let div;
-	let t0;
-	let t1;
-
-	return {
-		c() {
-			div = element("div");
-			t0 = text(/*field*/ ctx[0]);
-			t1 = text(" is undefined");
-			this.h();
-		},
-		l(nodes) {
-			div = claim_element(nodes, "DIV", { class: true });
-			var div_nodes = children(div);
-			t0 = claim_text(div_nodes, /*field*/ ctx[0]);
-			t1 = claim_text(div_nodes, " is undefined");
-			div_nodes.forEach(detach);
-			this.h();
-		},
-		h() {
-			attr(div, "class", "field svelte-ltyhti");
-		},
-		m(target, anchor) {
-			insert(target, div, anchor);
-			append(div, t0);
-			append(div, t1);
-		},
-		p(ctx, dirty) {
-			if (dirty[0] & /*field*/ 1) set_data(t0, /*field*/ ctx[0]);
-		},
-		i: noop,
-		o: noop,
-		d(detaching) {
-			if (detaching) detach(div);
-		}
-	};
-}
-
-// (135:0) {#if field === null}
 function create_if_block(ctx) {
 	let div;
-	let t0;
-	let t1;
+	let t;
+	let show_if;
+	let current_block_type_index;
+	let if_block1;
+	let div_class_value;
+	let current;
+	let if_block0 = /*label*/ ctx[4] && create_if_block_25(ctx);
+
+	const if_block_creators = [
+		create_if_block_1,
+		create_if_block_15,
+		create_if_block_16,
+		create_if_block_20,
+		create_if_block_21,
+		create_if_block_22,
+		create_if_block_23,
+		create_if_block_24
+	];
+
+	const if_blocks = [];
+
+	function select_block_type(ctx, dirty) {
+		if (dirty[0] & /*schema, parentKeys*/ 96) show_if = !!(/*schema*/ ctx[6] && /*schema*/ ctx[6].hasOwnProperty(/*parentKeys*/ ctx[5]));
+		if (show_if) return 0;
+		if (typeof /*field*/ ctx[0] === "number") return 1;
+		if (typeof /*field*/ ctx[0] === "string") return 2;
+		if (typeof /*field*/ ctx[0] === "boolean") return 3;
+		if (/*field*/ ctx[0].constructor === [].constructor) return 4;
+		if (/*field*/ ctx[0].constructor === ({}).constructor) return 5;
+		if (/*field*/ ctx[0] === null) return 6;
+		if (/*field*/ ctx[0] === undefined) return 7;
+		return -1;
+	}
+
+	if (~(current_block_type_index = select_block_type(ctx, [-1, -1]))) {
+		if_block1 = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
+	}
 
 	return {
 		c() {
 			div = element("div");
-			t0 = text(/*field*/ ctx[0]);
-			t1 = text(" is null");
+			if (if_block0) if_block0.c();
+			t = space();
+			if (if_block1) if_block1.c();
 			this.h();
 		},
 		l(nodes) {
 			div = claim_element(nodes, "DIV", { class: true });
 			var div_nodes = children(div);
-			t0 = claim_text(div_nodes, /*field*/ ctx[0]);
-			t1 = claim_text(div_nodes, " is null");
+			if (if_block0) if_block0.l(div_nodes);
+			t = claim_space(div_nodes);
+			if (if_block1) if_block1.l(div_nodes);
 			div_nodes.forEach(detach);
 			this.h();
 		},
 		h() {
-			attr(div, "class", "field svelte-ltyhti");
+			attr(div, "class", div_class_value = "field " + /*label*/ ctx[4] + " svelte-1wlycgm");
 		},
 		m(target, anchor) {
 			insert(target, div, anchor);
-			append(div, t0);
-			append(div, t1);
+			if (if_block0) if_block0.m(div, null);
+			append(div, t);
+
+			if (~current_block_type_index) {
+				if_blocks[current_block_type_index].m(div, null);
+			}
+
+			current = true;
 		},
 		p(ctx, dirty) {
-			if (dirty[0] & /*field*/ 1) set_data(t0, /*field*/ ctx[0]);
+			if (/*label*/ ctx[4]) {
+				if (if_block0) {
+					if_block0.p(ctx, dirty);
+				} else {
+					if_block0 = create_if_block_25(ctx);
+					if_block0.c();
+					if_block0.m(div, t);
+				}
+			} else if (if_block0) {
+				if_block0.d(1);
+				if_block0 = null;
+			}
+
+			let previous_block_index = current_block_type_index;
+			current_block_type_index = select_block_type(ctx, dirty);
+
+			if (current_block_type_index === previous_block_index) {
+				if (~current_block_type_index) {
+					if_blocks[current_block_type_index].p(ctx, dirty);
+				}
+			} else {
+				if (if_block1) {
+					group_outros();
+
+					transition_out(if_blocks[previous_block_index], 1, 1, () => {
+						if_blocks[previous_block_index] = null;
+					});
+
+					check_outros();
+				}
+
+				if (~current_block_type_index) {
+					if_block1 = if_blocks[current_block_type_index];
+
+					if (!if_block1) {
+						if_block1 = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
+						if_block1.c();
+					} else {
+						if_block1.p(ctx, dirty);
+					}
+
+					transition_in(if_block1, 1);
+					if_block1.m(div, null);
+				} else {
+					if_block1 = null;
+				}
+			}
+
+			if (!current || dirty[0] & /*label*/ 16 && div_class_value !== (div_class_value = "field " + /*label*/ ctx[4] + " svelte-1wlycgm")) {
+				attr(div, "class", div_class_value);
+			}
 		},
+		i(local) {
+			if (current) return;
+			transition_in(if_block1);
+			current = true;
+		},
+		o(local) {
+			transition_out(if_block1);
+			current = false;
+		},
+		d(detaching) {
+			if (detaching) detach(div);
+			if (if_block0) if_block0.d();
+
+			if (~current_block_type_index) {
+				if_blocks[current_block_type_index].d();
+			}
+		}
+	};
+}
+
+// (29:4) {#if label}
+function create_if_block_25(ctx) {
+	let label_1;
+	let t;
+
+	return {
+		c() {
+			label_1 = element("label");
+			t = text(/*label*/ ctx[4]);
+			this.h();
+		},
+		l(nodes) {
+			label_1 = claim_element(nodes, "LABEL", { for: true, class: true });
+			var label_1_nodes = children(label_1);
+			t = claim_text(label_1_nodes, /*label*/ ctx[4]);
+			label_1_nodes.forEach(detach);
+			this.h();
+		},
+		h() {
+			attr(label_1, "for", /*label*/ ctx[4]);
+			attr(label_1, "class", "svelte-1wlycgm");
+		},
+		m(target, anchor) {
+			insert(target, label_1, anchor);
+			append(label_1, t);
+		},
+		p(ctx, dirty) {
+			if (dirty[0] & /*label*/ 16) set_data(t, /*label*/ ctx[4]);
+
+			if (dirty[0] & /*label*/ 16) {
+				attr(label_1, "for", /*label*/ ctx[4]);
+			}
+		},
+		d(detaching) {
+			if (detaching) detach(label_1);
+		}
+	};
+}
+
+// (92:34) 
+function create_if_block_24(ctx) {
+	let div;
+	let t;
+
+	return {
+		c() {
+			div = element("div");
+			t = text("field is undefined");
+		},
+		l(nodes) {
+			div = claim_element(nodes, "DIV", {});
+			var div_nodes = children(div);
+			t = claim_text(div_nodes, "field is undefined");
+			div_nodes.forEach(detach);
+		},
+		m(target, anchor) {
+			insert(target, div, anchor);
+			append(div, t);
+		},
+		p: noop,
 		i: noop,
 		o: noop,
 		d(detaching) {
@@ -559,50 +259,184 @@ function create_if_block(ctx) {
 	};
 }
 
-// (318:8) {#each Object.entries(field) as [key, value]}
-function create_each_block_1(ctx) {
+// (90:29) 
+function create_if_block_23(ctx) {
 	let div;
-	let label_1;
-	let t0_value = /*key*/ ctx[69] + "";
-	let t0;
-	let label_1_for_value;
-	let t1;
+	let t;
+
+	return {
+		c() {
+			div = element("div");
+			t = text("field is null");
+		},
+		l(nodes) {
+			div = claim_element(nodes, "DIV", {});
+			var div_nodes = children(div);
+			t = claim_text(div_nodes, "field is null");
+			div_nodes.forEach(detach);
+		},
+		m(target, anchor) {
+			insert(target, div, anchor);
+			append(div, t);
+		},
+		p: noop,
+		i: noop,
+		o: noop,
+		d(detaching) {
+			if (detaching) detach(div);
+		}
+	};
+}
+
+// (88:53) 
+function create_if_block_22(ctx) {
+	let fieldset;
+	let updating_field;
+	let updating_showMedia;
+	let updating_changingAsset;
+	let updating_localMediaList;
+	let current;
+
+	function fieldset_field_binding(value) {
+		/*fieldset_field_binding*/ ctx[40](value);
+	}
+
+	function fieldset_showMedia_binding(value) {
+		/*fieldset_showMedia_binding*/ ctx[41](value);
+	}
+
+	function fieldset_changingAsset_binding(value) {
+		/*fieldset_changingAsset_binding*/ ctx[42](value);
+	}
+
+	function fieldset_localMediaList_binding(value) {
+		/*fieldset_localMediaList_binding*/ ctx[43](value);
+	}
+
+	let fieldset_props = {
+		parentKeys: /*parentKeys*/ ctx[5],
+		schema: /*schema*/ ctx[6]
+	};
+
+	if (/*field*/ ctx[0] !== void 0) {
+		fieldset_props.field = /*field*/ ctx[0];
+	}
+
+	if (/*showMedia*/ ctx[1] !== void 0) {
+		fieldset_props.showMedia = /*showMedia*/ ctx[1];
+	}
+
+	if (/*changingAsset*/ ctx[2] !== void 0) {
+		fieldset_props.changingAsset = /*changingAsset*/ ctx[2];
+	}
+
+	if (/*localMediaList*/ ctx[3] !== void 0) {
+		fieldset_props.localMediaList = /*localMediaList*/ ctx[3];
+	}
+
+	fieldset = new Fieldset({ props: fieldset_props });
+	binding_callbacks.push(() => bind(fieldset, "field", fieldset_field_binding));
+	binding_callbacks.push(() => bind(fieldset, "showMedia", fieldset_showMedia_binding));
+	binding_callbacks.push(() => bind(fieldset, "changingAsset", fieldset_changingAsset_binding));
+	binding_callbacks.push(() => bind(fieldset, "localMediaList", fieldset_localMediaList_binding));
+
+	return {
+		c() {
+			create_component(fieldset.$$.fragment);
+		},
+		l(nodes) {
+			claim_component(fieldset.$$.fragment, nodes);
+		},
+		m(target, anchor) {
+			mount_component(fieldset, target, anchor);
+			current = true;
+		},
+		p(ctx, dirty) {
+			const fieldset_changes = {};
+			if (dirty[0] & /*parentKeys*/ 32) fieldset_changes.parentKeys = /*parentKeys*/ ctx[5];
+			if (dirty[0] & /*schema*/ 64) fieldset_changes.schema = /*schema*/ ctx[6];
+
+			if (!updating_field && dirty[0] & /*field*/ 1) {
+				updating_field = true;
+				fieldset_changes.field = /*field*/ ctx[0];
+				add_flush_callback(() => updating_field = false);
+			}
+
+			if (!updating_showMedia && dirty[0] & /*showMedia*/ 2) {
+				updating_showMedia = true;
+				fieldset_changes.showMedia = /*showMedia*/ ctx[1];
+				add_flush_callback(() => updating_showMedia = false);
+			}
+
+			if (!updating_changingAsset && dirty[0] & /*changingAsset*/ 4) {
+				updating_changingAsset = true;
+				fieldset_changes.changingAsset = /*changingAsset*/ ctx[2];
+				add_flush_callback(() => updating_changingAsset = false);
+			}
+
+			if (!updating_localMediaList && dirty[0] & /*localMediaList*/ 8) {
+				updating_localMediaList = true;
+				fieldset_changes.localMediaList = /*localMediaList*/ ctx[3];
+				add_flush_callback(() => updating_localMediaList = false);
+			}
+
+			fieldset.$set(fieldset_changes);
+		},
+		i(local) {
+			if (current) return;
+			transition_in(fieldset.$$.fragment, local);
+			current = true;
+		},
+		o(local) {
+			transition_out(fieldset.$$.fragment, local);
+			current = false;
+		},
+		d(detaching) {
+			destroy_component(fieldset, detaching);
+		}
+	};
+}
+
+// (86:51) 
+function create_if_block_21(ctx) {
 	let component;
 	let updating_field;
 	let updating_showMedia;
 	let updating_changingAsset;
 	let updating_localMediaList;
-	let t2;
 	let current;
 
 	function component_field_binding_1(value) {
-		/*component_field_binding_1*/ ctx[62](value, /*key*/ ctx[69]);
+		/*component_field_binding_1*/ ctx[36](value);
 	}
 
 	function component_showMedia_binding_1(value) {
-		/*component_showMedia_binding_1*/ ctx[63](value);
+		/*component_showMedia_binding_1*/ ctx[37](value);
 	}
 
 	function component_changingAsset_binding_1(value) {
-		/*component_changingAsset_binding_1*/ ctx[64](value);
+		/*component_changingAsset_binding_1*/ ctx[38](value);
 	}
 
 	function component_localMediaList_binding_1(value) {
-		/*component_localMediaList_binding_1*/ ctx[65](value);
+		/*component_localMediaList_binding_1*/ ctx[39](value);
 	}
 
-	let component_props = { label: /*key*/ ctx[69] };
+	let component_props = {
+		parentKeys: /*parentKeys*/ ctx[5],
+		schema: /*schema*/ ctx[6]
+	};
 
-	if (/*field*/ ctx[0][/*key*/ ctx[69]] !== void 0) {
-		component_props.field = /*field*/ ctx[0][/*key*/ ctx[69]];
+	if (/*field*/ ctx[0] !== void 0) {
+		component_props.field = /*field*/ ctx[0];
 	}
 
-	if (/*showMedia*/ ctx[2] !== void 0) {
-		component_props.showMedia = /*showMedia*/ ctx[2];
+	if (/*showMedia*/ ctx[1] !== void 0) {
+		component_props.showMedia = /*showMedia*/ ctx[1];
 	}
 
-	if (/*changingAsset*/ ctx[1] !== void 0) {
-		component_props.changingAsset = /*changingAsset*/ ctx[1];
+	if (/*changingAsset*/ ctx[2] !== void 0) {
+		component_props.changingAsset = /*changingAsset*/ ctx[2];
 	}
 
 	if (/*localMediaList*/ ctx[3] !== void 0) {
@@ -617,67 +451,35 @@ function create_each_block_1(ctx) {
 
 	return {
 		c() {
-			div = element("div");
-			label_1 = element("label");
-			t0 = text(t0_value);
-			t1 = space();
 			create_component(component.$$.fragment);
-			t2 = space();
-			this.h();
 		},
 		l(nodes) {
-			div = claim_element(nodes, "DIV", { class: true });
-			var div_nodes = children(div);
-			label_1 = claim_element(div_nodes, "LABEL", { for: true, class: true });
-			var label_1_nodes = children(label_1);
-			t0 = claim_text(label_1_nodes, t0_value);
-			label_1_nodes.forEach(detach);
-			t1 = claim_space(div_nodes);
-			claim_component(component.$$.fragment, div_nodes);
-			t2 = claim_space(div_nodes);
-			div_nodes.forEach(detach);
-			this.h();
-		},
-		h() {
-			attr(label_1, "for", label_1_for_value = /*key*/ ctx[69]);
-			attr(label_1, "class", "svelte-ltyhti");
-			attr(div, "class", "field svelte-ltyhti");
+			claim_component(component.$$.fragment, nodes);
 		},
 		m(target, anchor) {
-			insert(target, div, anchor);
-			append(div, label_1);
-			append(label_1, t0);
-			append(div, t1);
-			mount_component(component, div, null);
-			append(div, t2);
+			mount_component(component, target, anchor);
 			current = true;
 		},
-		p(new_ctx, dirty) {
-			ctx = new_ctx;
-			if ((!current || dirty[0] & /*field*/ 1) && t0_value !== (t0_value = /*key*/ ctx[69] + "")) set_data(t0, t0_value);
-
-			if (!current || dirty[0] & /*field*/ 1 && label_1_for_value !== (label_1_for_value = /*key*/ ctx[69])) {
-				attr(label_1, "for", label_1_for_value);
-			}
-
+		p(ctx, dirty) {
 			const component_changes = {};
-			if (dirty[0] & /*field*/ 1) component_changes.label = /*key*/ ctx[69];
+			if (dirty[0] & /*parentKeys*/ 32) component_changes.parentKeys = /*parentKeys*/ ctx[5];
+			if (dirty[0] & /*schema*/ 64) component_changes.schema = /*schema*/ ctx[6];
 
 			if (!updating_field && dirty[0] & /*field*/ 1) {
 				updating_field = true;
-				component_changes.field = /*field*/ ctx[0][/*key*/ ctx[69]];
+				component_changes.field = /*field*/ ctx[0];
 				add_flush_callback(() => updating_field = false);
 			}
 
-			if (!updating_showMedia && dirty[0] & /*showMedia*/ 4) {
+			if (!updating_showMedia && dirty[0] & /*showMedia*/ 2) {
 				updating_showMedia = true;
-				component_changes.showMedia = /*showMedia*/ ctx[2];
+				component_changes.showMedia = /*showMedia*/ ctx[1];
 				add_flush_callback(() => updating_showMedia = false);
 			}
 
-			if (!updating_changingAsset && dirty[0] & /*changingAsset*/ 2) {
+			if (!updating_changingAsset && dirty[0] & /*changingAsset*/ 4) {
 				updating_changingAsset = true;
-				component_changes.changingAsset = /*changingAsset*/ ctx[1];
+				component_changes.changingAsset = /*changingAsset*/ ctx[2];
 				add_flush_callback(() => updating_changingAsset = false);
 			}
 
@@ -699,211 +501,1000 @@ function create_each_block_1(ctx) {
 			current = false;
 		},
 		d(detaching) {
-			if (detaching) detach(div);
-			destroy_component(component);
+			destroy_component(component, detaching);
 		}
 	};
 }
 
-// (291:20) {:else}
-function create_else_block_1(ctx) {
-	let t0;
-	let t1_value = /*key*/ ctx[69] + "";
-	let t1;
+// (84:41) 
+function create_if_block_20(ctx) {
+	let boolean;
+	let updating_field;
+	let current;
 
-	return {
-		c() {
-			t0 = text("Component ");
-			t1 = text(t1_value);
-		},
-		l(nodes) {
-			t0 = claim_text(nodes, "Component ");
-			t1 = claim_text(nodes, t1_value);
-		},
-		m(target, anchor) {
-			insert(target, t0, anchor);
-			insert(target, t1, anchor);
-		},
-		p(ctx, dirty) {
-			if (dirty[0] & /*field*/ 1 && t1_value !== (t1_value = /*key*/ ctx[69] + "")) set_data(t1, t1_value);
-		},
-		d(detaching) {
-			if (detaching) detach(t0);
-			if (detaching) detach(t1);
-		}
-	};
-}
-
-// (289:69) 
-function create_if_block_14(ctx) {
-	let t_value = (Object.values(/*value*/ ctx[67])[0].constructor === ("").constructor
-	? Object.values(/*value*/ ctx[67])[0].replace(/<[^>]*>?/gm, "").slice(0, 20).concat(/*value*/ ctx[67].length > 20 ? "..." : "")
-	: Object.keys(/*value*/ ctx[67])[0]) + "";
-
-	let t;
-
-	return {
-		c() {
-			t = text(t_value);
-		},
-		l(nodes) {
-			t = claim_text(nodes, t_value);
-		},
-		m(target, anchor) {
-			insert(target, t, anchor);
-		},
-		p(ctx, dirty) {
-			if (dirty[0] & /*field*/ 1 && t_value !== (t_value = (Object.values(/*value*/ ctx[67])[0].constructor === ("").constructor
-			? Object.values(/*value*/ ctx[67])[0].replace(/<[^>]*>?/gm, "").slice(0, 20).concat(/*value*/ ctx[67].length > 20 ? "..." : "")
-			: Object.keys(/*value*/ ctx[67])[0]) + "")) set_data(t, t_value);
-		},
-		d(detaching) {
-			if (detaching) detach(t);
-		}
-	};
-}
-
-// (287:20) {#if value.constructor === "".constructor}
-function create_if_block_13(ctx) {
-	let t_value = /*value*/ ctx[67].replace(/<[^>]*>?/gm, "").slice(0, 20).concat(/*value*/ ctx[67].length > 20 ? "..." : "") + "";
-	let t;
-
-	return {
-		c() {
-			t = text(t_value);
-		},
-		l(nodes) {
-			t = claim_text(nodes, t_value);
-		},
-		m(target, anchor) {
-			insert(target, t, anchor);
-		},
-		p(ctx, dirty) {
-			if (dirty[0] & /*field*/ 1 && t_value !== (t_value = /*value*/ ctx[67].replace(/<[^>]*>?/gm, "").slice(0, 20).concat(/*value*/ ctx[67].length > 20 ? "..." : "") + "")) set_data(t, t_value);
-		},
-		d(detaching) {
-			if (detaching) detach(t);
-		}
-	};
-}
-
-// (297:20) {#if removesItems}
-function create_if_block_12(ctx) {
-	let button;
-	let svg;
-	let path0;
-	let path1;
-	let mounted;
-	let dispose;
-
-	function click_handler_10() {
-		return /*click_handler_10*/ ctx[53](/*value*/ ctx[67]);
+	function boolean_field_binding_1(value) {
+		/*boolean_field_binding_1*/ ctx[35](value);
 	}
 
+	let boolean_props = { label: /*label*/ ctx[4] };
+
+	if (/*field*/ ctx[0] !== void 0) {
+		boolean_props.field = /*field*/ ctx[0];
+	}
+
+	boolean = new Boolean({ props: boolean_props });
+	binding_callbacks.push(() => bind(boolean, "field", boolean_field_binding_1));
+
 	return {
 		c() {
-			button = element("button");
-			svg = svg_element("svg");
-			path0 = svg_element("path");
-			path1 = svg_element("path");
-			this.h();
+			create_component(boolean.$$.fragment);
 		},
 		l(nodes) {
-			button = claim_element(nodes, "BUTTON", { class: true });
-			var button_nodes = children(button);
-
-			svg = claim_element(
-				button_nodes,
-				"svg",
-				{
-					xmlns: true,
-					height: true,
-					viewBox: true,
-					width: true
-				},
-				1
-			);
-
-			var svg_nodes = children(svg);
-			path0 = claim_element(svg_nodes, "path", { d: true, fill: true }, 1);
-			children(path0).forEach(detach);
-			path1 = claim_element(svg_nodes, "path", { d: true }, 1);
-			children(path1).forEach(detach);
-			svg_nodes.forEach(detach);
-			button_nodes.forEach(detach);
-			this.h();
-		},
-		h() {
-			attr(path0, "d", "M0 0h24v24H0z");
-			attr(path0, "fill", "none");
-			attr(path1, "d", "M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z");
-			attr(svg, "xmlns", "http://www.w3.org/2000/svg");
-			attr(svg, "height", "16");
-			attr(svg, "viewBox", "0 0 24 24");
-			attr(svg, "width", "16");
-			attr(button, "class", "close svelte-ltyhti");
+			claim_component(boolean.$$.fragment, nodes);
 		},
 		m(target, anchor) {
-			insert(target, button, anchor);
-			append(button, svg);
-			append(svg, path0);
-			append(svg, path1);
-
-			if (!mounted) {
-				dispose = listen(button, "click", prevent_default(click_handler_10));
-				mounted = true;
-			}
+			mount_component(boolean, target, anchor);
+			current = true;
 		},
-		p(new_ctx, dirty) {
-			ctx = new_ctx;
+		p(ctx, dirty) {
+			const boolean_changes = {};
+			if (dirty[0] & /*label*/ 16) boolean_changes.label = /*label*/ ctx[4];
+
+			if (!updating_field && dirty[0] & /*field*/ 1) {
+				updating_field = true;
+				boolean_changes.field = /*field*/ ctx[0];
+				add_flush_callback(() => updating_field = false);
+			}
+
+			boolean.$set(boolean_changes);
+		},
+		i(local) {
+			if (current) return;
+			transition_in(boolean.$$.fragment, local);
+			current = true;
+		},
+		o(local) {
+			transition_out(boolean.$$.fragment, local);
+			current = false;
 		},
 		d(detaching) {
-			if (detaching) detach(button);
-			mounted = false;
-			dispose();
+			destroy_component(boolean, detaching);
 		}
 	};
 }
 
-// (306:12) {#if openKeys.includes(key)}
-function create_if_block_11(ctx) {
-	let div;
+// (74:40) 
+function create_if_block_16(ctx) {
+	let show_if;
+	let show_if_1;
+	let show_if_2;
+	let current_block_type_index;
+	let if_block;
+	let if_block_anchor;
+	let current;
+	const if_block_creators = [create_if_block_17, create_if_block_18, create_if_block_19, create_else_block];
+	const if_blocks = [];
+
+	function select_block_type_1(ctx, dirty) {
+		if (dirty[0] & /*field*/ 1) show_if = !!isDate(/*field*/ ctx[0]);
+		if (show_if) return 0;
+		if (dirty[0] & /*field*/ 1) show_if_1 = !!isTime(/*field*/ ctx[0]);
+		if (show_if_1) return 1;
+		if (dirty[0] & /*field*/ 1) show_if_2 = !!isAssetPath(/*field*/ ctx[0]);
+		if (show_if_2) return 2;
+		return 3;
+	}
+
+	current_block_type_index = select_block_type_1(ctx, [-1, -1]);
+	if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
+
+	return {
+		c() {
+			if_block.c();
+			if_block_anchor = empty();
+		},
+		l(nodes) {
+			if_block.l(nodes);
+			if_block_anchor = empty();
+		},
+		m(target, anchor) {
+			if_blocks[current_block_type_index].m(target, anchor);
+			insert(target, if_block_anchor, anchor);
+			current = true;
+		},
+		p(ctx, dirty) {
+			let previous_block_index = current_block_type_index;
+			current_block_type_index = select_block_type_1(ctx, dirty);
+
+			if (current_block_type_index === previous_block_index) {
+				if_blocks[current_block_type_index].p(ctx, dirty);
+			} else {
+				group_outros();
+
+				transition_out(if_blocks[previous_block_index], 1, 1, () => {
+					if_blocks[previous_block_index] = null;
+				});
+
+				check_outros();
+				if_block = if_blocks[current_block_type_index];
+
+				if (!if_block) {
+					if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
+					if_block.c();
+				} else {
+					if_block.p(ctx, dirty);
+				}
+
+				transition_in(if_block, 1);
+				if_block.m(if_block_anchor.parentNode, if_block_anchor);
+			}
+		},
+		i(local) {
+			if (current) return;
+			transition_in(if_block);
+			current = true;
+		},
+		o(local) {
+			transition_out(if_block);
+			current = false;
+		},
+		d(detaching) {
+			if_blocks[current_block_type_index].d(detaching);
+			if (detaching) detach(if_block_anchor);
+		}
+	};
+}
+
+// (72:40) 
+function create_if_block_15(ctx) {
+	let number;
+	let updating_field;
+	let current;
+
+	function number_field_binding_1(value) {
+		/*number_field_binding_1*/ ctx[27](value);
+	}
+
+	let number_props = { label: /*label*/ ctx[4] };
+
+	if (/*field*/ ctx[0] !== void 0) {
+		number_props.field = /*field*/ ctx[0];
+	}
+
+	number = new Number({ props: number_props });
+	binding_callbacks.push(() => bind(number, "field", number_field_binding_1));
+
+	return {
+		c() {
+			create_component(number.$$.fragment);
+		},
+		l(nodes) {
+			claim_component(number.$$.fragment, nodes);
+		},
+		m(target, anchor) {
+			mount_component(number, target, anchor);
+			current = true;
+		},
+		p(ctx, dirty) {
+			const number_changes = {};
+			if (dirty[0] & /*label*/ 16) number_changes.label = /*label*/ ctx[4];
+
+			if (!updating_field && dirty[0] & /*field*/ 1) {
+				updating_field = true;
+				number_changes.field = /*field*/ ctx[0];
+				add_flush_callback(() => updating_field = false);
+			}
+
+			number.$set(number_changes);
+		},
+		i(local) {
+			if (current) return;
+			transition_in(number.$$.fragment, local);
+			current = true;
+		},
+		o(local) {
+			transition_out(number.$$.fragment, local);
+			current = false;
+		},
+		d(detaching) {
+			destroy_component(number, detaching);
+		}
+	};
+}
+
+// (32:4) {#if schema && schema.hasOwnProperty(parentKeys)}
+function create_if_block_1(ctx) {
+	let t0;
+	let t1;
+	let t2;
+	let t3;
+	let t4;
+	let t5;
+	let t6;
+	let t7;
+	let t8;
+	let t9;
+	let t10;
+	let t11;
+	let if_block12_anchor;
+	let current;
+	let if_block0 = /*schema*/ ctx[6][/*parentKeys*/ ctx[5]].type === "component" && create_if_block_14(ctx);
+	let if_block1 = /*schema*/ ctx[6][/*parentKeys*/ ctx[5]].type === "checkbox" && create_if_block_13(ctx);
+	let if_block2 = /*schema*/ ctx[6][/*parentKeys*/ ctx[5]].type === "radio" && create_if_block_12(ctx);
+	let if_block3 = /*schema*/ ctx[6][/*parentKeys*/ ctx[5]].type === "select" && create_if_block_11(ctx);
+	let if_block4 = /*schema*/ ctx[6][/*parentKeys*/ ctx[5]].type === "wysiwyg" && create_if_block_10(ctx);
+	let if_block5 = /*schema*/ ctx[6][/*parentKeys*/ ctx[5]].type === "autocomplete" && create_if_block_9(ctx);
+	let if_block6 = /*schema*/ ctx[6][/*parentKeys*/ ctx[5]].type === "id" && create_if_block_8(ctx);
+	let if_block7 = /*schema*/ ctx[6][/*parentKeys*/ ctx[5]].type === "text" && create_if_block_7(ctx);
+	let if_block8 = /*schema*/ ctx[6][/*parentKeys*/ ctx[5]].type === "number" && create_if_block_6(ctx);
+	let if_block9 = /*schema*/ ctx[6][/*parentKeys*/ ctx[5]].type === "boolean" && create_if_block_5(ctx);
+	let if_block10 = /*schema*/ ctx[6][/*parentKeys*/ ctx[5]].type === "date" && create_if_block_4(ctx);
+	let if_block11 = /*schema*/ ctx[6][/*parentKeys*/ ctx[5]].type === "time" && create_if_block_3(ctx);
+	let if_block12 = /*schema*/ ctx[6][/*parentKeys*/ ctx[5]].type === "asset" && create_if_block_2(ctx);
+
+	return {
+		c() {
+			if (if_block0) if_block0.c();
+			t0 = space();
+			if (if_block1) if_block1.c();
+			t1 = space();
+			if (if_block2) if_block2.c();
+			t2 = space();
+			if (if_block3) if_block3.c();
+			t3 = space();
+			if (if_block4) if_block4.c();
+			t4 = space();
+			if (if_block5) if_block5.c();
+			t5 = space();
+			if (if_block6) if_block6.c();
+			t6 = space();
+			if (if_block7) if_block7.c();
+			t7 = space();
+			if (if_block8) if_block8.c();
+			t8 = space();
+			if (if_block9) if_block9.c();
+			t9 = space();
+			if (if_block10) if_block10.c();
+			t10 = space();
+			if (if_block11) if_block11.c();
+			t11 = space();
+			if (if_block12) if_block12.c();
+			if_block12_anchor = empty();
+		},
+		l(nodes) {
+			if (if_block0) if_block0.l(nodes);
+			t0 = claim_space(nodes);
+			if (if_block1) if_block1.l(nodes);
+			t1 = claim_space(nodes);
+			if (if_block2) if_block2.l(nodes);
+			t2 = claim_space(nodes);
+			if (if_block3) if_block3.l(nodes);
+			t3 = claim_space(nodes);
+			if (if_block4) if_block4.l(nodes);
+			t4 = claim_space(nodes);
+			if (if_block5) if_block5.l(nodes);
+			t5 = claim_space(nodes);
+			if (if_block6) if_block6.l(nodes);
+			t6 = claim_space(nodes);
+			if (if_block7) if_block7.l(nodes);
+			t7 = claim_space(nodes);
+			if (if_block8) if_block8.l(nodes);
+			t8 = claim_space(nodes);
+			if (if_block9) if_block9.l(nodes);
+			t9 = claim_space(nodes);
+			if (if_block10) if_block10.l(nodes);
+			t10 = claim_space(nodes);
+			if (if_block11) if_block11.l(nodes);
+			t11 = claim_space(nodes);
+			if (if_block12) if_block12.l(nodes);
+			if_block12_anchor = empty();
+		},
+		m(target, anchor) {
+			if (if_block0) if_block0.m(target, anchor);
+			insert(target, t0, anchor);
+			if (if_block1) if_block1.m(target, anchor);
+			insert(target, t1, anchor);
+			if (if_block2) if_block2.m(target, anchor);
+			insert(target, t2, anchor);
+			if (if_block3) if_block3.m(target, anchor);
+			insert(target, t3, anchor);
+			if (if_block4) if_block4.m(target, anchor);
+			insert(target, t4, anchor);
+			if (if_block5) if_block5.m(target, anchor);
+			insert(target, t5, anchor);
+			if (if_block6) if_block6.m(target, anchor);
+			insert(target, t6, anchor);
+			if (if_block7) if_block7.m(target, anchor);
+			insert(target, t7, anchor);
+			if (if_block8) if_block8.m(target, anchor);
+			insert(target, t8, anchor);
+			if (if_block9) if_block9.m(target, anchor);
+			insert(target, t9, anchor);
+			if (if_block10) if_block10.m(target, anchor);
+			insert(target, t10, anchor);
+			if (if_block11) if_block11.m(target, anchor);
+			insert(target, t11, anchor);
+			if (if_block12) if_block12.m(target, anchor);
+			insert(target, if_block12_anchor, anchor);
+			current = true;
+		},
+		p(ctx, dirty) {
+			if (/*schema*/ ctx[6][/*parentKeys*/ ctx[5]].type === "component") {
+				if (if_block0) {
+					if_block0.p(ctx, dirty);
+
+					if (dirty[0] & /*schema, parentKeys*/ 96) {
+						transition_in(if_block0, 1);
+					}
+				} else {
+					if_block0 = create_if_block_14(ctx);
+					if_block0.c();
+					transition_in(if_block0, 1);
+					if_block0.m(t0.parentNode, t0);
+				}
+			} else if (if_block0) {
+				group_outros();
+
+				transition_out(if_block0, 1, 1, () => {
+					if_block0 = null;
+				});
+
+				check_outros();
+			}
+
+			if (/*schema*/ ctx[6][/*parentKeys*/ ctx[5]].type === "checkbox") {
+				if (if_block1) {
+					if_block1.p(ctx, dirty);
+
+					if (dirty[0] & /*schema, parentKeys*/ 96) {
+						transition_in(if_block1, 1);
+					}
+				} else {
+					if_block1 = create_if_block_13(ctx);
+					if_block1.c();
+					transition_in(if_block1, 1);
+					if_block1.m(t1.parentNode, t1);
+				}
+			} else if (if_block1) {
+				group_outros();
+
+				transition_out(if_block1, 1, 1, () => {
+					if_block1 = null;
+				});
+
+				check_outros();
+			}
+
+			if (/*schema*/ ctx[6][/*parentKeys*/ ctx[5]].type === "radio") {
+				if (if_block2) {
+					if_block2.p(ctx, dirty);
+
+					if (dirty[0] & /*schema, parentKeys*/ 96) {
+						transition_in(if_block2, 1);
+					}
+				} else {
+					if_block2 = create_if_block_12(ctx);
+					if_block2.c();
+					transition_in(if_block2, 1);
+					if_block2.m(t2.parentNode, t2);
+				}
+			} else if (if_block2) {
+				group_outros();
+
+				transition_out(if_block2, 1, 1, () => {
+					if_block2 = null;
+				});
+
+				check_outros();
+			}
+
+			if (/*schema*/ ctx[6][/*parentKeys*/ ctx[5]].type === "select") {
+				if (if_block3) {
+					if_block3.p(ctx, dirty);
+
+					if (dirty[0] & /*schema, parentKeys*/ 96) {
+						transition_in(if_block3, 1);
+					}
+				} else {
+					if_block3 = create_if_block_11(ctx);
+					if_block3.c();
+					transition_in(if_block3, 1);
+					if_block3.m(t3.parentNode, t3);
+				}
+			} else if (if_block3) {
+				group_outros();
+
+				transition_out(if_block3, 1, 1, () => {
+					if_block3 = null;
+				});
+
+				check_outros();
+			}
+
+			if (/*schema*/ ctx[6][/*parentKeys*/ ctx[5]].type === "wysiwyg") {
+				if (if_block4) {
+					if_block4.p(ctx, dirty);
+
+					if (dirty[0] & /*schema, parentKeys*/ 96) {
+						transition_in(if_block4, 1);
+					}
+				} else {
+					if_block4 = create_if_block_10(ctx);
+					if_block4.c();
+					transition_in(if_block4, 1);
+					if_block4.m(t4.parentNode, t4);
+				}
+			} else if (if_block4) {
+				group_outros();
+
+				transition_out(if_block4, 1, 1, () => {
+					if_block4 = null;
+				});
+
+				check_outros();
+			}
+
+			if (/*schema*/ ctx[6][/*parentKeys*/ ctx[5]].type === "autocomplete") {
+				if (if_block5) {
+					if_block5.p(ctx, dirty);
+
+					if (dirty[0] & /*schema, parentKeys*/ 96) {
+						transition_in(if_block5, 1);
+					}
+				} else {
+					if_block5 = create_if_block_9(ctx);
+					if_block5.c();
+					transition_in(if_block5, 1);
+					if_block5.m(t5.parentNode, t5);
+				}
+			} else if (if_block5) {
+				group_outros();
+
+				transition_out(if_block5, 1, 1, () => {
+					if_block5 = null;
+				});
+
+				check_outros();
+			}
+
+			if (/*schema*/ ctx[6][/*parentKeys*/ ctx[5]].type === "id") {
+				if (if_block6) {
+					if_block6.p(ctx, dirty);
+
+					if (dirty[0] & /*schema, parentKeys*/ 96) {
+						transition_in(if_block6, 1);
+					}
+				} else {
+					if_block6 = create_if_block_8(ctx);
+					if_block6.c();
+					transition_in(if_block6, 1);
+					if_block6.m(t6.parentNode, t6);
+				}
+			} else if (if_block6) {
+				group_outros();
+
+				transition_out(if_block6, 1, 1, () => {
+					if_block6 = null;
+				});
+
+				check_outros();
+			}
+
+			if (/*schema*/ ctx[6][/*parentKeys*/ ctx[5]].type === "text") {
+				if (if_block7) {
+					if_block7.p(ctx, dirty);
+
+					if (dirty[0] & /*schema, parentKeys*/ 96) {
+						transition_in(if_block7, 1);
+					}
+				} else {
+					if_block7 = create_if_block_7(ctx);
+					if_block7.c();
+					transition_in(if_block7, 1);
+					if_block7.m(t7.parentNode, t7);
+				}
+			} else if (if_block7) {
+				group_outros();
+
+				transition_out(if_block7, 1, 1, () => {
+					if_block7 = null;
+				});
+
+				check_outros();
+			}
+
+			if (/*schema*/ ctx[6][/*parentKeys*/ ctx[5]].type === "number") {
+				if (if_block8) {
+					if_block8.p(ctx, dirty);
+
+					if (dirty[0] & /*schema, parentKeys*/ 96) {
+						transition_in(if_block8, 1);
+					}
+				} else {
+					if_block8 = create_if_block_6(ctx);
+					if_block8.c();
+					transition_in(if_block8, 1);
+					if_block8.m(t8.parentNode, t8);
+				}
+			} else if (if_block8) {
+				group_outros();
+
+				transition_out(if_block8, 1, 1, () => {
+					if_block8 = null;
+				});
+
+				check_outros();
+			}
+
+			if (/*schema*/ ctx[6][/*parentKeys*/ ctx[5]].type === "boolean") {
+				if (if_block9) {
+					if_block9.p(ctx, dirty);
+
+					if (dirty[0] & /*schema, parentKeys*/ 96) {
+						transition_in(if_block9, 1);
+					}
+				} else {
+					if_block9 = create_if_block_5(ctx);
+					if_block9.c();
+					transition_in(if_block9, 1);
+					if_block9.m(t9.parentNode, t9);
+				}
+			} else if (if_block9) {
+				group_outros();
+
+				transition_out(if_block9, 1, 1, () => {
+					if_block9 = null;
+				});
+
+				check_outros();
+			}
+
+			if (/*schema*/ ctx[6][/*parentKeys*/ ctx[5]].type === "date") {
+				if (if_block10) {
+					if_block10.p(ctx, dirty);
+
+					if (dirty[0] & /*schema, parentKeys*/ 96) {
+						transition_in(if_block10, 1);
+					}
+				} else {
+					if_block10 = create_if_block_4(ctx);
+					if_block10.c();
+					transition_in(if_block10, 1);
+					if_block10.m(t10.parentNode, t10);
+				}
+			} else if (if_block10) {
+				group_outros();
+
+				transition_out(if_block10, 1, 1, () => {
+					if_block10 = null;
+				});
+
+				check_outros();
+			}
+
+			if (/*schema*/ ctx[6][/*parentKeys*/ ctx[5]].type === "time") {
+				if (if_block11) {
+					if_block11.p(ctx, dirty);
+
+					if (dirty[0] & /*schema, parentKeys*/ 96) {
+						transition_in(if_block11, 1);
+					}
+				} else {
+					if_block11 = create_if_block_3(ctx);
+					if_block11.c();
+					transition_in(if_block11, 1);
+					if_block11.m(t11.parentNode, t11);
+				}
+			} else if (if_block11) {
+				group_outros();
+
+				transition_out(if_block11, 1, 1, () => {
+					if_block11 = null;
+				});
+
+				check_outros();
+			}
+
+			if (/*schema*/ ctx[6][/*parentKeys*/ ctx[5]].type === "asset") {
+				if (if_block12) {
+					if_block12.p(ctx, dirty);
+
+					if (dirty[0] & /*schema, parentKeys*/ 96) {
+						transition_in(if_block12, 1);
+					}
+				} else {
+					if_block12 = create_if_block_2(ctx);
+					if_block12.c();
+					transition_in(if_block12, 1);
+					if_block12.m(if_block12_anchor.parentNode, if_block12_anchor);
+				}
+			} else if (if_block12) {
+				group_outros();
+
+				transition_out(if_block12, 1, 1, () => {
+					if_block12 = null;
+				});
+
+				check_outros();
+			}
+		},
+		i(local) {
+			if (current) return;
+			transition_in(if_block0);
+			transition_in(if_block1);
+			transition_in(if_block2);
+			transition_in(if_block3);
+			transition_in(if_block4);
+			transition_in(if_block5);
+			transition_in(if_block6);
+			transition_in(if_block7);
+			transition_in(if_block8);
+			transition_in(if_block9);
+			transition_in(if_block10);
+			transition_in(if_block11);
+			transition_in(if_block12);
+			current = true;
+		},
+		o(local) {
+			transition_out(if_block0);
+			transition_out(if_block1);
+			transition_out(if_block2);
+			transition_out(if_block3);
+			transition_out(if_block4);
+			transition_out(if_block5);
+			transition_out(if_block6);
+			transition_out(if_block7);
+			transition_out(if_block8);
+			transition_out(if_block9);
+			transition_out(if_block10);
+			transition_out(if_block11);
+			transition_out(if_block12);
+			current = false;
+		},
+		d(detaching) {
+			if (if_block0) if_block0.d(detaching);
+			if (detaching) detach(t0);
+			if (if_block1) if_block1.d(detaching);
+			if (detaching) detach(t1);
+			if (if_block2) if_block2.d(detaching);
+			if (detaching) detach(t2);
+			if (if_block3) if_block3.d(detaching);
+			if (detaching) detach(t3);
+			if (if_block4) if_block4.d(detaching);
+			if (detaching) detach(t4);
+			if (if_block5) if_block5.d(detaching);
+			if (detaching) detach(t5);
+			if (if_block6) if_block6.d(detaching);
+			if (detaching) detach(t6);
+			if (if_block7) if_block7.d(detaching);
+			if (detaching) detach(t7);
+			if (if_block8) if_block8.d(detaching);
+			if (detaching) detach(t8);
+			if (if_block9) if_block9.d(detaching);
+			if (detaching) detach(t9);
+			if (if_block10) if_block10.d(detaching);
+			if (detaching) detach(t10);
+			if (if_block11) if_block11.d(detaching);
+			if (detaching) detach(t11);
+			if (if_block12) if_block12.d(detaching);
+			if (detaching) detach(if_block12_anchor);
+		}
+	};
+}
+
+// (81:8) {:else}
+function create_else_block(ctx) {
+	let text_1;
+	let updating_field;
+	let current;
+
+	function text_1_field_binding_1(value) {
+		/*text_1_field_binding_1*/ ctx[34](value);
+	}
+
+	let text_1_props = {};
+
+	if (/*field*/ ctx[0] !== void 0) {
+		text_1_props.field = /*field*/ ctx[0];
+	}
+
+	text_1 = new Text({ props: text_1_props });
+	binding_callbacks.push(() => bind(text_1, "field", text_1_field_binding_1));
+
+	return {
+		c() {
+			create_component(text_1.$$.fragment);
+		},
+		l(nodes) {
+			claim_component(text_1.$$.fragment, nodes);
+		},
+		m(target, anchor) {
+			mount_component(text_1, target, anchor);
+			current = true;
+		},
+		p(ctx, dirty) {
+			const text_1_changes = {};
+
+			if (!updating_field && dirty[0] & /*field*/ 1) {
+				updating_field = true;
+				text_1_changes.field = /*field*/ ctx[0];
+				add_flush_callback(() => updating_field = false);
+			}
+
+			text_1.$set(text_1_changes);
+		},
+		i(local) {
+			if (current) return;
+			transition_in(text_1.$$.fragment, local);
+			current = true;
+		},
+		o(local) {
+			transition_out(text_1.$$.fragment, local);
+			current = false;
+		},
+		d(detaching) {
+			destroy_component(text_1, detaching);
+		}
+	};
+}
+
+// (79:37) 
+function create_if_block_19(ctx) {
+	let asset;
+	let updating_field;
+	let updating_showMedia;
+	let updating_changingAsset;
+	let updating_localMediaList;
+	let current;
+
+	function asset_field_binding_1(value) {
+		/*asset_field_binding_1*/ ctx[30](value);
+	}
+
+	function asset_showMedia_binding_1(value) {
+		/*asset_showMedia_binding_1*/ ctx[31](value);
+	}
+
+	function asset_changingAsset_binding_1(value) {
+		/*asset_changingAsset_binding_1*/ ctx[32](value);
+	}
+
+	function asset_localMediaList_binding_1(value) {
+		/*asset_localMediaList_binding_1*/ ctx[33](value);
+	}
+
+	let asset_props = {};
+
+	if (/*field*/ ctx[0] !== void 0) {
+		asset_props.field = /*field*/ ctx[0];
+	}
+
+	if (/*showMedia*/ ctx[1] !== void 0) {
+		asset_props.showMedia = /*showMedia*/ ctx[1];
+	}
+
+	if (/*changingAsset*/ ctx[2] !== void 0) {
+		asset_props.changingAsset = /*changingAsset*/ ctx[2];
+	}
+
+	if (/*localMediaList*/ ctx[3] !== void 0) {
+		asset_props.localMediaList = /*localMediaList*/ ctx[3];
+	}
+
+	asset = new Asset({ props: asset_props });
+	binding_callbacks.push(() => bind(asset, "field", asset_field_binding_1));
+	binding_callbacks.push(() => bind(asset, "showMedia", asset_showMedia_binding_1));
+	binding_callbacks.push(() => bind(asset, "changingAsset", asset_changingAsset_binding_1));
+	binding_callbacks.push(() => bind(asset, "localMediaList", asset_localMediaList_binding_1));
+
+	return {
+		c() {
+			create_component(asset.$$.fragment);
+		},
+		l(nodes) {
+			claim_component(asset.$$.fragment, nodes);
+		},
+		m(target, anchor) {
+			mount_component(asset, target, anchor);
+			current = true;
+		},
+		p(ctx, dirty) {
+			const asset_changes = {};
+
+			if (!updating_field && dirty[0] & /*field*/ 1) {
+				updating_field = true;
+				asset_changes.field = /*field*/ ctx[0];
+				add_flush_callback(() => updating_field = false);
+			}
+
+			if (!updating_showMedia && dirty[0] & /*showMedia*/ 2) {
+				updating_showMedia = true;
+				asset_changes.showMedia = /*showMedia*/ ctx[1];
+				add_flush_callback(() => updating_showMedia = false);
+			}
+
+			if (!updating_changingAsset && dirty[0] & /*changingAsset*/ 4) {
+				updating_changingAsset = true;
+				asset_changes.changingAsset = /*changingAsset*/ ctx[2];
+				add_flush_callback(() => updating_changingAsset = false);
+			}
+
+			if (!updating_localMediaList && dirty[0] & /*localMediaList*/ 8) {
+				updating_localMediaList = true;
+				asset_changes.localMediaList = /*localMediaList*/ ctx[3];
+				add_flush_callback(() => updating_localMediaList = false);
+			}
+
+			asset.$set(asset_changes);
+		},
+		i(local) {
+			if (current) return;
+			transition_in(asset.$$.fragment, local);
+			current = true;
+		},
+		o(local) {
+			transition_out(asset.$$.fragment, local);
+			current = false;
+		},
+		d(detaching) {
+			destroy_component(asset, detaching);
+		}
+	};
+}
+
+// (77:32) 
+function create_if_block_18(ctx) {
+	let time;
+	let updating_field;
+	let current;
+
+	function time_field_binding_1(value) {
+		/*time_field_binding_1*/ ctx[29](value);
+	}
+
+	let time_props = {};
+
+	if (/*field*/ ctx[0] !== void 0) {
+		time_props.field = /*field*/ ctx[0];
+	}
+
+	time = new Time({ props: time_props });
+	binding_callbacks.push(() => bind(time, "field", time_field_binding_1));
+
+	return {
+		c() {
+			create_component(time.$$.fragment);
+		},
+		l(nodes) {
+			claim_component(time.$$.fragment, nodes);
+		},
+		m(target, anchor) {
+			mount_component(time, target, anchor);
+			current = true;
+		},
+		p(ctx, dirty) {
+			const time_changes = {};
+
+			if (!updating_field && dirty[0] & /*field*/ 1) {
+				updating_field = true;
+				time_changes.field = /*field*/ ctx[0];
+				add_flush_callback(() => updating_field = false);
+			}
+
+			time.$set(time_changes);
+		},
+		i(local) {
+			if (current) return;
+			transition_in(time.$$.fragment, local);
+			current = true;
+		},
+		o(local) {
+			transition_out(time.$$.fragment, local);
+			current = false;
+		},
+		d(detaching) {
+			destroy_component(time, detaching);
+		}
+	};
+}
+
+// (75:8) {#if isDate(field)}
+function create_if_block_17(ctx) {
+	let date;
+	let updating_field;
+	let current;
+
+	function date_field_binding_1(value) {
+		/*date_field_binding_1*/ ctx[28](value);
+	}
+
+	let date_props = {};
+
+	if (/*field*/ ctx[0] !== void 0) {
+		date_props.field = /*field*/ ctx[0];
+	}
+
+	date = new Date({ props: date_props });
+	binding_callbacks.push(() => bind(date, "field", date_field_binding_1));
+
+	return {
+		c() {
+			create_component(date.$$.fragment);
+		},
+		l(nodes) {
+			claim_component(date.$$.fragment, nodes);
+		},
+		m(target, anchor) {
+			mount_component(date, target, anchor);
+			current = true;
+		},
+		p(ctx, dirty) {
+			const date_changes = {};
+
+			if (!updating_field && dirty[0] & /*field*/ 1) {
+				updating_field = true;
+				date_changes.field = /*field*/ ctx[0];
+				add_flush_callback(() => updating_field = false);
+			}
+
+			date.$set(date_changes);
+		},
+		i(local) {
+			if (current) return;
+			transition_in(date.$$.fragment, local);
+			current = true;
+		},
+		o(local) {
+			transition_out(date.$$.fragment, local);
+			current = false;
+		},
+		d(detaching) {
+			destroy_component(date, detaching);
+		}
+	};
+}
+
+// (33:8) {#if schema[parentKeys].type === "component"}
+function create_if_block_14(ctx) {
 	let component;
 	let updating_field;
 	let updating_showMedia;
 	let updating_changingAsset;
 	let updating_localMediaList;
-	let div_transition;
 	let current;
 
 	function component_field_binding(value) {
-		/*component_field_binding*/ ctx[54](value, /*key*/ ctx[69]);
+		/*component_field_binding*/ ctx[8](value);
 	}
 
 	function component_showMedia_binding(value) {
-		/*component_showMedia_binding*/ ctx[55](value);
+		/*component_showMedia_binding*/ ctx[9](value);
 	}
 
 	function component_changingAsset_binding(value) {
-		/*component_changingAsset_binding*/ ctx[56](value);
+		/*component_changingAsset_binding*/ ctx[10](value);
 	}
 
 	function component_localMediaList_binding(value) {
-		/*component_localMediaList_binding*/ ctx[57](value);
+		/*component_localMediaList_binding*/ ctx[11](value);
 	}
 
-	let component_props = { label: /*label*/ ctx[4] };
+	let component_props = {
+		label: /*label*/ ctx[4],
+		parentKeys: /*parentKeys*/ ctx[5],
+		schema: /*schema*/ ctx[6]
+	};
 
-	if (/*field*/ ctx[0][/*key*/ ctx[69]] !== void 0) {
-		component_props.field = /*field*/ ctx[0][/*key*/ ctx[69]];
+	if (/*field*/ ctx[0] !== void 0) {
+		component_props.field = /*field*/ ctx[0];
 	}
 
-	if (/*showMedia*/ ctx[2] !== void 0) {
-		component_props.showMedia = /*showMedia*/ ctx[2];
+	if (/*showMedia*/ ctx[1] !== void 0) {
+		component_props.showMedia = /*showMedia*/ ctx[1];
 	}
 
-	if (/*changingAsset*/ ctx[1] !== void 0) {
-		component_props.changingAsset = /*changingAsset*/ ctx[1];
+	if (/*changingAsset*/ ctx[2] !== void 0) {
+		component_props.changingAsset = /*changingAsset*/ ctx[2];
 	}
 
 	if (/*localMediaList*/ ctx[3] !== void 0) {
@@ -918,40 +1509,36 @@ function create_if_block_11(ctx) {
 
 	return {
 		c() {
-			div = element("div");
 			create_component(component.$$.fragment);
 		},
 		l(nodes) {
-			div = claim_element(nodes, "DIV", {});
-			var div_nodes = children(div);
-			claim_component(component.$$.fragment, div_nodes);
-			div_nodes.forEach(detach);
+			claim_component(component.$$.fragment, nodes);
 		},
 		m(target, anchor) {
-			insert(target, div, anchor);
-			mount_component(component, div, null);
+			mount_component(component, target, anchor);
 			current = true;
 		},
-		p(new_ctx, dirty) {
-			ctx = new_ctx;
+		p(ctx, dirty) {
 			const component_changes = {};
 			if (dirty[0] & /*label*/ 16) component_changes.label = /*label*/ ctx[4];
+			if (dirty[0] & /*parentKeys*/ 32) component_changes.parentKeys = /*parentKeys*/ ctx[5];
+			if (dirty[0] & /*schema*/ 64) component_changes.schema = /*schema*/ ctx[6];
 
 			if (!updating_field && dirty[0] & /*field*/ 1) {
 				updating_field = true;
-				component_changes.field = /*field*/ ctx[0][/*key*/ ctx[69]];
+				component_changes.field = /*field*/ ctx[0];
 				add_flush_callback(() => updating_field = false);
 			}
 
-			if (!updating_showMedia && dirty[0] & /*showMedia*/ 4) {
+			if (!updating_showMedia && dirty[0] & /*showMedia*/ 2) {
 				updating_showMedia = true;
-				component_changes.showMedia = /*showMedia*/ ctx[2];
+				component_changes.showMedia = /*showMedia*/ ctx[1];
 				add_flush_callback(() => updating_showMedia = false);
 			}
 
-			if (!updating_changingAsset && dirty[0] & /*changingAsset*/ 2) {
+			if (!updating_changingAsset && dirty[0] & /*changingAsset*/ 4) {
 				updating_changingAsset = true;
-				component_changes.changingAsset = /*changingAsset*/ ctx[1];
+				component_changes.changingAsset = /*changingAsset*/ ctx[2];
 				add_flush_callback(() => updating_changingAsset = false);
 			}
 
@@ -966,1383 +1553,773 @@ function create_if_block_11(ctx) {
 		i(local) {
 			if (current) return;
 			transition_in(component.$$.fragment, local);
-
-			add_render_callback(() => {
-				if (!div_transition) div_transition = create_bidirectional_transition(div, slide, { duration: 300 }, true);
-				div_transition.run(1);
-			});
-
 			current = true;
 		},
 		o(local) {
 			transition_out(component.$$.fragment, local);
-			if (!div_transition) div_transition = create_bidirectional_transition(div, slide, { duration: 300 }, false);
-			div_transition.run(0);
 			current = false;
 		},
 		d(detaching) {
-			if (detaching) detach(div);
-			destroy_component(component);
-			if (detaching && div_transition) div_transition.end();
+			destroy_component(component, detaching);
 		}
 	};
 }
 
-// (244:8) {#each field as value, key (compID = isOpen ? key : value)}
-function create_each_block(key_2, ctx) {
-	let div5;
-	let div4;
-	let div0;
-	let svg0;
-	let path0;
-	let circle0;
-	let circle1;
-	let circle2;
-	let circle3;
-	let circle4;
-	let circle5;
-	let t0;
-	let div1;
-	let button0;
-	let svg1;
-	let path1;
-	let path2;
-	let button0_style_value;
-	let t1;
-	let button1;
-	let svg2;
-	let path3;
-	let path4;
-	let button1_style_value;
-	let t2;
-	let div2;
-	let t3;
-	let div3;
-	let t4;
-	let show_if = /*openKeys*/ ctx[7].includes(/*key*/ ctx[69]);
-	let t5;
-	let div5_id_value;
-	let div5_data_index_value;
-	let rect;
-	let stop_animation = noop;
+// (36:8) {#if schema[parentKeys].type === "checkbox"}
+function create_if_block_13(ctx) {
+	let checkbox;
+	let updating_field;
 	let current;
-	let mounted;
-	let dispose;
 
-	function click_handler_8(...args) {
-		return /*click_handler_8*/ ctx[51](/*key*/ ctx[69], ...args);
+	function checkbox_field_binding(value) {
+		/*checkbox_field_binding*/ ctx[12](value);
 	}
 
-	function click_handler_9(...args) {
-		return /*click_handler_9*/ ctx[52](/*key*/ ctx[69], ...args);
+	let checkbox_props = {
+		schema: /*schema*/ ctx[6],
+		parentKeys: /*parentKeys*/ ctx[5]
+	};
+
+	if (/*field*/ ctx[0] !== void 0) {
+		checkbox_props.field = /*field*/ ctx[0];
 	}
 
-	function select_block_type_3(ctx, dirty) {
-		if (/*value*/ ctx[67].constructor === ("").constructor) return create_if_block_13;
-		if (/*value*/ ctx[67].constructor === ({}).constructor) return create_if_block_14;
-		return create_else_block_1;
-	}
-
-	let current_block_type = select_block_type_3(ctx, [-1, -1, -1]);
-	let if_block0 = current_block_type(ctx);
-	let if_block1 = /*removesItems*/ ctx[5] && create_if_block_12(ctx);
-	let if_block2 = show_if && create_if_block_11(ctx);
+	checkbox = new Checkbox({ props: checkbox_props });
+	binding_callbacks.push(() => bind(checkbox, "field", checkbox_field_binding));
 
 	return {
-		key: key_2,
-		first: null,
 		c() {
-			div5 = element("div");
-			div4 = element("div");
-			div0 = element("div");
-			svg0 = svg_element("svg");
-			path0 = svg_element("path");
-			circle0 = svg_element("circle");
-			circle1 = svg_element("circle");
-			circle2 = svg_element("circle");
-			circle3 = svg_element("circle");
-			circle4 = svg_element("circle");
-			circle5 = svg_element("circle");
-			t0 = space();
-			div1 = element("div");
-			button0 = element("button");
-			svg1 = svg_element("svg");
-			path1 = svg_element("path");
-			path2 = svg_element("path");
-			t1 = space();
-			button1 = element("button");
-			svg2 = svg_element("svg");
-			path3 = svg_element("path");
-			path4 = svg_element("path");
-			t2 = space();
-			div2 = element("div");
-			if_block0.c();
-			t3 = space();
-			div3 = element("div");
-			if (if_block1) if_block1.c();
-			t4 = space();
-			if (if_block2) if_block2.c();
-			t5 = space();
-			this.h();
+			create_component(checkbox.$$.fragment);
 		},
 		l(nodes) {
-			div5 = claim_element(nodes, "DIV", {
-				id: true,
-				"data-index": true,
-				"data-id": true,
-				"data-graby": true,
-				class: true
-			});
-
-			var div5_nodes = children(div5);
-			div4 = claim_element(div5_nodes, "DIV", { class: true });
-			var div4_nodes = children(div4);
-			div0 = claim_element(div4_nodes, "DIV", { class: true });
-			var div0_nodes = children(div0);
-
-			svg0 = claim_element(
-				div0_nodes,
-				"svg",
-				{
-					xmlns: true,
-					class: true,
-					width: true,
-					height: true,
-					viewBox: true,
-					"stroke-width": true,
-					stroke: true,
-					fill: true,
-					"stroke-linecap": true,
-					"stroke-linejoin": true
-				},
-				1
-			);
-
-			var svg0_nodes = children(svg0);
-			path0 = claim_element(svg0_nodes, "path", { stroke: true, d: true, fill: true }, 1);
-			children(path0).forEach(detach);
-			circle0 = claim_element(svg0_nodes, "circle", { cx: true, cy: true, r: true }, 1);
-			children(circle0).forEach(detach);
-			circle1 = claim_element(svg0_nodes, "circle", { cx: true, cy: true, r: true }, 1);
-			children(circle1).forEach(detach);
-			circle2 = claim_element(svg0_nodes, "circle", { cx: true, cy: true, r: true }, 1);
-			children(circle2).forEach(detach);
-			circle3 = claim_element(svg0_nodes, "circle", { cx: true, cy: true, r: true }, 1);
-			children(circle3).forEach(detach);
-			circle4 = claim_element(svg0_nodes, "circle", { cx: true, cy: true, r: true }, 1);
-			children(circle4).forEach(detach);
-			circle5 = claim_element(svg0_nodes, "circle", { cx: true, cy: true, r: true }, 1);
-			children(circle5).forEach(detach);
-			svg0_nodes.forEach(detach);
-			div0_nodes.forEach(detach);
-			t0 = claim_space(div4_nodes);
-			div1 = claim_element(div4_nodes, "DIV", { class: true });
-			var div1_nodes = children(div1);
-			button0 = claim_element(div1_nodes, "BUTTON", { class: true, style: true });
-			var button0_nodes = children(button0);
-
-			svg1 = claim_element(
-				button0_nodes,
-				"svg",
-				{
-					xmlns: true,
-					viewBox: true,
-					width: true,
-					height: true
-				},
-				1
-			);
-
-			var svg1_nodes = children(svg1);
-			path1 = claim_element(svg1_nodes, "path", { d: true, fill: true }, 1);
-			children(path1).forEach(detach);
-			path2 = claim_element(svg1_nodes, "path", { d: true }, 1);
-			children(path2).forEach(detach);
-			svg1_nodes.forEach(detach);
-			button0_nodes.forEach(detach);
-			t1 = claim_space(div1_nodes);
-			button1 = claim_element(div1_nodes, "BUTTON", { class: true, style: true });
-			var button1_nodes = children(button1);
-
-			svg2 = claim_element(
-				button1_nodes,
-				"svg",
-				{
-					xmlns: true,
-					viewBox: true,
-					width: true,
-					height: true
-				},
-				1
-			);
-
-			var svg2_nodes = children(svg2);
-			path3 = claim_element(svg2_nodes, "path", { d: true, fill: true }, 1);
-			children(path3).forEach(detach);
-			path4 = claim_element(svg2_nodes, "path", { d: true }, 1);
-			children(path4).forEach(detach);
-			svg2_nodes.forEach(detach);
-			button1_nodes.forEach(detach);
-			div1_nodes.forEach(detach);
-			t2 = claim_space(div4_nodes);
-			div2 = claim_element(div4_nodes, "DIV", { class: true });
-			var div2_nodes = children(div2);
-			if_block0.l(div2_nodes);
-			div2_nodes.forEach(detach);
-			t3 = claim_space(div4_nodes);
-			div3 = claim_element(div4_nodes, "DIV", { class: true });
-			var div3_nodes = children(div3);
-			if (if_block1) if_block1.l(div3_nodes);
-			div3_nodes.forEach(detach);
-			div4_nodes.forEach(detach);
-			t4 = claim_space(div5_nodes);
-			if (if_block2) if_block2.l(div5_nodes);
-			t5 = claim_space(div5_nodes);
-			div5_nodes.forEach(detach);
-			this.h();
-		},
-		h() {
-			attr(path0, "stroke", "none");
-			attr(path0, "d", "M0 0h24v24H0z");
-			attr(path0, "fill", "none");
-			attr(circle0, "cx", "5");
-			attr(circle0, "cy", "9");
-			attr(circle0, "r", "1");
-			attr(circle1, "cx", "5");
-			attr(circle1, "cy", "15");
-			attr(circle1, "r", "1");
-			attr(circle2, "cx", "12");
-			attr(circle2, "cy", "9");
-			attr(circle2, "r", "1");
-			attr(circle3, "cx", "12");
-			attr(circle3, "cy", "15");
-			attr(circle3, "r", "1");
-			attr(circle4, "cx", "19");
-			attr(circle4, "cy", "9");
-			attr(circle4, "r", "1");
-			attr(circle5, "cx", "19");
-			attr(circle5, "cy", "15");
-			attr(circle5, "r", "1");
-			attr(svg0, "xmlns", "http://www.w3.org/2000/svg");
-			attr(svg0, "class", "icon icon-tabler icon-tabler-grip-horizontal");
-			attr(svg0, "width", "30");
-			attr(svg0, "height", "30");
-			attr(svg0, "viewBox", "0 0 24 24");
-			attr(svg0, "stroke-width", "1.5");
-			attr(svg0, "stroke", "#2c3e50");
-			attr(svg0, "fill", "none");
-			attr(svg0, "stroke-linecap", "round");
-			attr(svg0, "stroke-linejoin", "round");
-			attr(div0, "class", "grip svelte-ltyhti");
-			attr(path1, "d", "M0 0h24v24H0V0z");
-			attr(path1, "fill", "none");
-			attr(path2, "d", "M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6 1.41 1.41z");
-			attr(svg1, "xmlns", "http://www.w3.org/2000/svg");
-			attr(svg1, "viewBox", "0 0 24 24");
-			attr(svg1, "width", "16px");
-			attr(svg1, "height", "16px");
-			attr(button0, "class", "up svelte-ltyhti");
-			attr(button0, "style", button0_style_value = "visibility: " + (/*key*/ ctx[69] > 0 ? "" : "hidden") + ";");
-			attr(path3, "d", "M0 0h24v24H0V0z");
-			attr(path3, "fill", "none");
-			attr(path4, "d", "M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z");
-			attr(svg2, "xmlns", "http://www.w3.org/2000/svg");
-			attr(svg2, "viewBox", "0 0 24 24");
-			attr(svg2, "width", "16px");
-			attr(svg2, "height", "16px");
-			attr(button1, "class", "down svelte-ltyhti");
-
-			attr(button1, "style", button1_style_value = "visibility: " + (/*key*/ ctx[69] < /*field*/ ctx[0].length - 1
-			? ""
-			: "hidden") + ";");
-
-			attr(div1, "class", "buttons svelte-ltyhti");
-			attr(div2, "class", "content svelte-ltyhti");
-			attr(div3, "class", "buttons svelte-ltyhti");
-			attr(div4, "class", "item svelte-ltyhti");
-
-			attr(div5, "id", div5_id_value = /*grabbed*/ ctx[9] && /*compID*/ ctx[19] == /*grabbed*/ ctx[9].dataset.id
-			? "grabbed"
-			: "");
-
-			attr(div5, "data-index", div5_data_index_value = /*key*/ ctx[69]);
-			attr(div5, "data-id", /*compID*/ ctx[19]);
-			attr(div5, "data-graby", "0");
-			attr(div5, "class", "item-wrapper svelte-ltyhti");
-			this.first = div5;
+			claim_component(checkbox.$$.fragment, nodes);
 		},
 		m(target, anchor) {
-			insert(target, div5, anchor);
-			append(div5, div4);
-			append(div4, div0);
-			append(div0, svg0);
-			append(svg0, path0);
-			append(svg0, circle0);
-			append(svg0, circle1);
-			append(svg0, circle2);
-			append(svg0, circle3);
-			append(svg0, circle4);
-			append(svg0, circle5);
-			append(div4, t0);
-			append(div4, div1);
-			append(div1, button0);
-			append(button0, svg1);
-			append(svg1, path1);
-			append(svg1, path2);
-			append(div1, t1);
-			append(div1, button1);
-			append(button1, svg2);
-			append(svg2, path3);
-			append(svg2, path4);
-			append(div4, t2);
-			append(div4, div2);
-			if_block0.m(div2, null);
-			append(div4, t3);
-			append(div4, div3);
-			if (if_block1) if_block1.m(div3, null);
-			append(div5, t4);
-			if (if_block2) if_block2.m(div5, null);
-			append(div5, t5);
+			mount_component(checkbox, target, anchor);
 			current = true;
-
-			if (!mounted) {
-				dispose = [
-					listen(div0, "mousedown", /*mousedown_handler*/ ctx[47]),
-					listen(div0, "touchstart", /*touchstart_handler*/ ctx[48]),
-					listen(div0, "mouseenter", /*mouseenter_handler*/ ctx[49]),
-					listen(div0, "touchmove", /*touchmove_handler*/ ctx[50]),
-					listen(button0, "click", prevent_default(click_handler_8)),
-					listen(button1, "click", prevent_default(click_handler_9)),
-					listen(div2, "click", prevent_default(function () {
-						if (is_function(/*accordion*/ ctx[18](/*key*/ ctx[69]))) /*accordion*/ ctx[18](/*key*/ ctx[69]).apply(this, arguments);
-					}))
-				];
-
-				mounted = true;
-			}
 		},
-		p(new_ctx, dirty) {
-			ctx = new_ctx;
+		p(ctx, dirty) {
+			const checkbox_changes = {};
+			if (dirty[0] & /*schema*/ 64) checkbox_changes.schema = /*schema*/ ctx[6];
+			if (dirty[0] & /*parentKeys*/ 32) checkbox_changes.parentKeys = /*parentKeys*/ ctx[5];
 
-			if (!current || dirty[0] & /*field*/ 1 && button0_style_value !== (button0_style_value = "visibility: " + (/*key*/ ctx[69] > 0 ? "" : "hidden") + ";")) {
-				attr(button0, "style", button0_style_value);
+			if (!updating_field && dirty[0] & /*field*/ 1) {
+				updating_field = true;
+				checkbox_changes.field = /*field*/ ctx[0];
+				add_flush_callback(() => updating_field = false);
 			}
 
-			if (!current || dirty[0] & /*field*/ 1 && button1_style_value !== (button1_style_value = "visibility: " + (/*key*/ ctx[69] < /*field*/ ctx[0].length - 1
-			? ""
-			: "hidden") + ";")) {
-				attr(button1, "style", button1_style_value);
-			}
-
-			if (current_block_type === (current_block_type = select_block_type_3(ctx, dirty)) && if_block0) {
-				if_block0.p(ctx, dirty);
-			} else {
-				if_block0.d(1);
-				if_block0 = current_block_type(ctx);
-
-				if (if_block0) {
-					if_block0.c();
-					if_block0.m(div2, null);
-				}
-			}
-
-			if (/*removesItems*/ ctx[5]) {
-				if (if_block1) {
-					if_block1.p(ctx, dirty);
-				} else {
-					if_block1 = create_if_block_12(ctx);
-					if_block1.c();
-					if_block1.m(div3, null);
-				}
-			} else if (if_block1) {
-				if_block1.d(1);
-				if_block1 = null;
-			}
-
-			if (dirty[0] & /*openKeys, field*/ 129) show_if = /*openKeys*/ ctx[7].includes(/*key*/ ctx[69]);
-
-			if (show_if) {
-				if (if_block2) {
-					if_block2.p(ctx, dirty);
-
-					if (dirty[0] & /*openKeys, field*/ 129) {
-						transition_in(if_block2, 1);
-					}
-				} else {
-					if_block2 = create_if_block_11(ctx);
-					if_block2.c();
-					transition_in(if_block2, 1);
-					if_block2.m(div5, t5);
-				}
-			} else if (if_block2) {
-				group_outros();
-
-				transition_out(if_block2, 1, 1, () => {
-					if_block2 = null;
-				});
-
-				check_outros();
-			}
-
-			if (!current || dirty[0] & /*grabbed*/ 512 && div5_id_value !== (div5_id_value = /*grabbed*/ ctx[9] && /*compID*/ ctx[19] == /*grabbed*/ ctx[9].dataset.id
-			? "grabbed"
-			: "")) {
-				attr(div5, "id", div5_id_value);
-			}
-
-			if (!current || dirty[0] & /*field*/ 1 && div5_data_index_value !== (div5_data_index_value = /*key*/ ctx[69])) {
-				attr(div5, "data-index", div5_data_index_value);
-			}
-		},
-		r() {
-			rect = div5.getBoundingClientRect();
-		},
-		f() {
-			fix_position(div5);
-			stop_animation();
-		},
-		a() {
-			stop_animation();
-			stop_animation = create_animation(div5, rect, flip, { duration: /*isOpen*/ ctx[6] ? null : 200 });
+			checkbox.$set(checkbox_changes);
 		},
 		i(local) {
 			if (current) return;
-			transition_in(if_block2);
+			transition_in(checkbox.$$.fragment, local);
 			current = true;
 		},
 		o(local) {
-			transition_out(if_block2);
+			transition_out(checkbox.$$.fragment, local);
 			current = false;
 		},
 		d(detaching) {
-			if (detaching) detach(div5);
-			if_block0.d();
-			if (if_block1) if_block1.d();
-			if (if_block2) if_block2.d();
-			mounted = false;
-			run_all(dispose);
+			destroy_component(checkbox, detaching);
 		}
 	};
 }
 
-// (161:4) {:else}
-function create_else_block(ctx) {
-	let div5;
-	let div3;
-	let button0;
-	let b;
-	let t0;
-	let t1;
-	let button1;
-	let i;
-	let t2;
-	let t3;
-	let button2;
-	let u;
-	let t4;
-	let t5;
-	let div0;
-	let t6;
-	let button3;
-	let svg0;
-	let path0;
-	let path1;
-	let path2;
-	let path3;
-	let circle0;
-	let circle1;
-	let t7;
-	let button4;
-	let svg1;
-	let path4;
-	let path5;
-	let path6;
-	let path7;
-	let path8;
-	let path9;
-	let t8;
-	let div1;
-	let t9;
-	let button5;
-	let svg2;
-	let path10;
-	let path11;
-	let path12;
-	let t10;
-	let button6;
-	let svg3;
-	let path13;
-	let path14;
-	let path15;
-	let line0;
-	let line1;
-	let line2;
-	let line3;
-	let t11;
-	let div2;
-	let t12;
-	let button7;
-	let svg4;
-	let path16;
-	let path17;
-	let path18;
-	let line4;
-	let line5;
-	let t13;
-	let div4;
-	let mounted;
-	let dispose;
+// (39:8) {#if schema[parentKeys].type === "radio"}
+function create_if_block_12(ctx) {
+	let radio;
+	let updating_field;
+	let current;
 
-	return {
-		c() {
-			div5 = element("div");
-			div3 = element("div");
-			button0 = element("button");
-			b = element("b");
-			t0 = text("B");
-			t1 = space();
-			button1 = element("button");
-			i = element("i");
-			t2 = text("I");
-			t3 = space();
-			button2 = element("button");
-			u = element("u");
-			t4 = text("U");
-			t5 = space();
-			div0 = element("div");
-			t6 = space();
-			button3 = element("button");
-			svg0 = svg_element("svg");
-			path0 = svg_element("path");
-			path1 = svg_element("path");
-			path2 = svg_element("path");
-			path3 = svg_element("path");
-			circle0 = svg_element("circle");
-			circle1 = svg_element("circle");
-			t7 = space();
-			button4 = element("button");
-			svg1 = svg_element("svg");
-			path4 = svg_element("path");
-			path5 = svg_element("path");
-			path6 = svg_element("path");
-			path7 = svg_element("path");
-			path8 = svg_element("path");
-			path9 = svg_element("path");
-			t8 = space();
-			div1 = element("div");
-			t9 = space();
-			button5 = element("button");
-			svg2 = svg_element("svg");
-			path10 = svg_element("path");
-			path11 = svg_element("path");
-			path12 = svg_element("path");
-			t10 = space();
-			button6 = element("button");
-			svg3 = svg_element("svg");
-			path13 = svg_element("path");
-			path14 = svg_element("path");
-			path15 = svg_element("path");
-			line0 = svg_element("line");
-			line1 = svg_element("line");
-			line2 = svg_element("line");
-			line3 = svg_element("line");
-			t11 = space();
-			div2 = element("div");
-			t12 = space();
-			button7 = element("button");
-			svg4 = svg_element("svg");
-			path16 = svg_element("path");
-			path17 = svg_element("path");
-			path18 = svg_element("path");
-			line4 = svg_element("line");
-			line5 = svg_element("line");
-			t13 = space();
-			div4 = element("div");
-			this.h();
-		},
-		l(nodes) {
-			div5 = claim_element(nodes, "DIV", { class: true });
-			var div5_nodes = children(div5);
-			div3 = claim_element(div5_nodes, "DIV", { class: true });
-			var div3_nodes = children(div3);
-			button0 = claim_element(div3_nodes, "BUTTON", { title: true, class: true });
-			var button0_nodes = children(button0);
-			b = claim_element(button0_nodes, "B", {});
-			var b_nodes = children(b);
-			t0 = claim_text(b_nodes, "B");
-			b_nodes.forEach(detach);
-			button0_nodes.forEach(detach);
-			t1 = claim_space(div3_nodes);
-			button1 = claim_element(div3_nodes, "BUTTON", { title: true, class: true });
-			var button1_nodes = children(button1);
-			i = claim_element(button1_nodes, "I", {});
-			var i_nodes = children(i);
-			t2 = claim_text(i_nodes, "I");
-			i_nodes.forEach(detach);
-			button1_nodes.forEach(detach);
-			t3 = claim_space(div3_nodes);
-			button2 = claim_element(div3_nodes, "BUTTON", { title: true, class: true });
-			var button2_nodes = children(button2);
-			u = claim_element(button2_nodes, "U", {});
-			var u_nodes = children(u);
-			t4 = claim_text(u_nodes, "U");
-			u_nodes.forEach(detach);
-			button2_nodes.forEach(detach);
-			t5 = claim_space(div3_nodes);
-			div0 = claim_element(div3_nodes, "DIV", { class: true });
-			children(div0).forEach(detach);
-			t6 = claim_space(div3_nodes);
-			button3 = claim_element(div3_nodes, "BUTTON", { class: true });
-			var button3_nodes = children(button3);
-
-			svg0 = claim_element(
-				button3_nodes,
-				"svg",
-				{
-					xmlns: true,
-					class: true,
-					width: true,
-					height: true,
-					viewBox: true,
-					"stroke-width": true,
-					stroke: true,
-					fill: true,
-					"stroke-linecap": true,
-					"stroke-linejoin": true
-				},
-				1
-			);
-
-			var svg0_nodes = children(svg0);
-			path0 = claim_element(svg0_nodes, "path", { stroke: true, d: true, fill: true }, 1);
-			children(path0).forEach(detach);
-			path1 = claim_element(svg0_nodes, "path", { d: true }, 1);
-			children(path1).forEach(detach);
-			path2 = claim_element(svg0_nodes, "path", { d: true }, 1);
-			children(path2).forEach(detach);
-			path3 = claim_element(svg0_nodes, "path", { d: true }, 1);
-			children(path3).forEach(detach);
-			circle0 = claim_element(svg0_nodes, "circle", { cx: true, r: true, cy: true }, 1);
-			children(circle0).forEach(detach);
-			circle1 = claim_element(svg0_nodes, "circle", { cx: true, r: true, cy: true }, 1);
-			children(circle1).forEach(detach);
-			svg0_nodes.forEach(detach);
-			button3_nodes.forEach(detach);
-			t7 = claim_space(div3_nodes);
-			button4 = claim_element(div3_nodes, "BUTTON", { class: true });
-			var button4_nodes = children(button4);
-
-			svg1 = claim_element(
-				button4_nodes,
-				"svg",
-				{
-					xmlns: true,
-					class: true,
-					width: true,
-					height: true,
-					viewBox: true,
-					"stroke-width": true,
-					stroke: true,
-					fill: true,
-					"stroke-linecap": true,
-					"stroke-linejoin": true
-				},
-				1
-			);
-
-			var svg1_nodes = children(svg1);
-			path4 = claim_element(svg1_nodes, "path", { stroke: true, d: true, fill: true }, 1);
-			children(path4).forEach(detach);
-			path5 = claim_element(svg1_nodes, "path", { d: true }, 1);
-			children(path5).forEach(detach);
-			path6 = claim_element(svg1_nodes, "path", { d: true }, 1);
-			children(path6).forEach(detach);
-			path7 = claim_element(svg1_nodes, "path", { d: true }, 1);
-			children(path7).forEach(detach);
-			path8 = claim_element(svg1_nodes, "path", { d: true }, 1);
-			children(path8).forEach(detach);
-			path9 = claim_element(svg1_nodes, "path", { d: true }, 1);
-			children(path9).forEach(detach);
-			svg1_nodes.forEach(detach);
-			button4_nodes.forEach(detach);
-			t8 = claim_space(div3_nodes);
-			div1 = claim_element(div3_nodes, "DIV", { class: true });
-			children(div1).forEach(detach);
-			t9 = claim_space(div3_nodes);
-			button5 = claim_element(div3_nodes, "BUTTON", { class: true });
-			var button5_nodes = children(button5);
-
-			svg2 = claim_element(
-				button5_nodes,
-				"svg",
-				{
-					xmlns: true,
-					class: true,
-					width: true,
-					height: true,
-					viewBox: true,
-					"stroke-width": true,
-					stroke: true,
-					fill: true,
-					"stroke-linecap": true,
-					"stroke-linejoin": true
-				},
-				1
-			);
-
-			var svg2_nodes = children(svg2);
-			path10 = claim_element(svg2_nodes, "path", { stroke: true, d: true, fill: true }, 1);
-			children(path10).forEach(detach);
-			path11 = claim_element(svg2_nodes, "path", { d: true }, 1);
-			children(path11).forEach(detach);
-			path12 = claim_element(svg2_nodes, "path", { d: true }, 1);
-			children(path12).forEach(detach);
-			svg2_nodes.forEach(detach);
-			button5_nodes.forEach(detach);
-			t10 = claim_space(div3_nodes);
-			button6 = claim_element(div3_nodes, "BUTTON", { class: true });
-			var button6_nodes = children(button6);
-
-			svg3 = claim_element(
-				button6_nodes,
-				"svg",
-				{
-					xmlns: true,
-					class: true,
-					width: true,
-					height: true,
-					viewBox: true,
-					"stroke-width": true,
-					stroke: true,
-					fill: true,
-					"stroke-linecap": true,
-					"stroke-linejoin": true
-				},
-				1
-			);
-
-			var svg3_nodes = children(svg3);
-			path13 = claim_element(svg3_nodes, "path", { stroke: true, d: true, fill: true }, 1);
-			children(path13).forEach(detach);
-			path14 = claim_element(svg3_nodes, "path", { d: true }, 1);
-			children(path14).forEach(detach);
-			path15 = claim_element(svg3_nodes, "path", { d: true }, 1);
-			children(path15).forEach(detach);
-			line0 = claim_element(svg3_nodes, "line", { x1: true, y1: true, x2: true, y2: true }, 1);
-			children(line0).forEach(detach);
-			line1 = claim_element(svg3_nodes, "line", { x1: true, y1: true, x2: true, y2: true }, 1);
-			children(line1).forEach(detach);
-			line2 = claim_element(svg3_nodes, "line", { x1: true, y1: true, x2: true, y2: true }, 1);
-			children(line2).forEach(detach);
-			line3 = claim_element(svg3_nodes, "line", { x1: true, y1: true, x2: true, y2: true }, 1);
-			children(line3).forEach(detach);
-			svg3_nodes.forEach(detach);
-			button6_nodes.forEach(detach);
-			t11 = claim_space(div3_nodes);
-			div2 = claim_element(div3_nodes, "DIV", { class: true });
-			children(div2).forEach(detach);
-			t12 = claim_space(div3_nodes);
-			button7 = claim_element(div3_nodes, "BUTTON", { class: true });
-			var button7_nodes = children(button7);
-
-			svg4 = claim_element(
-				button7_nodes,
-				"svg",
-				{
-					xmlns: true,
-					class: true,
-					width: true,
-					height: true,
-					viewBox: true,
-					"stroke-width": true,
-					stroke: true,
-					fill: true,
-					"stroke-linecap": true,
-					"stroke-linejoin": true
-				},
-				1
-			);
-
-			var svg4_nodes = children(svg4);
-			path16 = claim_element(svg4_nodes, "path", { stroke: true, d: true, fill: true }, 1);
-			children(path16).forEach(detach);
-			path17 = claim_element(svg4_nodes, "path", { d: true }, 1);
-			children(path17).forEach(detach);
-			path18 = claim_element(svg4_nodes, "path", { d: true }, 1);
-			children(path18).forEach(detach);
-			line4 = claim_element(svg4_nodes, "line", { x1: true, y1: true, x2: true, y2: true }, 1);
-			children(line4).forEach(detach);
-			line5 = claim_element(svg4_nodes, "line", { x1: true, y1: true, x2: true, y2: true }, 1);
-			children(line5).forEach(detach);
-			svg4_nodes.forEach(detach);
-			button7_nodes.forEach(detach);
-			div3_nodes.forEach(detach);
-			t13 = claim_space(div5_nodes);
-
-			div4 = claim_element(div5_nodes, "DIV", {
-				id: true,
-				class: true,
-				contenteditable: true
-			});
-
-			children(div4).forEach(detach);
-			div5_nodes.forEach(detach);
-			this.h();
-		},
-		h() {
-			attr(button0, "title", "Bold the selected text");
-			attr(button0, "class", "svelte-ltyhti");
-			attr(button1, "title", "Italicize the selected text");
-			attr(button1, "class", "svelte-ltyhti");
-			attr(button2, "title", "Underline the selected text");
-			attr(button2, "class", "svelte-ltyhti");
-			attr(div0, "class", "spacer svelte-ltyhti");
-			attr(path0, "stroke", "none");
-			attr(path0, "d", "M0 0h24v24H0z");
-			attr(path0, "fill", "none");
-			attr(path1, "d", "M11 6h9");
-			attr(path2, "d", "M11 12h9");
-			attr(path3, "d", "M12 18h8");
-			attr(circle0, "cx", "5");
-			attr(circle0, "r", "2");
-			attr(circle0, "cy", "7");
-			attr(circle1, "cx", "5");
-			attr(circle1, "r", "2");
-			attr(circle1, "cy", "17");
-			attr(svg0, "xmlns", "http://www.w3.org/2000/svg");
-			attr(svg0, "class", "icon icon-tabler icon-tabler-list-numbers-MODIFIED svelte-ltyhti");
-			attr(svg0, "width", "20");
-			attr(svg0, "height", "20");
-			attr(svg0, "viewBox", "0 0 24 24");
-			attr(svg0, "stroke-width", "1.5");
-			attr(svg0, "stroke", "black");
-			attr(svg0, "fill", "none");
-			attr(svg0, "stroke-linecap", "round");
-			attr(svg0, "stroke-linejoin", "round");
-			attr(button3, "class", "svelte-ltyhti");
-			attr(path4, "stroke", "none");
-			attr(path4, "d", "M0 0h24v24H0z");
-			attr(path4, "fill", "none");
-			attr(path5, "d", "M11 6h9");
-			attr(path6, "d", "M11 12h9");
-			attr(path7, "d", "M12 18h8");
-			attr(path8, "d", "M4 16a2 2 0 1 1 4 0c0 .591 -.5 1 -1 1.5l-3 2.5h4");
-			attr(path9, "d", "M6 10v-6l-2 2");
-			attr(svg1, "xmlns", "http://www.w3.org/2000/svg");
-			attr(svg1, "class", "icon icon-tabler icon-tabler-list-numbers svelte-ltyhti");
-			attr(svg1, "width", "20");
-			attr(svg1, "height", "20");
-			attr(svg1, "viewBox", "0 0 24 24");
-			attr(svg1, "stroke-width", "1.5");
-			attr(svg1, "stroke", "black");
-			attr(svg1, "fill", "none");
-			attr(svg1, "stroke-linecap", "round");
-			attr(svg1, "stroke-linejoin", "round");
-			attr(button4, "class", "svelte-ltyhti");
-			attr(div1, "class", "spacer svelte-ltyhti");
-			attr(path10, "stroke", "none");
-			attr(path10, "d", "M0 0h24v24H0z");
-			attr(path10, "fill", "none");
-			attr(path11, "d", "M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5");
-			attr(path12, "d", "M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5");
-			attr(svg2, "xmlns", "http://www.w3.org/2000/svg");
-			attr(svg2, "class", "icon icon-tabler icon-tabler-link svelte-ltyhti");
-			attr(svg2, "width", "20");
-			attr(svg2, "height", "20");
-			attr(svg2, "viewBox", "0 0 24 24");
-			attr(svg2, "stroke-width", "1.5");
-			attr(svg2, "stroke", "black");
-			attr(svg2, "fill", "none");
-			attr(svg2, "stroke-linecap", "round");
-			attr(svg2, "stroke-linejoin", "round");
-			attr(button5, "class", "svelte-ltyhti");
-			attr(path13, "stroke", "none");
-			attr(path13, "d", "M0 0h24v24H0z");
-			attr(path13, "fill", "none");
-			attr(path14, "d", "M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5");
-			attr(path15, "d", "M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5");
-			attr(line0, "x1", "16");
-			attr(line0, "y1", "21");
-			attr(line0, "x2", "16");
-			attr(line0, "y2", "19");
-			attr(line1, "x1", "19");
-			attr(line1, "y1", "16");
-			attr(line1, "x2", "21");
-			attr(line1, "y2", "16");
-			attr(line2, "x1", "3");
-			attr(line2, "y1", "8");
-			attr(line2, "x2", "5");
-			attr(line2, "y2", "8");
-			attr(line3, "x1", "8");
-			attr(line3, "y1", "3");
-			attr(line3, "x2", "8");
-			attr(line3, "y2", "5");
-			attr(svg3, "xmlns", "http://www.w3.org/2000/svg");
-			attr(svg3, "class", "icon icon-tabler icon-tabler-unlink svelte-ltyhti");
-			attr(svg3, "width", "20");
-			attr(svg3, "height", "20");
-			attr(svg3, "viewBox", "0 0 24 24");
-			attr(svg3, "stroke-width", "1.5");
-			attr(svg3, "stroke", "black");
-			attr(svg3, "fill", "none");
-			attr(svg3, "stroke-linecap", "round");
-			attr(svg3, "stroke-linejoin", "round");
-			attr(button6, "class", "svelte-ltyhti");
-			attr(div2, "class", "spacer svelte-ltyhti");
-			attr(path16, "stroke", "none");
-			attr(path16, "d", "M0 0h24v24H0z");
-			attr(path16, "fill", "none");
-			attr(path17, "d", "M17 15l4 4m0 -4l-4 4");
-			attr(path18, "d", "M7 6v-1h11v1");
-			attr(line4, "x1", "7");
-			attr(line4, "y1", "19");
-			attr(line4, "x2", "11");
-			attr(line4, "y2", "19");
-			attr(line5, "x1", "13");
-			attr(line5, "y1", "5");
-			attr(line5, "x2", "9");
-			attr(line5, "y2", "19");
-			attr(svg4, "xmlns", "http://www.w3.org/2000/svg");
-			attr(svg4, "class", "icon icon-tabler icon-tabler-clear-formatting svelte-ltyhti");
-			attr(svg4, "width", "20");
-			attr(svg4, "height", "20");
-			attr(svg4, "viewBox", "0 0 24 24");
-			attr(svg4, "stroke-width", "1.5");
-			attr(svg4, "stroke", "black");
-			attr(svg4, "fill", "none");
-			attr(svg4, "stroke-linecap", "round");
-			attr(svg4, "stroke-linejoin", "round");
-			attr(button7, "class", "svelte-ltyhti");
-			attr(div3, "class", "editor svelte-ltyhti");
-			attr(div4, "id", /*label*/ ctx[4]);
-			attr(div4, "class", "textarea svelte-ltyhti");
-			attr(div4, "contenteditable", "true");
-			if (/*field*/ ctx[0] === void 0) add_render_callback(() => /*div4_input_handler*/ ctx[43].call(div4));
-			attr(div5, "class", "field svelte-ltyhti");
-		},
-		m(target, anchor) {
-			insert(target, div5, anchor);
-			append(div5, div3);
-			append(div3, button0);
-			append(button0, b);
-			append(b, t0);
-			append(div3, t1);
-			append(div3, button1);
-			append(button1, i);
-			append(i, t2);
-			append(div3, t3);
-			append(div3, button2);
-			append(button2, u);
-			append(u, t4);
-			append(div3, t5);
-			append(div3, div0);
-			append(div3, t6);
-			append(div3, button3);
-			append(button3, svg0);
-			append(svg0, path0);
-			append(svg0, path1);
-			append(svg0, path2);
-			append(svg0, path3);
-			append(svg0, circle0);
-			append(svg0, circle1);
-			append(div3, t7);
-			append(div3, button4);
-			append(button4, svg1);
-			append(svg1, path4);
-			append(svg1, path5);
-			append(svg1, path6);
-			append(svg1, path7);
-			append(svg1, path8);
-			append(svg1, path9);
-			append(div3, t8);
-			append(div3, div1);
-			append(div3, t9);
-			append(div3, button5);
-			append(button5, svg2);
-			append(svg2, path10);
-			append(svg2, path11);
-			append(svg2, path12);
-			append(div3, t10);
-			append(div3, button6);
-			append(button6, svg3);
-			append(svg3, path13);
-			append(svg3, path14);
-			append(svg3, path15);
-			append(svg3, line0);
-			append(svg3, line1);
-			append(svg3, line2);
-			append(svg3, line3);
-			append(div3, t11);
-			append(div3, div2);
-			append(div3, t12);
-			append(div3, button7);
-			append(button7, svg4);
-			append(svg4, path16);
-			append(svg4, path17);
-			append(svg4, path18);
-			append(svg4, line4);
-			append(svg4, line5);
-			append(div5, t13);
-			append(div5, div4);
-
-			if (/*field*/ ctx[0] !== void 0) {
-				div4.innerHTML = /*field*/ ctx[0];
-			}
-
-			/*div4_binding*/ ctx[44](div4);
-
-			if (!mounted) {
-				dispose = [
-					listen(button0, "click", function () {
-						if (is_function(/*textarea*/ ctx[13].focus())) /*textarea*/ ctx[13].focus().apply(this, arguments);
-					}),
-					listen(button0, "click", prevent_default(/*click_handler*/ ctx[35])),
-					listen(button1, "click", function () {
-						if (is_function(/*textarea*/ ctx[13].focus())) /*textarea*/ ctx[13].focus().apply(this, arguments);
-					}),
-					listen(button1, "click", prevent_default(/*click_handler_1*/ ctx[36])),
-					listen(button2, "click", function () {
-						if (is_function(/*textarea*/ ctx[13].focus())) /*textarea*/ ctx[13].focus().apply(this, arguments);
-					}),
-					listen(button2, "click", prevent_default(/*click_handler_2*/ ctx[37])),
-					listen(button3, "click", function () {
-						if (is_function(/*textarea*/ ctx[13].focus())) /*textarea*/ ctx[13].focus().apply(this, arguments);
-					}),
-					listen(button3, "click", prevent_default(/*click_handler_3*/ ctx[38])),
-					listen(button4, "click", function () {
-						if (is_function(/*textarea*/ ctx[13].focus())) /*textarea*/ ctx[13].focus().apply(this, arguments);
-					}),
-					listen(button4, "click", prevent_default(/*click_handler_4*/ ctx[39])),
-					listen(button5, "click", function () {
-						if (is_function(/*textarea*/ ctx[13].focus())) /*textarea*/ ctx[13].focus().apply(this, arguments);
-					}),
-					listen(button5, "click", /*createLink*/ ctx[27]),
-					listen(button5, "click", prevent_default(/*click_handler_5*/ ctx[40])),
-					listen(button6, "click", function () {
-						if (is_function(/*textarea*/ ctx[13].focus())) /*textarea*/ ctx[13].focus().apply(this, arguments);
-					}),
-					listen(button6, "click", prevent_default(/*click_handler_6*/ ctx[41])),
-					listen(button7, "click", function () {
-						if (is_function(/*textarea*/ ctx[13].focus())) /*textarea*/ ctx[13].focus().apply(this, arguments);
-					}),
-					listen(button7, "click", prevent_default(/*click_handler_7*/ ctx[42])),
-					listen(div4, "input", /*div4_input_handler*/ ctx[43])
-				];
-
-				mounted = true;
-			}
-		},
-		p(new_ctx, dirty) {
-			ctx = new_ctx;
-
-			if (dirty[0] & /*label*/ 16) {
-				attr(div4, "id", /*label*/ ctx[4]);
-			}
-
-			if (dirty[0] & /*field*/ 1 && /*field*/ ctx[0] !== div4.innerHTML) {
-				div4.innerHTML = /*field*/ ctx[0];
-			}
-		},
-		d(detaching) {
-			if (detaching) detach(div5);
-			/*div4_binding*/ ctx[44](null);
-			mounted = false;
-			run_all(dispose);
-		}
-	};
-}
-
-// (157:32) 
-function create_if_block_8(ctx) {
-	let div;
-	let input;
-	let mounted;
-	let dispose;
-
-	return {
-		c() {
-			div = element("div");
-			input = element("input");
-			this.h();
-		},
-		l(nodes) {
-			div = claim_element(nodes, "DIV", { class: true });
-			var div_nodes = children(div);
-			input = claim_element(div_nodes, "INPUT", { id: true, type: true, class: true });
-			div_nodes.forEach(detach);
-			this.h();
-		},
-		h() {
-			attr(input, "id", /*label*/ ctx[4]);
-			attr(input, "type", "text");
-			attr(input, "class", "svelte-ltyhti");
-			attr(div, "class", "field svelte-ltyhti");
-		},
-		m(target, anchor) {
-			insert(target, div, anchor);
-			append(div, input);
-			set_input_value(input, /*field*/ ctx[0]);
-
-			if (!mounted) {
-				dispose = listen(input, "input", /*input_input_handler_1*/ ctx[34]);
-				mounted = true;
-			}
-		},
-		p(ctx, dirty) {
-			if (dirty[0] & /*label*/ 16) {
-				attr(input, "id", /*label*/ ctx[4]);
-			}
-
-			if (dirty[0] & /*field*/ 1 && input.value !== /*field*/ ctx[0]) {
-				set_input_value(input, /*field*/ ctx[0]);
-			}
-		},
-		d(detaching) {
-			if (detaching) detach(div);
-			mounted = false;
-			dispose();
-		}
-	};
-}
-
-// (148:33) 
-function create_if_block_5(ctx) {
-	let div;
-	let show_if;
-	let show_if_1;
-	let t0;
-	let button;
-	let t1;
-	let mounted;
-	let dispose;
-
-	function select_block_type_2(ctx, dirty) {
-		if (show_if == null || dirty[0] & /*field*/ 1) show_if = !!isImagePath(/*field*/ ctx[0]);
-		if (show_if) return create_if_block_6;
-		if (show_if_1 == null || dirty[0] & /*field*/ 1) show_if_1 = !!isDocPath(/*field*/ ctx[0]);
-		if (show_if_1) return create_if_block_7;
+	function radio_field_binding(value) {
+		/*radio_field_binding*/ ctx[13](value);
 	}
 
-	let current_block_type = select_block_type_2(ctx, [-1, -1, -1]);
-	let if_block = current_block_type && current_block_type(ctx);
+	let radio_props = {
+		schema: /*schema*/ ctx[6],
+		parentKeys: /*parentKeys*/ ctx[5]
+	};
+
+	if (/*field*/ ctx[0] !== void 0) {
+		radio_props.field = /*field*/ ctx[0];
+	}
+
+	radio = new Radio({ props: radio_props });
+	binding_callbacks.push(() => bind(radio, "field", radio_field_binding));
 
 	return {
 		c() {
-			div = element("div");
-			if (if_block) if_block.c();
-			t0 = space();
-			button = element("button");
-			t1 = text("Change Asset");
-			this.h();
+			create_component(radio.$$.fragment);
 		},
 		l(nodes) {
-			div = claim_element(nodes, "DIV", { class: true });
-			var div_nodes = children(div);
-			if (if_block) if_block.l(div_nodes);
-			t0 = claim_space(div_nodes);
-			button = claim_element(div_nodes, "BUTTON", { class: true });
-			var button_nodes = children(button);
-			t1 = claim_text(button_nodes, "Change Asset");
-			button_nodes.forEach(detach);
-			div_nodes.forEach(detach);
-			this.h();
-		},
-		h() {
-			attr(button, "class", "swap svelte-ltyhti");
-			attr(div, "class", "field thumbnail-wrapper svelte-ltyhti");
+			claim_component(radio.$$.fragment, nodes);
 		},
 		m(target, anchor) {
-			insert(target, div, anchor);
-			if (if_block) if_block.m(div, null);
-			append(div, t0);
-			append(div, button);
-			append(button, t1);
-
-			if (!mounted) {
-				dispose = listen(button, "click", prevent_default(/*swapAsset*/ ctx[28]));
-				mounted = true;
-			}
+			mount_component(radio, target, anchor);
+			current = true;
 		},
 		p(ctx, dirty) {
-			if (current_block_type === (current_block_type = select_block_type_2(ctx, dirty)) && if_block) {
-				if_block.p(ctx, dirty);
-			} else {
-				if (if_block) if_block.d(1);
-				if_block = current_block_type && current_block_type(ctx);
+			const radio_changes = {};
+			if (dirty[0] & /*schema*/ 64) radio_changes.schema = /*schema*/ ctx[6];
+			if (dirty[0] & /*parentKeys*/ 32) radio_changes.parentKeys = /*parentKeys*/ ctx[5];
 
-				if (if_block) {
-					if_block.c();
-					if_block.m(div, t0);
-				}
+			if (!updating_field && dirty[0] & /*field*/ 1) {
+				updating_field = true;
+				radio_changes.field = /*field*/ ctx[0];
+				add_flush_callback(() => updating_field = false);
 			}
+
+			radio.$set(radio_changes);
+		},
+		i(local) {
+			if (current) return;
+			transition_in(radio.$$.fragment, local);
+			current = true;
+		},
+		o(local) {
+			transition_out(radio.$$.fragment, local);
+			current = false;
 		},
 		d(detaching) {
-			if (detaching) detach(div);
-
-			if (if_block) {
-				if_block.d();
-			}
-
-			mounted = false;
-			dispose();
+			destroy_component(radio, detaching);
 		}
 	};
 }
 
-// (144:4) {#if isDate(field)}
-function create_if_block_4(ctx) {
-	let div;
-	let input;
-	let input_value_value;
-	let mounted;
-	let dispose;
+// (42:8) {#if schema[parentKeys].type === "select"}
+function create_if_block_11(ctx) {
+	let select;
+	let updating_field;
+	let current;
+
+	function select_field_binding(value) {
+		/*select_field_binding*/ ctx[14](value);
+	}
+
+	let select_props = {
+		schema: /*schema*/ ctx[6],
+		parentKeys: /*parentKeys*/ ctx[5]
+	};
+
+	if (/*field*/ ctx[0] !== void 0) {
+		select_props.field = /*field*/ ctx[0];
+	}
+
+	select = new Select({ props: select_props });
+	binding_callbacks.push(() => bind(select, "field", select_field_binding));
 
 	return {
 		c() {
-			div = element("div");
-			input = element("input");
-			this.h();
+			create_component(select.$$.fragment);
 		},
 		l(nodes) {
-			div = claim_element(nodes, "DIV", { class: true });
-			var div_nodes = children(div);
-			input = claim_element(div_nodes, "INPUT", { type: true });
-			div_nodes.forEach(detach);
-			this.h();
-		},
-		h() {
-			attr(input, "type", "date");
-			input.value = input_value_value = makeDate(/*field*/ ctx[0]);
-			attr(div, "class", "field svelte-ltyhti");
+			claim_component(select.$$.fragment, nodes);
 		},
 		m(target, anchor) {
-			insert(target, div, anchor);
-			append(div, input);
-
-			if (!mounted) {
-				dispose = listen(input, "input", /*input_handler*/ ctx[32]);
-				mounted = true;
-			}
+			mount_component(select, target, anchor);
+			current = true;
 		},
 		p(ctx, dirty) {
-			if (dirty[0] & /*field*/ 1 && input_value_value !== (input_value_value = makeDate(/*field*/ ctx[0]))) {
-				input.value = input_value_value;
+			const select_changes = {};
+			if (dirty[0] & /*schema*/ 64) select_changes.schema = /*schema*/ ctx[6];
+			if (dirty[0] & /*parentKeys*/ 32) select_changes.parentKeys = /*parentKeys*/ ctx[5];
+
+			if (!updating_field && dirty[0] & /*field*/ 1) {
+				updating_field = true;
+				select_changes.field = /*field*/ ctx[0];
+				add_flush_callback(() => updating_field = false);
 			}
+
+			select.$set(select_changes);
+		},
+		i(local) {
+			if (current) return;
+			transition_in(select.$$.fragment, local);
+			current = true;
+		},
+		o(local) {
+			transition_out(select.$$.fragment, local);
+			current = false;
 		},
 		d(detaching) {
-			if (detaching) detach(div);
-			mounted = false;
-			dispose();
+			destroy_component(select, detaching);
 		}
 	};
 }
 
-// (152:39) 
+// (45:8) {#if schema[parentKeys].type === "wysiwyg"}
+function create_if_block_10(ctx) {
+	let wysiwyg;
+	let updating_field;
+	let current;
+
+	function wysiwyg_field_binding(value) {
+		/*wysiwyg_field_binding*/ ctx[15](value);
+	}
+
+	let wysiwyg_props = {
+		schema: /*schema*/ ctx[6],
+		parentKeys: /*parentKeys*/ ctx[5]
+	};
+
+	if (/*field*/ ctx[0] !== void 0) {
+		wysiwyg_props.field = /*field*/ ctx[0];
+	}
+
+	wysiwyg = new Wysiwyg({ props: wysiwyg_props });
+	binding_callbacks.push(() => bind(wysiwyg, "field", wysiwyg_field_binding));
+
+	return {
+		c() {
+			create_component(wysiwyg.$$.fragment);
+		},
+		l(nodes) {
+			claim_component(wysiwyg.$$.fragment, nodes);
+		},
+		m(target, anchor) {
+			mount_component(wysiwyg, target, anchor);
+			current = true;
+		},
+		p(ctx, dirty) {
+			const wysiwyg_changes = {};
+			if (dirty[0] & /*schema*/ 64) wysiwyg_changes.schema = /*schema*/ ctx[6];
+			if (dirty[0] & /*parentKeys*/ 32) wysiwyg_changes.parentKeys = /*parentKeys*/ ctx[5];
+
+			if (!updating_field && dirty[0] & /*field*/ 1) {
+				updating_field = true;
+				wysiwyg_changes.field = /*field*/ ctx[0];
+				add_flush_callback(() => updating_field = false);
+			}
+
+			wysiwyg.$set(wysiwyg_changes);
+		},
+		i(local) {
+			if (current) return;
+			transition_in(wysiwyg.$$.fragment, local);
+			current = true;
+		},
+		o(local) {
+			transition_out(wysiwyg.$$.fragment, local);
+			current = false;
+		},
+		d(detaching) {
+			destroy_component(wysiwyg, detaching);
+		}
+	};
+}
+
+// (48:8) {#if schema[parentKeys].type === "autocomplete"}
+function create_if_block_9(ctx) {
+	let autocomplete;
+	let updating_field;
+	let current;
+
+	function autocomplete_field_binding(value) {
+		/*autocomplete_field_binding*/ ctx[16](value);
+	}
+
+	let autocomplete_props = {
+		schema: /*schema*/ ctx[6],
+		parentKeys: /*parentKeys*/ ctx[5]
+	};
+
+	if (/*field*/ ctx[0] !== void 0) {
+		autocomplete_props.field = /*field*/ ctx[0];
+	}
+
+	autocomplete = new Autocomplete({ props: autocomplete_props });
+	binding_callbacks.push(() => bind(autocomplete, "field", autocomplete_field_binding));
+
+	return {
+		c() {
+			create_component(autocomplete.$$.fragment);
+		},
+		l(nodes) {
+			claim_component(autocomplete.$$.fragment, nodes);
+		},
+		m(target, anchor) {
+			mount_component(autocomplete, target, anchor);
+			current = true;
+		},
+		p(ctx, dirty) {
+			const autocomplete_changes = {};
+			if (dirty[0] & /*schema*/ 64) autocomplete_changes.schema = /*schema*/ ctx[6];
+			if (dirty[0] & /*parentKeys*/ 32) autocomplete_changes.parentKeys = /*parentKeys*/ ctx[5];
+
+			if (!updating_field && dirty[0] & /*field*/ 1) {
+				updating_field = true;
+				autocomplete_changes.field = /*field*/ ctx[0];
+				add_flush_callback(() => updating_field = false);
+			}
+
+			autocomplete.$set(autocomplete_changes);
+		},
+		i(local) {
+			if (current) return;
+			transition_in(autocomplete.$$.fragment, local);
+			current = true;
+		},
+		o(local) {
+			transition_out(autocomplete.$$.fragment, local);
+			current = false;
+		},
+		d(detaching) {
+			destroy_component(autocomplete, detaching);
+		}
+	};
+}
+
+// (51:8) {#if schema[parentKeys].type === "id"}
+function create_if_block_8(ctx) {
+	let id;
+	let updating_field;
+	let current;
+
+	function id_field_binding(value) {
+		/*id_field_binding*/ ctx[17](value);
+	}
+
+	let id_props = {};
+
+	if (/*field*/ ctx[0] !== void 0) {
+		id_props.field = /*field*/ ctx[0];
+	}
+
+	id = new ID({ props: id_props });
+	binding_callbacks.push(() => bind(id, "field", id_field_binding));
+
+	return {
+		c() {
+			create_component(id.$$.fragment);
+		},
+		l(nodes) {
+			claim_component(id.$$.fragment, nodes);
+		},
+		m(target, anchor) {
+			mount_component(id, target, anchor);
+			current = true;
+		},
+		p(ctx, dirty) {
+			const id_changes = {};
+
+			if (!updating_field && dirty[0] & /*field*/ 1) {
+				updating_field = true;
+				id_changes.field = /*field*/ ctx[0];
+				add_flush_callback(() => updating_field = false);
+			}
+
+			id.$set(id_changes);
+		},
+		i(local) {
+			if (current) return;
+			transition_in(id.$$.fragment, local);
+			current = true;
+		},
+		o(local) {
+			transition_out(id.$$.fragment, local);
+			current = false;
+		},
+		d(detaching) {
+			destroy_component(id, detaching);
+		}
+	};
+}
+
+// (54:8) {#if schema[parentKeys].type === "text"}
 function create_if_block_7(ctx) {
-	let embed;
-	let embed_src_value;
+	let text_1;
+	let updating_field;
+	let current;
+
+	function text_1_field_binding(value) {
+		/*text_1_field_binding*/ ctx[18](value);
+	}
+
+	let text_1_props = {
+		schema: /*schema*/ ctx[6],
+		parentKeys: /*parentKeys*/ ctx[5]
+	};
+
+	if (/*field*/ ctx[0] !== void 0) {
+		text_1_props.field = /*field*/ ctx[0];
+	}
+
+	text_1 = new Text({ props: text_1_props });
+	binding_callbacks.push(() => bind(text_1, "field", text_1_field_binding));
 
 	return {
 		c() {
-			embed = element("embed");
-			this.h();
+			create_component(text_1.$$.fragment);
 		},
 		l(nodes) {
-			embed = claim_element(nodes, "EMBED", { src: true, class: true });
-			this.h();
-		},
-		h() {
-			if (embed.src !== (embed_src_value = /*field*/ ctx[0])) attr(embed, "src", embed_src_value);
-			attr(embed, "class", "thumbnail svelte-ltyhti");
+			claim_component(text_1.$$.fragment, nodes);
 		},
 		m(target, anchor) {
-			insert(target, embed, anchor);
+			mount_component(text_1, target, anchor);
+			current = true;
 		},
 		p(ctx, dirty) {
-			if (dirty[0] & /*field*/ 1 && embed.src !== (embed_src_value = /*field*/ ctx[0])) {
-				attr(embed, "src", embed_src_value);
+			const text_1_changes = {};
+			if (dirty[0] & /*schema*/ 64) text_1_changes.schema = /*schema*/ ctx[6];
+			if (dirty[0] & /*parentKeys*/ 32) text_1_changes.parentKeys = /*parentKeys*/ ctx[5];
+
+			if (!updating_field && dirty[0] & /*field*/ 1) {
+				updating_field = true;
+				text_1_changes.field = /*field*/ ctx[0];
+				add_flush_callback(() => updating_field = false);
 			}
+
+			text_1.$set(text_1_changes);
+		},
+		i(local) {
+			if (current) return;
+			transition_in(text_1.$$.fragment, local);
+			current = true;
+		},
+		o(local) {
+			transition_out(text_1.$$.fragment, local);
+			current = false;
 		},
 		d(detaching) {
-			if (detaching) detach(embed);
+			destroy_component(text_1, detaching);
 		}
 	};
 }
 
-// (150:12) {#if isImagePath(field)}
+// (57:8) {#if schema[parentKeys].type === "number"}
 function create_if_block_6(ctx) {
-	let img;
-	let img_src_value;
-	let mounted;
-	let dispose;
+	let number;
+	let updating_field;
+	let current;
+
+	function number_field_binding(value) {
+		/*number_field_binding*/ ctx[19](value);
+	}
+
+	let number_props = {};
+
+	if (/*field*/ ctx[0] !== void 0) {
+		number_props.field = /*field*/ ctx[0];
+	}
+
+	number = new Number({ props: number_props });
+	binding_callbacks.push(() => bind(number, "field", number_field_binding));
 
 	return {
 		c() {
-			img = element("img");
-			this.h();
+			create_component(number.$$.fragment);
 		},
 		l(nodes) {
-			img = claim_element(nodes, "IMG", { src: true, alt: true, class: true });
-			this.h();
-		},
-		h() {
-			if (img.src !== (img_src_value = /*field*/ ctx[0])) attr(img, "src", img_src_value);
-			attr(img, "alt", "click to change thumbnail");
-			attr(img, "class", "thumbnail svelte-ltyhti");
+			claim_component(number.$$.fragment, nodes);
 		},
 		m(target, anchor) {
-			insert(target, img, anchor);
-
-			if (!mounted) {
-				dispose = listen(img, "error", /*error_handler*/ ctx[33]);
-				mounted = true;
-			}
+			mount_component(number, target, anchor);
+			current = true;
 		},
 		p(ctx, dirty) {
-			if (dirty[0] & /*field*/ 1 && img.src !== (img_src_value = /*field*/ ctx[0])) {
-				attr(img, "src", img_src_value);
+			const number_changes = {};
+
+			if (!updating_field && dirty[0] & /*field*/ 1) {
+				updating_field = true;
+				number_changes.field = /*field*/ ctx[0];
+				add_flush_callback(() => updating_field = false);
 			}
+
+			number.$set(number_changes);
+		},
+		i(local) {
+			if (current) return;
+			transition_in(number.$$.fragment, local);
+			current = true;
+		},
+		o(local) {
+			transition_out(number.$$.fragment, local);
+			current = false;
 		},
 		d(detaching) {
-			if (detaching) detach(img);
-			mounted = false;
-			dispose();
+			destroy_component(number, detaching);
+		}
+	};
+}
+
+// (60:8) {#if schema[parentKeys].type === "boolean"}
+function create_if_block_5(ctx) {
+	let boolean;
+	let updating_field;
+	let current;
+
+	function boolean_field_binding(value) {
+		/*boolean_field_binding*/ ctx[20](value);
+	}
+
+	let boolean_props = { label: /*label*/ ctx[4] };
+
+	if (/*field*/ ctx[0] !== void 0) {
+		boolean_props.field = /*field*/ ctx[0];
+	}
+
+	boolean = new Boolean({ props: boolean_props });
+	binding_callbacks.push(() => bind(boolean, "field", boolean_field_binding));
+
+	return {
+		c() {
+			create_component(boolean.$$.fragment);
+		},
+		l(nodes) {
+			claim_component(boolean.$$.fragment, nodes);
+		},
+		m(target, anchor) {
+			mount_component(boolean, target, anchor);
+			current = true;
+		},
+		p(ctx, dirty) {
+			const boolean_changes = {};
+			if (dirty[0] & /*label*/ 16) boolean_changes.label = /*label*/ ctx[4];
+
+			if (!updating_field && dirty[0] & /*field*/ 1) {
+				updating_field = true;
+				boolean_changes.field = /*field*/ ctx[0];
+				add_flush_callback(() => updating_field = false);
+			}
+
+			boolean.$set(boolean_changes);
+		},
+		i(local) {
+			if (current) return;
+			transition_in(boolean.$$.fragment, local);
+			current = true;
+		},
+		o(local) {
+			transition_out(boolean.$$.fragment, local);
+			current = false;
+		},
+		d(detaching) {
+			destroy_component(boolean, detaching);
+		}
+	};
+}
+
+// (63:8) {#if schema[parentKeys].type === "date"}
+function create_if_block_4(ctx) {
+	let date;
+	let updating_field;
+	let current;
+
+	function date_field_binding(value) {
+		/*date_field_binding*/ ctx[21](value);
+	}
+
+	let date_props = {};
+
+	if (/*field*/ ctx[0] !== void 0) {
+		date_props.field = /*field*/ ctx[0];
+	}
+
+	date = new Date({ props: date_props });
+	binding_callbacks.push(() => bind(date, "field", date_field_binding));
+
+	return {
+		c() {
+			create_component(date.$$.fragment);
+		},
+		l(nodes) {
+			claim_component(date.$$.fragment, nodes);
+		},
+		m(target, anchor) {
+			mount_component(date, target, anchor);
+			current = true;
+		},
+		p(ctx, dirty) {
+			const date_changes = {};
+
+			if (!updating_field && dirty[0] & /*field*/ 1) {
+				updating_field = true;
+				date_changes.field = /*field*/ ctx[0];
+				add_flush_callback(() => updating_field = false);
+			}
+
+			date.$set(date_changes);
+		},
+		i(local) {
+			if (current) return;
+			transition_in(date.$$.fragment, local);
+			current = true;
+		},
+		o(local) {
+			transition_out(date.$$.fragment, local);
+			current = false;
+		},
+		d(detaching) {
+			destroy_component(date, detaching);
+		}
+	};
+}
+
+// (66:8) {#if schema[parentKeys].type === "time"}
+function create_if_block_3(ctx) {
+	let time;
+	let updating_field;
+	let current;
+
+	function time_field_binding(value) {
+		/*time_field_binding*/ ctx[22](value);
+	}
+
+	let time_props = {};
+
+	if (/*field*/ ctx[0] !== void 0) {
+		time_props.field = /*field*/ ctx[0];
+	}
+
+	time = new Time({ props: time_props });
+	binding_callbacks.push(() => bind(time, "field", time_field_binding));
+
+	return {
+		c() {
+			create_component(time.$$.fragment);
+		},
+		l(nodes) {
+			claim_component(time.$$.fragment, nodes);
+		},
+		m(target, anchor) {
+			mount_component(time, target, anchor);
+			current = true;
+		},
+		p(ctx, dirty) {
+			const time_changes = {};
+
+			if (!updating_field && dirty[0] & /*field*/ 1) {
+				updating_field = true;
+				time_changes.field = /*field*/ ctx[0];
+				add_flush_callback(() => updating_field = false);
+			}
+
+			time.$set(time_changes);
+		},
+		i(local) {
+			if (current) return;
+			transition_in(time.$$.fragment, local);
+			current = true;
+		},
+		o(local) {
+			transition_out(time.$$.fragment, local);
+			current = false;
+		},
+		d(detaching) {
+			destroy_component(time, detaching);
+		}
+	};
+}
+
+// (69:8) {#if schema[parentKeys].type === "asset"}
+function create_if_block_2(ctx) {
+	let asset;
+	let updating_field;
+	let updating_showMedia;
+	let updating_changingAsset;
+	let updating_localMediaList;
+	let current;
+
+	function asset_field_binding(value) {
+		/*asset_field_binding*/ ctx[23](value);
+	}
+
+	function asset_showMedia_binding(value) {
+		/*asset_showMedia_binding*/ ctx[24](value);
+	}
+
+	function asset_changingAsset_binding(value) {
+		/*asset_changingAsset_binding*/ ctx[25](value);
+	}
+
+	function asset_localMediaList_binding(value) {
+		/*asset_localMediaList_binding*/ ctx[26](value);
+	}
+
+	let asset_props = {};
+
+	if (/*field*/ ctx[0] !== void 0) {
+		asset_props.field = /*field*/ ctx[0];
+	}
+
+	if (/*showMedia*/ ctx[1] !== void 0) {
+		asset_props.showMedia = /*showMedia*/ ctx[1];
+	}
+
+	if (/*changingAsset*/ ctx[2] !== void 0) {
+		asset_props.changingAsset = /*changingAsset*/ ctx[2];
+	}
+
+	if (/*localMediaList*/ ctx[3] !== void 0) {
+		asset_props.localMediaList = /*localMediaList*/ ctx[3];
+	}
+
+	asset = new Asset({ props: asset_props });
+	binding_callbacks.push(() => bind(asset, "field", asset_field_binding));
+	binding_callbacks.push(() => bind(asset, "showMedia", asset_showMedia_binding));
+	binding_callbacks.push(() => bind(asset, "changingAsset", asset_changingAsset_binding));
+	binding_callbacks.push(() => bind(asset, "localMediaList", asset_localMediaList_binding));
+
+	return {
+		c() {
+			create_component(asset.$$.fragment);
+		},
+		l(nodes) {
+			claim_component(asset.$$.fragment, nodes);
+		},
+		m(target, anchor) {
+			mount_component(asset, target, anchor);
+			current = true;
+		},
+		p(ctx, dirty) {
+			const asset_changes = {};
+
+			if (!updating_field && dirty[0] & /*field*/ 1) {
+				updating_field = true;
+				asset_changes.field = /*field*/ ctx[0];
+				add_flush_callback(() => updating_field = false);
+			}
+
+			if (!updating_showMedia && dirty[0] & /*showMedia*/ 2) {
+				updating_showMedia = true;
+				asset_changes.showMedia = /*showMedia*/ ctx[1];
+				add_flush_callback(() => updating_showMedia = false);
+			}
+
+			if (!updating_changingAsset && dirty[0] & /*changingAsset*/ 4) {
+				updating_changingAsset = true;
+				asset_changes.changingAsset = /*changingAsset*/ ctx[2];
+				add_flush_callback(() => updating_changingAsset = false);
+			}
+
+			if (!updating_localMediaList && dirty[0] & /*localMediaList*/ 8) {
+				updating_localMediaList = true;
+				asset_changes.localMediaList = /*localMediaList*/ ctx[3];
+				add_flush_callback(() => updating_localMediaList = false);
+			}
+
+			asset.$set(asset_changes);
+		},
+		i(local) {
+			if (current) return;
+			transition_in(asset.$$.fragment, local);
+			current = true;
+		},
+		o(local) {
+			transition_out(asset.$$.fragment, local);
+			current = false;
+		},
+		d(detaching) {
+			destroy_component(asset, detaching);
 		}
 	};
 }
 
 function create_fragment(ctx) {
-	let current_block_type_index;
-	let if_block;
 	let if_block_anchor;
 	let current;
-
-	const if_block_creators = [
-		create_if_block,
-		create_if_block_1,
-		create_if_block_2,
-		create_if_block_3,
-		create_if_block_9,
-		create_if_block_10,
-		create_if_block_15
-	];
-
-	const if_blocks = [];
-
-	function select_block_type(ctx, dirty) {
-		if (/*field*/ ctx[0] === null) return 0;
-		if (/*field*/ ctx[0] === undefined) return 1;
-		if (typeof /*field*/ ctx[0] === "number") return 2;
-		if (typeof /*field*/ ctx[0] === "string") return 3;
-		if (typeof /*field*/ ctx[0] === "boolean") return 4;
-		if (/*field*/ ctx[0].constructor === [].constructor) return 5;
-		if (/*field*/ ctx[0].constructor === ({}).constructor) return 6;
-		return -1;
-	}
-
-	if (~(current_block_type_index = select_block_type(ctx, [-1, -1, -1]))) {
-		if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
-	}
+	let if_block = /*label*/ ctx[4] !== "plenti_salt" && create_if_block(ctx);
 
 	return {
 		c() {
@@ -2354,47 +2331,32 @@ function create_fragment(ctx) {
 			if_block_anchor = empty();
 		},
 		m(target, anchor) {
-			if (~current_block_type_index) {
-				if_blocks[current_block_type_index].m(target, anchor);
-			}
-
+			if (if_block) if_block.m(target, anchor);
 			insert(target, if_block_anchor, anchor);
 			current = true;
 		},
 		p(ctx, dirty) {
-			let previous_block_index = current_block_type_index;
-			current_block_type_index = select_block_type(ctx, dirty);
-
-			if (current_block_type_index === previous_block_index) {
-				if (~current_block_type_index) {
-					if_blocks[current_block_type_index].p(ctx, dirty);
-				}
-			} else {
+			if (/*label*/ ctx[4] !== "plenti_salt") {
 				if (if_block) {
-					group_outros();
+					if_block.p(ctx, dirty);
 
-					transition_out(if_blocks[previous_block_index], 1, 1, () => {
-						if_blocks[previous_block_index] = null;
-					});
-
-					check_outros();
-				}
-
-				if (~current_block_type_index) {
-					if_block = if_blocks[current_block_type_index];
-
-					if (!if_block) {
-						if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
-						if_block.c();
-					} else {
-						if_block.p(ctx, dirty);
+					if (dirty[0] & /*label*/ 16) {
+						transition_in(if_block, 1);
 					}
-
+				} else {
+					if_block = create_if_block(ctx);
+					if_block.c();
 					transition_in(if_block, 1);
 					if_block.m(if_block_anchor.parentNode, if_block_anchor);
-				} else {
-					if_block = null;
 				}
+			} else if (if_block) {
+				group_outros();
+
+				transition_out(if_block, 1, 1, () => {
+					if_block = null;
+				});
+
+				check_outros();
 			}
 		},
 		i(local) {
@@ -2407,10 +2369,7 @@ function create_fragment(ctx) {
 			current = false;
 		},
 		d(detaching) {
-			if (~current_block_type_index) {
-				if_blocks[current_block_type_index].d(detaching);
-			}
-
+			if (if_block) if_block.d(detaching);
 			if (detaching) detach(if_block_anchor);
 		}
 	};
@@ -2421,242 +2380,25 @@ function instance($$self, $$props, $$invalidate) {
 		{ label } = $$props,
 		{ showMedia } = $$props,
 		{ changingAsset } = $$props,
-		{ localMediaList } = $$props;
+		{ localMediaList } = $$props,
+		{ parentKeys } = $$props,
+		{ schema } = $$props;
 
-	const bindDate = date => {
-		$$invalidate(0, field = formatDate(date, field));
-	};
+	let { shadowContent = false } = $$props;
 
-	let isOpen = false;
-	let openKeys = [];
-
-	const accordion = newKey => {
-		if (openKeys.length === 1 && openKeys.includes(newKey)) {
-			setTimeout(
-				() => {
-					$$invalidate(6, isOpen = false);
-				},
-				300
-			);
-		}
-
-		if (openKeys.includes(newKey)) {
-			// Remove key
-			$$invalidate(7, openKeys = openKeys.filter(key => key !== newKey));
-		} else {
-			// Add key
-			$$invalidate(7, openKeys = [...openKeys, newKey]);
-
-			$$invalidate(6, isOpen = true);
-		}
-	};
-
-	let { removesItems = true } = $$props;
-	let compID;
-	let ghost;
-	let grabbed;
-	let lastTarget;
-	let mouseY = 0; // pointer y coordinate within client
-	let offsetY = 0; // y distance from top of grabbed element to pointer
-	let layerY = 0; // distance from top of list to top of client
-
-	const grab = (clientY, element) => {
-		// modify grabbed element
-		$$invalidate(9, grabbed = element);
-
-		$$invalidate(9, grabbed.dataset.grabY = clientY, grabbed);
-
-		// modify ghost element (which is actually dragged)
-		$$invalidate(8, ghost.innerHTML = grabbed.innerHTML, ghost);
-
-		// record offset from cursor to top of element
-		// (used for positioning ghost)
-		$$invalidate(11, offsetY = grabbed.getBoundingClientRect().y - clientY);
-
-		drag(clientY);
-	};
-
-	// drag handler updates cursor position
-	const drag = clientY => {
-		if (grabbed) {
-			$$invalidate(10, mouseY = clientY);
-			$$invalidate(12, layerY = ghost.parentNode.getBoundingClientRect().y);
-		}
-	};
-
-	// touchEnter handler emulates the mouseenter event for touch input
-	const touchEnter = ev => {
-		drag(ev.clientY);
-
-		// trigger dragEnter the first time the cursor moves over a list item
-		let target = document.elementFromPoint(ev.clientX, ev.clientY).closest(".item-wrapper");
-
-		if (target && target != lastTarget) {
-			lastTarget = target;
-			dragEnter(ev, target);
-		}
-	};
-
-	const dragEnter = (ev, target) => {
-		// swap items
-		if (grabbed && target != grabbed && target.classList.contains("item-wrapper")) {
-			moveItem(parseInt(grabbed.dataset.index), parseInt(target.dataset.index));
-		}
-	};
-
-	// does the actual moving of items
-	const moveItem = (from, to) => {
-		let temp = field[from];
-		$$invalidate(0, field[from] = field[to], field);
-		$$invalidate(0, field[to] = temp, field);
-	};
-
-	const release = ev => {
-		$$invalidate(9, grabbed = null);
-	};
-
-	const removeItem = val => {
-		$$invalidate(0, field = field.filter(i => i !== val));
-	};
-
-	let textarea;
-	let linkURL, linkText, linkOptions;
-
-	const createLink = () => {
-		$$invalidate(14, linkURL = prompt("Enter a URL:", "http://"));
-		let selectedText = document.getSelection().toString();
-
-		if (selectedText.length > 0) {
-			$$invalidate(15, linkText = selectedText);
-		} else {
-			$$invalidate(15, linkText = prompt("Link Text:", ""));
-		}
-
-		let newTab = prompt("Open link in new tab? (yes/no)", "no");
-
-		if (newTab === "yes" || newTab === "y") {
-			$$invalidate(16, linkOptions = "target='_blank' rel='noreferrer noopener'");
-		}
-	};
-
-	let originalAsset;
-
-	const swapAsset = () => {
-		$$invalidate(30, originalAsset = field);
-		$$invalidate(1, changingAsset = field);
-		$$invalidate(2, showMedia = true);
-	};
-
-	// If an img path is 404, load the data image instead
-	const loadDataImage = imgEl => {
-		// Get src from img that was clicked on in visual editor
-		let src = imgEl.target.attributes.src.nodeValue;
-
-		// Load all image on the page with that source
-		// TODO: Could load images not related to this field specifically
-		let allImg = document.querySelectorAll("img[src=\"" + src + "\"]");
-
-		allImg.forEach(i => {
-			localMediaList.forEach(asset => {
-				// Check if the field path matches a recently uploaded file in memory
-				if (asset.file === field) {
-					// Set the source to the data image instead of the path that can't be found
-					i.src = asset.contents;
-				}
-			});
-		});
-	};
-
-	function input_input_handler() {
-		field = to_number(this.value);
-		(($$invalidate(0, field), $$invalidate(1, changingAsset)), $$invalidate(30, originalAsset));
-	}
-
-	const input_handler = date => bindDate(date.target.value);
-	const error_handler = imgEl => loadDataImage(imgEl);
-
-	function input_input_handler_1() {
-		field = this.value;
-		(($$invalidate(0, field), $$invalidate(1, changingAsset)), $$invalidate(30, originalAsset));
-	}
-
-	const click_handler = () => document.execCommand("bold");
-	const click_handler_1 = () => document.execCommand("italic");
-	const click_handler_2 = () => document.execCommand("underline");
-	const click_handler_3 = () => document.execCommand("insertUnorderedList");
-	const click_handler_4 = () => document.execCommand("insertOrderedList");
-	const click_handler_5 = () => document.execCommand("insertHTML", false, "<a href='" + linkURL + "' " + linkOptions + ">" + linkText + "</a>");
-	const click_handler_6 = () => document.execCommand("unlink");
-	const click_handler_7 = () => document.execCommand("removeFormat");
-
-	function div4_input_handler() {
-		field = this.innerHTML;
-		(($$invalidate(0, field), $$invalidate(1, changingAsset)), $$invalidate(30, originalAsset));
-	}
-
-	function div4_binding($$value) {
-		binding_callbacks[$$value ? "unshift" : "push"](() => {
-			textarea = $$value;
-			$$invalidate(13, textarea);
-		});
-	}
-
-	function input_change_handler() {
-		field = this.checked;
-		(($$invalidate(0, field), $$invalidate(1, changingAsset)), $$invalidate(30, originalAsset));
-	}
-
-	function div0_binding($$value) {
-		binding_callbacks[$$value ? "unshift" : "push"](() => {
-			ghost = $$value;
-			$$invalidate(8, ghost);
-		});
-	}
-
-	const mousedown_handler = function (ev) {
-		grab(ev.clientY, this.closest(".item-wrapper"));
-	};
-
-	const touchstart_handler = function (ev) {
-		grab(ev.touches[0].clientY, this.closest(".item-wrapper"));
-	};
-
-	const mouseenter_handler = function (ev) {
-		ev.stopPropagation();
-		dragEnter(ev, ev.target.closest(".item-wrapper"));
-	};
-
-	const touchmove_handler = function (ev) {
-		ev.stopPropagation();
-		ev.preventDefault();
-		touchEnter(ev.touches[0]);
-	};
-
-	const click_handler_8 = function (key, ev) {
-		moveItem(key, key - 1);
-	};
-
-	const click_handler_9 = function (key, ev) {
-		moveItem(key, key + 1);
-	};
-
-	const click_handler_10 = value => removeItem(value);
-
-	function component_field_binding(value, key) {
-		if ($$self.$$.not_equal(field[key], value)) {
-			field[key] = value;
-			(($$invalidate(0, field), $$invalidate(1, changingAsset)), $$invalidate(30, originalAsset));
-		}
+	function component_field_binding(value) {
+		field = value;
+		$$invalidate(0, field);
 	}
 
 	function component_showMedia_binding(value) {
 		showMedia = value;
-		$$invalidate(2, showMedia);
+		$$invalidate(1, showMedia);
 	}
 
 	function component_changingAsset_binding(value) {
 		changingAsset = value;
-		$$invalidate(1, changingAsset);
+		$$invalidate(2, changingAsset);
 	}
 
 	function component_localMediaList_binding(value) {
@@ -2664,41 +2406,139 @@ function instance($$self, $$props, $$invalidate) {
 		$$invalidate(3, localMediaList);
 	}
 
-	const mousemove_handler = function (ev) {
-		ev.stopPropagation();
-		drag(ev.clientY);
-	};
+	function checkbox_field_binding(value) {
+		field = value;
+		$$invalidate(0, field);
+	}
 
-	const touchmove_handler_1 = function (ev) {
-		ev.stopPropagation();
-		drag(ev.touches[0].clientY);
-	};
+	function radio_field_binding(value) {
+		field = value;
+		$$invalidate(0, field);
+	}
 
-	const mouseup_handler = function (ev) {
-		ev.stopPropagation();
-		release(ev);
-	};
+	function select_field_binding(value) {
+		field = value;
+		$$invalidate(0, field);
+	}
 
-	const touchend_handler = function (ev) {
-		ev.stopPropagation();
-		release(ev.touches[0]);
-	};
+	function wysiwyg_field_binding(value) {
+		field = value;
+		$$invalidate(0, field);
+	}
 
-	function component_field_binding_1(value, key) {
-		if ($$self.$$.not_equal(field[key], value)) {
-			field[key] = value;
-			(($$invalidate(0, field), $$invalidate(1, changingAsset)), $$invalidate(30, originalAsset));
-		}
+	function autocomplete_field_binding(value) {
+		field = value;
+		$$invalidate(0, field);
+	}
+
+	function id_field_binding(value) {
+		field = value;
+		$$invalidate(0, field);
+	}
+
+	function text_1_field_binding(value) {
+		field = value;
+		$$invalidate(0, field);
+	}
+
+	function number_field_binding(value) {
+		field = value;
+		$$invalidate(0, field);
+	}
+
+	function boolean_field_binding(value) {
+		field = value;
+		$$invalidate(0, field);
+	}
+
+	function date_field_binding(value) {
+		field = value;
+		$$invalidate(0, field);
+	}
+
+	function time_field_binding(value) {
+		field = value;
+		$$invalidate(0, field);
+	}
+
+	function asset_field_binding(value) {
+		field = value;
+		$$invalidate(0, field);
+	}
+
+	function asset_showMedia_binding(value) {
+		showMedia = value;
+		$$invalidate(1, showMedia);
+	}
+
+	function asset_changingAsset_binding(value) {
+		changingAsset = value;
+		$$invalidate(2, changingAsset);
+	}
+
+	function asset_localMediaList_binding(value) {
+		localMediaList = value;
+		$$invalidate(3, localMediaList);
+	}
+
+	function number_field_binding_1(value) {
+		field = value;
+		$$invalidate(0, field);
+	}
+
+	function date_field_binding_1(value) {
+		field = value;
+		$$invalidate(0, field);
+	}
+
+	function time_field_binding_1(value) {
+		field = value;
+		$$invalidate(0, field);
+	}
+
+	function asset_field_binding_1(value) {
+		field = value;
+		$$invalidate(0, field);
+	}
+
+	function asset_showMedia_binding_1(value) {
+		showMedia = value;
+		$$invalidate(1, showMedia);
+	}
+
+	function asset_changingAsset_binding_1(value) {
+		changingAsset = value;
+		$$invalidate(2, changingAsset);
+	}
+
+	function asset_localMediaList_binding_1(value) {
+		localMediaList = value;
+		$$invalidate(3, localMediaList);
+	}
+
+	function text_1_field_binding_1(value) {
+		field = value;
+		$$invalidate(0, field);
+	}
+
+	function boolean_field_binding_1(value) {
+		field = value;
+		$$invalidate(0, field);
+	}
+
+	function component_field_binding_1(value) {
+		field = value;
+		$$invalidate(0, field);
 	}
 
 	function component_showMedia_binding_1(value) {
 		showMedia = value;
-		$$invalidate(2, showMedia);
+		$$invalidate(1, showMedia);
 	}
 
 	function component_changingAsset_binding_1(value) {
 		changingAsset = value;
-		$$invalidate(1, changingAsset);
+		$$invalidate(2, changingAsset);
 	}
 
 	function component_localMediaList_binding_1(value) {
@@ -2706,96 +2546,94 @@ function instance($$self, $$props, $$invalidate) {
 		$$invalidate(3, localMediaList);
 	}
 
+	function fieldset_field_binding(value) {
+		field = value;
+		$$invalidate(0, field);
+	}
+
+	function fieldset_showMedia_binding(value) {
+		showMedia = value;
+		$$invalidate(1, showMedia);
+	}
+
+	function fieldset_changingAsset_binding(value) {
+		changingAsset = value;
+		$$invalidate(2, changingAsset);
+	}
+
+	function fieldset_localMediaList_binding(value) {
+		localMediaList = value;
+		$$invalidate(3, localMediaList);
+	}
+
 	$$self.$$set = $$props => {
 		if ("field" in $$props) $$invalidate(0, field = $$props.field);
 		if ("label" in $$props) $$invalidate(4, label = $$props.label);
-		if ("showMedia" in $$props) $$invalidate(2, showMedia = $$props.showMedia);
-		if ("changingAsset" in $$props) $$invalidate(1, changingAsset = $$props.changingAsset);
+		if ("showMedia" in $$props) $$invalidate(1, showMedia = $$props.showMedia);
+		if ("changingAsset" in $$props) $$invalidate(2, changingAsset = $$props.changingAsset);
 		if ("localMediaList" in $$props) $$invalidate(3, localMediaList = $$props.localMediaList);
-		if ("removesItems" in $$props) $$invalidate(5, removesItems = $$props.removesItems);
+		if ("parentKeys" in $$props) $$invalidate(5, parentKeys = $$props.parentKeys);
+		if ("schema" in $$props) $$invalidate(6, schema = $$props.schema);
+		if ("shadowContent" in $$props) $$invalidate(7, shadowContent = $$props.shadowContent);
 	};
 
 	$$self.$$.update = () => {
-		if ($$self.$$.dirty[0] & /*changingAsset, field, originalAsset*/ 1073741827) {
-			$: if (changingAsset) {
-				if (field === originalAsset) {
-					$$invalidate(0, field = changingAsset);
-				}
+		if ($$self.$$.dirty[0] & /*shadowContent, label, field*/ 145) {
+			$: if (shadowContent !== false) {
+				$$invalidate(7, shadowContent[label] = field, shadowContent);
 			}
 		}
 	};
 
 	return [
 		field,
-		changingAsset,
 		showMedia,
+		changingAsset,
 		localMediaList,
 		label,
-		removesItems,
-		isOpen,
-		openKeys,
-		ghost,
-		grabbed,
-		mouseY,
-		offsetY,
-		layerY,
-		textarea,
-		linkURL,
-		linkText,
-		linkOptions,
-		bindDate,
-		accordion,
-		compID,
-		grab,
-		drag,
-		touchEnter,
-		dragEnter,
-		moveItem,
-		release,
-		removeItem,
-		createLink,
-		swapAsset,
-		loadDataImage,
-		originalAsset,
-		input_input_handler,
-		input_handler,
-		error_handler,
-		input_input_handler_1,
-		click_handler,
-		click_handler_1,
-		click_handler_2,
-		click_handler_3,
-		click_handler_4,
-		click_handler_5,
-		click_handler_6,
-		click_handler_7,
-		div4_input_handler,
-		div4_binding,
-		input_change_handler,
-		div0_binding,
-		mousedown_handler,
-		touchstart_handler,
-		mouseenter_handler,
-		touchmove_handler,
-		click_handler_8,
-		click_handler_9,
-		click_handler_10,
+		parentKeys,
+		schema,
+		shadowContent,
 		component_field_binding,
 		component_showMedia_binding,
 		component_changingAsset_binding,
 		component_localMediaList_binding,
-		mousemove_handler,
-		touchmove_handler_1,
-		mouseup_handler,
-		touchend_handler,
+		checkbox_field_binding,
+		radio_field_binding,
+		select_field_binding,
+		wysiwyg_field_binding,
+		autocomplete_field_binding,
+		id_field_binding,
+		text_1_field_binding,
+		number_field_binding,
+		boolean_field_binding,
+		date_field_binding,
+		time_field_binding,
+		asset_field_binding,
+		asset_showMedia_binding,
+		asset_changingAsset_binding,
+		asset_localMediaList_binding,
+		number_field_binding_1,
+		date_field_binding_1,
+		time_field_binding_1,
+		asset_field_binding_1,
+		asset_showMedia_binding_1,
+		asset_changingAsset_binding_1,
+		asset_localMediaList_binding_1,
+		text_1_field_binding_1,
+		boolean_field_binding_1,
 		component_field_binding_1,
 		component_showMedia_binding_1,
 		component_changingAsset_binding_1,
-		component_localMediaList_binding_1
+		component_localMediaList_binding_1,
+		fieldset_field_binding,
+		fieldset_showMedia_binding,
+		fieldset_changingAsset_binding,
+		fieldset_localMediaList_binding
 	];
 }
 
-class Component extends SvelteComponent {
+class Component_1 extends SvelteComponent {
 	constructor(options) {
 		super();
 
@@ -2808,14 +2646,16 @@ class Component extends SvelteComponent {
 			{
 				field: 0,
 				label: 4,
-				showMedia: 2,
-				changingAsset: 1,
+				showMedia: 1,
+				changingAsset: 2,
 				localMediaList: 3,
-				removesItems: 5
+				parentKeys: 5,
+				schema: 6,
+				shadowContent: 7
 			},
-			[-1, -1, -1]
+			[-1, -1]
 		);
 	}
 }
 
-export default Component;
+export default Component_1;

@@ -23,7 +23,7 @@ import {
 } from '../../web_modules/svelte/internal/index.mjs';
 
 import { onMount } from '../../web_modules/svelte/index.mjs';
-import { isImage, isDoc } from './assets_checker.js';
+import { isImage, isDoc } from './asset_checker.js';
 
 function get_each_context(ctx, list, i) {
 	const child_ctx = ctx.slice();

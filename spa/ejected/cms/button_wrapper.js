@@ -35,7 +35,7 @@ function create_fragment(ctx) {
 			this.h();
 		},
 		h() {
-			attr(div, "class", "buttons svelte-s2agx2");
+			attr(div, "class", "buttons svelte-1vbo9ow");
 		},
 		m(target, anchor) {
 			insert(target, div, anchor);

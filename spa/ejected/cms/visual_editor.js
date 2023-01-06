@@ -11,20 +11,18 @@ import {
 	claim_component,
 	claim_element,
 	claim_space,
-	claim_text,
 	create_component,
 	destroy_component,
 	destroy_each,
 	detach,
 	element,
+	empty,
 	group_outros,
 	init,
 	insert,
 	mount_component,
 	safe_not_equal,
-	set_data,
 	space,
-	text,
 	transition_in,
 	transition_out
 } from '../../web_modules/svelte/internal/index.mjs';
@@ -32,51 +30,154 @@ import {
 import DynamicFormInput from './dynamic_form_input.js';
 import ButtonWrapper from './button_wrapper.js';
 import Button from './button.js';
+import schemas from '../schemas.js';
 
 function get_each_context(ctx, list, i) {
 	const child_ctx = ctx.slice();
-	child_ctx[8] = list[i][0];
-	child_ctx[9] = list[i][1];
-	child_ctx[10] = list;
-	child_ctx[11] = i;
+	child_ctx[18] = list[i][0];
+	child_ctx[19] = list[i][1];
+	child_ctx[20] = list;
+	child_ctx[21] = i;
 	return child_ctx;
 }
 
-// (9:4) {#each Object.entries(content.fields) as [label, field]}
-function create_each_block(ctx) {
-	let div;
-	let label;
-	let t0_value = /*label*/ ctx[8] + "";
-	let t0;
-	let label_for_value;
-	let t1;
+function get_each_context_1(ctx, list, i) {
+	const child_ctx = ctx.slice();
+	child_ctx[22] = list[i];
+	return child_ctx;
+}
+
+function get_each_context_2(ctx, list, i) {
+	const child_ctx = ctx.slice();
+	child_ctx[22] = list[i];
+	return child_ctx;
+}
+
+// (14:8) {#if schema}
+function create_if_block_2(ctx) {
+	let each_1_anchor;
+	let current;
+	let each_value_2 = Object.entries(/*schema*/ ctx[5]);
+	let each_blocks = [];
+
+	for (let i = 0; i < each_value_2.length; i += 1) {
+		each_blocks[i] = create_each_block_2(get_each_context_2(ctx, each_value_2, i));
+	}
+
+	const out = i => transition_out(each_blocks[i], 1, 1, () => {
+		each_blocks[i] = null;
+	});
+
+	return {
+		c() {
+			for (let i = 0; i < each_blocks.length; i += 1) {
+				each_blocks[i].c();
+			}
+
+			each_1_anchor = empty();
+		},
+		l(nodes) {
+			for (let i = 0; i < each_blocks.length; i += 1) {
+				each_blocks[i].l(nodes);
+			}
+
+			each_1_anchor = empty();
+		},
+		m(target, anchor) {
+			for (let i = 0; i < each_blocks.length; i += 1) {
+				each_blocks[i].m(target, anchor);
+			}
+
+			insert(target, each_1_anchor, anchor);
+			current = true;
+		},
+		p(ctx, dirty) {
+			if (dirty & /*shadowContent, Object, schema, showMedia, changingAsset, localMediaList, content*/ 63) {
+				each_value_2 = Object.entries(/*schema*/ ctx[5]);
+				let i;
+
+				for (i = 0; i < each_value_2.length; i += 1) {
+					const child_ctx = get_each_context_2(ctx, each_value_2, i);
+
+					if (each_blocks[i]) {
+						each_blocks[i].p(child_ctx, dirty);
+						transition_in(each_blocks[i], 1);
+					} else {
+						each_blocks[i] = create_each_block_2(child_ctx);
+						each_blocks[i].c();
+						transition_in(each_blocks[i], 1);
+						each_blocks[i].m(each_1_anchor.parentNode, each_1_anchor);
+					}
+				}
+
+				group_outros();
+
+				for (i = each_value_2.length; i < each_blocks.length; i += 1) {
+					out(i);
+				}
+
+				check_outros();
+			}
+		},
+		i(local) {
+			if (current) return;
+
+			for (let i = 0; i < each_value_2.length; i += 1) {
+				transition_in(each_blocks[i]);
+			}
+
+			current = true;
+		},
+		o(local) {
+			each_blocks = each_blocks.filter(Boolean);
+
+			for (let i = 0; i < each_blocks.length; i += 1) {
+				transition_out(each_blocks[i]);
+			}
+
+			current = false;
+		},
+		d(detaching) {
+			destroy_each(each_blocks, detaching);
+			if (detaching) detach(each_1_anchor);
+		}
+	};
+}
+
+// (16:16) {#if schema_field[1]?.before === label}
+function create_if_block_3(ctx) {
 	let dynamicforminput;
-	let updating_field;
+	let updating_shadowContent;
 	let updating_showMedia;
 	let updating_changingAsset;
 	let updating_localMediaList;
 	let current;
 
-	function dynamicforminput_field_binding(value) {
-		/*dynamicforminput_field_binding*/ ctx[4](value, /*label*/ ctx[8]);
+	function dynamicforminput_shadowContent_binding(value) {
+		/*dynamicforminput_shadowContent_binding*/ ctx[6](value);
 	}
 
 	function dynamicforminput_showMedia_binding(value) {
-		/*dynamicforminput_showMedia_binding*/ ctx[5](value);
+		/*dynamicforminput_showMedia_binding*/ ctx[7](value);
 	}
 
 	function dynamicforminput_changingAsset_binding(value) {
-		/*dynamicforminput_changingAsset_binding*/ ctx[6](value);
+		/*dynamicforminput_changingAsset_binding*/ ctx[8](value);
 	}
 
 	function dynamicforminput_localMediaList_binding(value) {
-		/*dynamicforminput_localMediaList_binding*/ ctx[7](value);
+		/*dynamicforminput_localMediaList_binding*/ ctx[9](value);
 	}
 
-	let dynamicforminput_props = { label: /*label*/ ctx[8] };
+	let dynamicforminput_props = {
+		field: /*shadowContent*/ ctx[4][/*schema_field*/ ctx[22][0]],
+		label: /*schema_field*/ ctx[22][0],
+		parentKeys: /*schema_field*/ ctx[22][0],
+		schema: /*schema*/ ctx[5]
+	};
 
-	if (/*content*/ ctx[0].fields[/*label*/ ctx[8]] !== void 0) {
-		dynamicforminput_props.field = /*content*/ ctx[0].fields[/*label*/ ctx[8]];
+	if (/*shadowContent*/ ctx[4] !== void 0) {
+		dynamicforminput_props.shadowContent = /*shadowContent*/ ctx[4];
 	}
 
 	if (/*showMedia*/ ctx[1] !== void 0) {
@@ -92,60 +193,33 @@ function create_each_block(ctx) {
 	}
 
 	dynamicforminput = new DynamicFormInput({ props: dynamicforminput_props });
-	binding_callbacks.push(() => bind(dynamicforminput, "field", dynamicforminput_field_binding));
+	binding_callbacks.push(() => bind(dynamicforminput, "shadowContent", dynamicforminput_shadowContent_binding));
 	binding_callbacks.push(() => bind(dynamicforminput, "showMedia", dynamicforminput_showMedia_binding));
 	binding_callbacks.push(() => bind(dynamicforminput, "changingAsset", dynamicforminput_changingAsset_binding));
 	binding_callbacks.push(() => bind(dynamicforminput, "localMediaList", dynamicforminput_localMediaList_binding));
 
 	return {
 		c() {
-			div = element("div");
-			label = element("label");
-			t0 = text(t0_value);
-			t1 = space();
 			create_component(dynamicforminput.$$.fragment);
-			this.h();
 		},
 		l(nodes) {
-			div = claim_element(nodes, "DIV", { class: true });
-			var div_nodes = children(div);
-			label = claim_element(div_nodes, "LABEL", { for: true, class: true });
-			var label_nodes = children(label);
-			t0 = claim_text(label_nodes, t0_value);
-			label_nodes.forEach(detach);
-			t1 = claim_space(div_nodes);
-			claim_component(dynamicforminput.$$.fragment, div_nodes);
-			div_nodes.forEach(detach);
-			this.h();
-		},
-		h() {
-			attr(label, "for", label_for_value = /*label*/ ctx[8]);
-			attr(label, "class", "svelte-15qb3w8");
-			attr(div, "class", "field svelte-15qb3w8");
+			claim_component(dynamicforminput.$$.fragment, nodes);
 		},
 		m(target, anchor) {
-			insert(target, div, anchor);
-			append(div, label);
-			append(label, t0);
-			append(div, t1);
-			mount_component(dynamicforminput, div, null);
+			mount_component(dynamicforminput, target, anchor);
 			current = true;
 		},
-		p(new_ctx, dirty) {
-			ctx = new_ctx;
-			if ((!current || dirty & /*content*/ 1) && t0_value !== (t0_value = /*label*/ ctx[8] + "")) set_data(t0, t0_value);
-
-			if (!current || dirty & /*content*/ 1 && label_for_value !== (label_for_value = /*label*/ ctx[8])) {
-				attr(label, "for", label_for_value);
-			}
-
+		p(ctx, dirty) {
 			const dynamicforminput_changes = {};
-			if (dirty & /*content*/ 1) dynamicforminput_changes.label = /*label*/ ctx[8];
+			if (dirty & /*shadowContent, schema*/ 48) dynamicforminput_changes.field = /*shadowContent*/ ctx[4][/*schema_field*/ ctx[22][0]];
+			if (dirty & /*schema*/ 32) dynamicforminput_changes.label = /*schema_field*/ ctx[22][0];
+			if (dirty & /*schema*/ 32) dynamicforminput_changes.parentKeys = /*schema_field*/ ctx[22][0];
+			if (dirty & /*schema*/ 32) dynamicforminput_changes.schema = /*schema*/ ctx[5];
 
-			if (!updating_field && dirty & /*content, Object*/ 1) {
-				updating_field = true;
-				dynamicforminput_changes.field = /*content*/ ctx[0].fields[/*label*/ ctx[8]];
-				add_flush_callback(() => updating_field = false);
+			if (!updating_shadowContent && dirty & /*shadowContent*/ 16) {
+				updating_shadowContent = true;
+				dynamicforminput_changes.shadowContent = /*shadowContent*/ ctx[4];
+				add_flush_callback(() => updating_shadowContent = false);
 			}
 
 			if (!updating_showMedia && dirty & /*showMedia*/ 2) {
@@ -178,13 +252,524 @@ function create_each_block(ctx) {
 			current = false;
 		},
 		d(detaching) {
-			if (detaching) detach(div);
-			destroy_component(dynamicforminput);
+			destroy_component(dynamicforminput, detaching);
 		}
 	};
 }
 
-// (15:4) <ButtonWrapper>
+// (15:12) {#each Object.entries(schema) as schema_field}
+function create_each_block_2(ctx) {
+	let if_block_anchor;
+	let current;
+	let if_block = /*schema_field*/ ctx[22][1]?.before === /*label*/ ctx[18] && create_if_block_3(ctx);
+
+	return {
+		c() {
+			if (if_block) if_block.c();
+			if_block_anchor = empty();
+		},
+		l(nodes) {
+			if (if_block) if_block.l(nodes);
+			if_block_anchor = empty();
+		},
+		m(target, anchor) {
+			if (if_block) if_block.m(target, anchor);
+			insert(target, if_block_anchor, anchor);
+			current = true;
+		},
+		p(ctx, dirty) {
+			if (/*schema_field*/ ctx[22][1]?.before === /*label*/ ctx[18]) {
+				if (if_block) {
+					if_block.p(ctx, dirty);
+
+					if (dirty & /*schema, content*/ 33) {
+						transition_in(if_block, 1);
+					}
+				} else {
+					if_block = create_if_block_3(ctx);
+					if_block.c();
+					transition_in(if_block, 1);
+					if_block.m(if_block_anchor.parentNode, if_block_anchor);
+				}
+			} else if (if_block) {
+				group_outros();
+
+				transition_out(if_block, 1, 1, () => {
+					if_block = null;
+				});
+
+				check_outros();
+			}
+		},
+		i(local) {
+			if (current) return;
+			transition_in(if_block);
+			current = true;
+		},
+		o(local) {
+			transition_out(if_block);
+			current = false;
+		},
+		d(detaching) {
+			if (if_block) if_block.d(detaching);
+			if (detaching) detach(if_block_anchor);
+		}
+	};
+}
+
+// (39:8) {#if schema}
+function create_if_block(ctx) {
+	let each_1_anchor;
+	let current;
+	let each_value_1 = Object.entries(/*schema*/ ctx[5]);
+	let each_blocks = [];
+
+	for (let i = 0; i < each_value_1.length; i += 1) {
+		each_blocks[i] = create_each_block_1(get_each_context_1(ctx, each_value_1, i));
+	}
+
+	const out = i => transition_out(each_blocks[i], 1, 1, () => {
+		each_blocks[i] = null;
+	});
+
+	return {
+		c() {
+			for (let i = 0; i < each_blocks.length; i += 1) {
+				each_blocks[i].c();
+			}
+
+			each_1_anchor = empty();
+		},
+		l(nodes) {
+			for (let i = 0; i < each_blocks.length; i += 1) {
+				each_blocks[i].l(nodes);
+			}
+
+			each_1_anchor = empty();
+		},
+		m(target, anchor) {
+			for (let i = 0; i < each_blocks.length; i += 1) {
+				each_blocks[i].m(target, anchor);
+			}
+
+			insert(target, each_1_anchor, anchor);
+			current = true;
+		},
+		p(ctx, dirty) {
+			if (dirty & /*shadowContent, Object, schema, showMedia, changingAsset, localMediaList, content*/ 63) {
+				each_value_1 = Object.entries(/*schema*/ ctx[5]);
+				let i;
+
+				for (i = 0; i < each_value_1.length; i += 1) {
+					const child_ctx = get_each_context_1(ctx, each_value_1, i);
+
+					if (each_blocks[i]) {
+						each_blocks[i].p(child_ctx, dirty);
+						transition_in(each_blocks[i], 1);
+					} else {
+						each_blocks[i] = create_each_block_1(child_ctx);
+						each_blocks[i].c();
+						transition_in(each_blocks[i], 1);
+						each_blocks[i].m(each_1_anchor.parentNode, each_1_anchor);
+					}
+				}
+
+				group_outros();
+
+				for (i = each_value_1.length; i < each_blocks.length; i += 1) {
+					out(i);
+				}
+
+				check_outros();
+			}
+		},
+		i(local) {
+			if (current) return;
+
+			for (let i = 0; i < each_value_1.length; i += 1) {
+				transition_in(each_blocks[i]);
+			}
+
+			current = true;
+		},
+		o(local) {
+			each_blocks = each_blocks.filter(Boolean);
+
+			for (let i = 0; i < each_blocks.length; i += 1) {
+				transition_out(each_blocks[i]);
+			}
+
+			current = false;
+		},
+		d(detaching) {
+			destroy_each(each_blocks, detaching);
+			if (detaching) detach(each_1_anchor);
+		}
+	};
+}
+
+// (41:16) {#if schema_field[1]?.after === label}
+function create_if_block_1(ctx) {
+	let dynamicforminput;
+	let updating_shadowContent;
+	let updating_showMedia;
+	let updating_changingAsset;
+	let updating_localMediaList;
+	let current;
+
+	function dynamicforminput_shadowContent_binding_1(value) {
+		/*dynamicforminput_shadowContent_binding_1*/ ctx[14](value);
+	}
+
+	function dynamicforminput_showMedia_binding_2(value) {
+		/*dynamicforminput_showMedia_binding_2*/ ctx[15](value);
+	}
+
+	function dynamicforminput_changingAsset_binding_2(value) {
+		/*dynamicforminput_changingAsset_binding_2*/ ctx[16](value);
+	}
+
+	function dynamicforminput_localMediaList_binding_2(value) {
+		/*dynamicforminput_localMediaList_binding_2*/ ctx[17](value);
+	}
+
+	let dynamicforminput_props = {
+		field: /*shadowContent*/ ctx[4][/*schema_field*/ ctx[22][0]],
+		label: /*schema_field*/ ctx[22][0],
+		parentKeys: /*schema_field*/ ctx[22][0],
+		schema: /*schema*/ ctx[5]
+	};
+
+	if (/*shadowContent*/ ctx[4] !== void 0) {
+		dynamicforminput_props.shadowContent = /*shadowContent*/ ctx[4];
+	}
+
+	if (/*showMedia*/ ctx[1] !== void 0) {
+		dynamicforminput_props.showMedia = /*showMedia*/ ctx[1];
+	}
+
+	if (/*changingAsset*/ ctx[2] !== void 0) {
+		dynamicforminput_props.changingAsset = /*changingAsset*/ ctx[2];
+	}
+
+	if (/*localMediaList*/ ctx[3] !== void 0) {
+		dynamicforminput_props.localMediaList = /*localMediaList*/ ctx[3];
+	}
+
+	dynamicforminput = new DynamicFormInput({ props: dynamicforminput_props });
+	binding_callbacks.push(() => bind(dynamicforminput, "shadowContent", dynamicforminput_shadowContent_binding_1));
+	binding_callbacks.push(() => bind(dynamicforminput, "showMedia", dynamicforminput_showMedia_binding_2));
+	binding_callbacks.push(() => bind(dynamicforminput, "changingAsset", dynamicforminput_changingAsset_binding_2));
+	binding_callbacks.push(() => bind(dynamicforminput, "localMediaList", dynamicforminput_localMediaList_binding_2));
+
+	return {
+		c() {
+			create_component(dynamicforminput.$$.fragment);
+		},
+		l(nodes) {
+			claim_component(dynamicforminput.$$.fragment, nodes);
+		},
+		m(target, anchor) {
+			mount_component(dynamicforminput, target, anchor);
+			current = true;
+		},
+		p(ctx, dirty) {
+			const dynamicforminput_changes = {};
+			if (dirty & /*shadowContent, schema*/ 48) dynamicforminput_changes.field = /*shadowContent*/ ctx[4][/*schema_field*/ ctx[22][0]];
+			if (dirty & /*schema*/ 32) dynamicforminput_changes.label = /*schema_field*/ ctx[22][0];
+			if (dirty & /*schema*/ 32) dynamicforminput_changes.parentKeys = /*schema_field*/ ctx[22][0];
+			if (dirty & /*schema*/ 32) dynamicforminput_changes.schema = /*schema*/ ctx[5];
+
+			if (!updating_shadowContent && dirty & /*shadowContent*/ 16) {
+				updating_shadowContent = true;
+				dynamicforminput_changes.shadowContent = /*shadowContent*/ ctx[4];
+				add_flush_callback(() => updating_shadowContent = false);
+			}
+
+			if (!updating_showMedia && dirty & /*showMedia*/ 2) {
+				updating_showMedia = true;
+				dynamicforminput_changes.showMedia = /*showMedia*/ ctx[1];
+				add_flush_callback(() => updating_showMedia = false);
+			}
+
+			if (!updating_changingAsset && dirty & /*changingAsset*/ 4) {
+				updating_changingAsset = true;
+				dynamicforminput_changes.changingAsset = /*changingAsset*/ ctx[2];
+				add_flush_callback(() => updating_changingAsset = false);
+			}
+
+			if (!updating_localMediaList && dirty & /*localMediaList*/ 8) {
+				updating_localMediaList = true;
+				dynamicforminput_changes.localMediaList = /*localMediaList*/ ctx[3];
+				add_flush_callback(() => updating_localMediaList = false);
+			}
+
+			dynamicforminput.$set(dynamicforminput_changes);
+		},
+		i(local) {
+			if (current) return;
+			transition_in(dynamicforminput.$$.fragment, local);
+			current = true;
+		},
+		o(local) {
+			transition_out(dynamicforminput.$$.fragment, local);
+			current = false;
+		},
+		d(detaching) {
+			destroy_component(dynamicforminput, detaching);
+		}
+	};
+}
+
+// (40:12) {#each Object.entries(schema) as schema_field}
+function create_each_block_1(ctx) {
+	let if_block_anchor;
+	let current;
+	let if_block = /*schema_field*/ ctx[22][1]?.after === /*label*/ ctx[18] && create_if_block_1(ctx);
+
+	return {
+		c() {
+			if (if_block) if_block.c();
+			if_block_anchor = empty();
+		},
+		l(nodes) {
+			if (if_block) if_block.l(nodes);
+			if_block_anchor = empty();
+		},
+		m(target, anchor) {
+			if (if_block) if_block.m(target, anchor);
+			insert(target, if_block_anchor, anchor);
+			current = true;
+		},
+		p(ctx, dirty) {
+			if (/*schema_field*/ ctx[22][1]?.after === /*label*/ ctx[18]) {
+				if (if_block) {
+					if_block.p(ctx, dirty);
+
+					if (dirty & /*schema, content*/ 33) {
+						transition_in(if_block, 1);
+					}
+				} else {
+					if_block = create_if_block_1(ctx);
+					if_block.c();
+					transition_in(if_block, 1);
+					if_block.m(if_block_anchor.parentNode, if_block_anchor);
+				}
+			} else if (if_block) {
+				group_outros();
+
+				transition_out(if_block, 1, 1, () => {
+					if_block = null;
+				});
+
+				check_outros();
+			}
+		},
+		i(local) {
+			if (current) return;
+			transition_in(if_block);
+			current = true;
+		},
+		o(local) {
+			transition_out(if_block);
+			current = false;
+		},
+		d(detaching) {
+			if (if_block) if_block.d(detaching);
+			if (detaching) detach(if_block_anchor);
+		}
+	};
+}
+
+// (13:4) {#each Object.entries(content.fields) as [label, field]}
+function create_each_block(ctx) {
+	let t0;
+	let dynamicforminput;
+	let updating_field;
+	let updating_showMedia;
+	let updating_changingAsset;
+	let updating_localMediaList;
+	let t1;
+	let if_block1_anchor;
+	let current;
+	let if_block0 = /*schema*/ ctx[5] && create_if_block_2(ctx);
+
+	function dynamicforminput_field_binding(value) {
+		/*dynamicforminput_field_binding*/ ctx[10](value, /*label*/ ctx[18]);
+	}
+
+	function dynamicforminput_showMedia_binding_1(value) {
+		/*dynamicforminput_showMedia_binding_1*/ ctx[11](value);
+	}
+
+	function dynamicforminput_changingAsset_binding_1(value) {
+		/*dynamicforminput_changingAsset_binding_1*/ ctx[12](value);
+	}
+
+	function dynamicforminput_localMediaList_binding_1(value) {
+		/*dynamicforminput_localMediaList_binding_1*/ ctx[13](value);
+	}
+
+	let dynamicforminput_props = {
+		label: /*label*/ ctx[18],
+		parentKeys: /*label*/ ctx[18],
+		schema: /*schema*/ ctx[5]
+	};
+
+	if (/*content*/ ctx[0].fields[/*label*/ ctx[18]] !== void 0) {
+		dynamicforminput_props.field = /*content*/ ctx[0].fields[/*label*/ ctx[18]];
+	}
+
+	if (/*showMedia*/ ctx[1] !== void 0) {
+		dynamicforminput_props.showMedia = /*showMedia*/ ctx[1];
+	}
+
+	if (/*changingAsset*/ ctx[2] !== void 0) {
+		dynamicforminput_props.changingAsset = /*changingAsset*/ ctx[2];
+	}
+
+	if (/*localMediaList*/ ctx[3] !== void 0) {
+		dynamicforminput_props.localMediaList = /*localMediaList*/ ctx[3];
+	}
+
+	dynamicforminput = new DynamicFormInput({ props: dynamicforminput_props });
+	binding_callbacks.push(() => bind(dynamicforminput, "field", dynamicforminput_field_binding));
+	binding_callbacks.push(() => bind(dynamicforminput, "showMedia", dynamicforminput_showMedia_binding_1));
+	binding_callbacks.push(() => bind(dynamicforminput, "changingAsset", dynamicforminput_changingAsset_binding_1));
+	binding_callbacks.push(() => bind(dynamicforminput, "localMediaList", dynamicforminput_localMediaList_binding_1));
+	let if_block1 = /*schema*/ ctx[5] && create_if_block(ctx);
+
+	return {
+		c() {
+			if (if_block0) if_block0.c();
+			t0 = space();
+			create_component(dynamicforminput.$$.fragment);
+			t1 = space();
+			if (if_block1) if_block1.c();
+			if_block1_anchor = empty();
+		},
+		l(nodes) {
+			if (if_block0) if_block0.l(nodes);
+			t0 = claim_space(nodes);
+			claim_component(dynamicforminput.$$.fragment, nodes);
+			t1 = claim_space(nodes);
+			if (if_block1) if_block1.l(nodes);
+			if_block1_anchor = empty();
+		},
+		m(target, anchor) {
+			if (if_block0) if_block0.m(target, anchor);
+			insert(target, t0, anchor);
+			mount_component(dynamicforminput, target, anchor);
+			insert(target, t1, anchor);
+			if (if_block1) if_block1.m(target, anchor);
+			insert(target, if_block1_anchor, anchor);
+			current = true;
+		},
+		p(new_ctx, dirty) {
+			ctx = new_ctx;
+
+			if (/*schema*/ ctx[5]) {
+				if (if_block0) {
+					if_block0.p(ctx, dirty);
+
+					if (dirty & /*schema*/ 32) {
+						transition_in(if_block0, 1);
+					}
+				} else {
+					if_block0 = create_if_block_2(ctx);
+					if_block0.c();
+					transition_in(if_block0, 1);
+					if_block0.m(t0.parentNode, t0);
+				}
+			} else if (if_block0) {
+				group_outros();
+
+				transition_out(if_block0, 1, 1, () => {
+					if_block0 = null;
+				});
+
+				check_outros();
+			}
+
+			const dynamicforminput_changes = {};
+			if (dirty & /*content*/ 1) dynamicforminput_changes.label = /*label*/ ctx[18];
+			if (dirty & /*content*/ 1) dynamicforminput_changes.parentKeys = /*label*/ ctx[18];
+			if (dirty & /*schema*/ 32) dynamicforminput_changes.schema = /*schema*/ ctx[5];
+
+			if (!updating_field && dirty & /*content, Object*/ 1) {
+				updating_field = true;
+				dynamicforminput_changes.field = /*content*/ ctx[0].fields[/*label*/ ctx[18]];
+				add_flush_callback(() => updating_field = false);
+			}
+
+			if (!updating_showMedia && dirty & /*showMedia*/ 2) {
+				updating_showMedia = true;
+				dynamicforminput_changes.showMedia = /*showMedia*/ ctx[1];
+				add_flush_callback(() => updating_showMedia = false);
+			}
+
+			if (!updating_changingAsset && dirty & /*changingAsset*/ 4) {
+				updating_changingAsset = true;
+				dynamicforminput_changes.changingAsset = /*changingAsset*/ ctx[2];
+				add_flush_callback(() => updating_changingAsset = false);
+			}
+
+			if (!updating_localMediaList && dirty & /*localMediaList*/ 8) {
+				updating_localMediaList = true;
+				dynamicforminput_changes.localMediaList = /*localMediaList*/ ctx[3];
+				add_flush_callback(() => updating_localMediaList = false);
+			}
+
+			dynamicforminput.$set(dynamicforminput_changes);
+
+			if (/*schema*/ ctx[5]) {
+				if (if_block1) {
+					if_block1.p(ctx, dirty);
+
+					if (dirty & /*schema*/ 32) {
+						transition_in(if_block1, 1);
+					}
+				} else {
+					if_block1 = create_if_block(ctx);
+					if_block1.c();
+					transition_in(if_block1, 1);
+					if_block1.m(if_block1_anchor.parentNode, if_block1_anchor);
+				}
+			} else if (if_block1) {
+				group_outros();
+
+				transition_out(if_block1, 1, 1, () => {
+					if_block1 = null;
+				});
+
+				check_outros();
+			}
+		},
+		i(local) {
+			if (current) return;
+			transition_in(if_block0);
+			transition_in(dynamicforminput.$$.fragment, local);
+			transition_in(if_block1);
+			current = true;
+		},
+		o(local) {
+			transition_out(if_block0);
+			transition_out(dynamicforminput.$$.fragment, local);
+			transition_out(if_block1);
+			current = false;
+		},
+		d(detaching) {
+			if (if_block0) if_block0.d(detaching);
+			if (detaching) detach(t0);
+			destroy_component(dynamicforminput, detaching);
+			if (detaching) detach(t1);
+			if (if_block1) if_block1.d(detaching);
+			if (detaching) detach(if_block1_anchor);
+		}
+	};
+}
+
+// (56:4) <ButtonWrapper>
 function create_default_slot(ctx) {
 	let button0;
 	let t;
@@ -199,6 +784,7 @@ function create_default_slot(ctx) {
 						contents: JSON.stringify(/*content*/ ctx[0].fields, undefined, "\t")
 					}
 				],
+				shadowContent: /*shadowContent*/ ctx[4],
 				buttonText: "Save",
 				action: /*content*/ ctx[0].isNew ? "create" : "update",
 				encoding: "text"
@@ -213,7 +799,9 @@ function create_default_slot(ctx) {
 						contents: JSON.stringify(/*content*/ ctx[0].fields, undefined, "\t")
 					}
 				],
+				shadowContent: /*shadowContent*/ ctx[4],
 				buttonText: "Delete",
+				buttonStyle: "secondary",
 				action: "delete",
 				encoding: "text"
 			}
@@ -246,6 +834,7 @@ function create_default_slot(ctx) {
 				}
 			];
 
+			if (dirty & /*shadowContent*/ 16) button0_changes.shadowContent = /*shadowContent*/ ctx[4];
 			if (dirty & /*content*/ 1) button0_changes.action = /*content*/ ctx[0].isNew ? "create" : "update";
 			button0.$set(button0_changes);
 			const button1_changes = {};
@@ -257,6 +846,7 @@ function create_default_slot(ctx) {
 				}
 			];
 
+			if (dirty & /*shadowContent*/ 16) button1_changes.shadowContent = /*shadowContent*/ ctx[4];
 			button1.$set(button1_changes);
 		},
 		i(local) {
@@ -327,7 +917,7 @@ function create_fragment(ctx) {
 			this.h();
 		},
 		h() {
-			attr(form, "class", "svelte-15qb3w8");
+			attr(form, "class", "svelte-kc7an7");
 		},
 		m(target, anchor) {
 			insert(target, form, anchor);
@@ -341,7 +931,7 @@ function create_fragment(ctx) {
 			current = true;
 		},
 		p(ctx, [dirty]) {
-			if (dirty & /*Object, content, showMedia, changingAsset, localMediaList*/ 15) {
+			if (dirty & /*Object, schema, shadowContent, showMedia, changingAsset, localMediaList, content*/ 63) {
 				each_value = Object.entries(/*content*/ ctx[0].fields);
 				let i;
 
@@ -370,7 +960,7 @@ function create_fragment(ctx) {
 
 			const buttonwrapper_changes = {};
 
-			if (dirty & /*$$scope, content*/ 4097) {
+			if (dirty & /*$$scope, content, shadowContent*/ 134217745) {
 				buttonwrapper_changes.$$scope = { dirty, ctx };
 			}
 
@@ -405,16 +995,17 @@ function create_fragment(ctx) {
 }
 
 function instance($$self, $$props, $$invalidate) {
+	let schema;
+
 	let { content } = $$props,
 		{ showMedia } = $$props,
 		{ changingAsset } = $$props,
-		{ localMediaList } = $$props;
+		{ localMediaList } = $$props,
+		{ shadowContent } = $$props;
 
-	function dynamicforminput_field_binding(value, label) {
-		if ($$self.$$.not_equal(content.fields[label], value)) {
-			content.fields[label] = value;
-			$$invalidate(0, content);
-		}
+	function dynamicforminput_shadowContent_binding(value) {
+		shadowContent = value;
+		$$invalidate(4, shadowContent);
 	}
 
 	function dynamicforminput_showMedia_binding(value) {
@@ -432,11 +1023,60 @@ function instance($$self, $$props, $$invalidate) {
 		$$invalidate(3, localMediaList);
 	}
 
+	function dynamicforminput_field_binding(value, label) {
+		if ($$self.$$.not_equal(content.fields[label], value)) {
+			content.fields[label] = value;
+			$$invalidate(0, content);
+		}
+	}
+
+	function dynamicforminput_showMedia_binding_1(value) {
+		showMedia = value;
+		$$invalidate(1, showMedia);
+	}
+
+	function dynamicforminput_changingAsset_binding_1(value) {
+		changingAsset = value;
+		$$invalidate(2, changingAsset);
+	}
+
+	function dynamicforminput_localMediaList_binding_1(value) {
+		localMediaList = value;
+		$$invalidate(3, localMediaList);
+	}
+
+	function dynamicforminput_shadowContent_binding_1(value) {
+		shadowContent = value;
+		$$invalidate(4, shadowContent);
+	}
+
+	function dynamicforminput_showMedia_binding_2(value) {
+		showMedia = value;
+		$$invalidate(1, showMedia);
+	}
+
+	function dynamicforminput_changingAsset_binding_2(value) {
+		changingAsset = value;
+		$$invalidate(2, changingAsset);
+	}
+
+	function dynamicforminput_localMediaList_binding_2(value) {
+		localMediaList = value;
+		$$invalidate(3, localMediaList);
+	}
+
 	$$self.$$set = $$props => {
 		if ("content" in $$props) $$invalidate(0, content = $$props.content);
 		if ("showMedia" in $$props) $$invalidate(1, showMedia = $$props.showMedia);
 		if ("changingAsset" in $$props) $$invalidate(2, changingAsset = $$props.changingAsset);
 		if ("localMediaList" in $$props) $$invalidate(3, localMediaList = $$props.localMediaList);
+		if ("shadowContent" in $$props) $$invalidate(4, shadowContent = $$props.shadowContent);
+	};
+
+	$$self.$$.update = () => {
+		if ($$self.$$.dirty & /*content*/ 1) {
+			$: $$invalidate(5, schema = schemas[content.type]);
+		}
 	};
 
 	return [
@@ -444,10 +1084,20 @@ function instance($$self, $$props, $$invalidate) {
 		showMedia,
 		changingAsset,
 		localMediaList,
-		dynamicforminput_field_binding,
+		shadowContent,
+		schema,
+		dynamicforminput_shadowContent_binding,
 		dynamicforminput_showMedia_binding,
 		dynamicforminput_changingAsset_binding,
-		dynamicforminput_localMediaList_binding
+		dynamicforminput_localMediaList_binding,
+		dynamicforminput_field_binding,
+		dynamicforminput_showMedia_binding_1,
+		dynamicforminput_changingAsset_binding_1,
+		dynamicforminput_localMediaList_binding_1,
+		dynamicforminput_shadowContent_binding_1,
+		dynamicforminput_showMedia_binding_2,
+		dynamicforminput_changingAsset_binding_2,
+		dynamicforminput_localMediaList_binding_2
 	];
 }
 
@@ -459,7 +1109,8 @@ class Component extends SvelteComponent {
 			content: 0,
 			showMedia: 1,
 			changingAsset: 2,
-			localMediaList: 3
+			localMediaList: 3,
+			shadowContent: 4
 		});
 	}
 }

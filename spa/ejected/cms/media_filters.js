@@ -21,7 +21,7 @@ import {
 	text
 } from '../../web_modules/svelte/internal/index.mjs';
 
-import { isAssetPath } from './assets_checker.js';
+import { isAssetPath } from './asset_checker.js';
 
 function get_each_context(ctx, list, i) {
 	const child_ctx = ctx.slice();
