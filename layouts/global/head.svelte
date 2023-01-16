@@ -9,8 +9,8 @@
   <title>{ title }</title>
   <base href="{env.baseurl}">
 
-  <script type="module" src="spa/ejected/main.js"></script>
+  <script type="module" src="spa/core/main.js"></script>
 
-  <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+  <link rel="icon" type="image/svg+xml" href="logo.svg">
   <link rel='stylesheet' href='spa/bundle.css'>
 </head>
